@@ -1,0 +1,21 @@
+{
+  "name": "HACaccess 9001",
+  "version": "1.0",
+  "manifest_version": 2,
+  "description": "Quickly and efficiently check your grades!",
+  "browser_action": {
+    "default_icon": "icon.png",
+    "default_popup": "hac.html"
+  },
+  "background": {
+    "page": "background.html"
+  },
+  "permissions": [
+    "https://hacaccess.herokuapp.com/",
+    "https://*.roundrockisd.org/",
+    "notifications"
+  ],
+  "web_accessible_resources": ["icon.png"],
+  "options_page": "options.html",
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
+}

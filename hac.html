@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title></title>
+		<link type="text/css" rel="stylesheet" href="hac.css">
+		<script type="text/javascript" src="jq.js"></script>
+		<script type="text/javascript" src="base64.js"></script>
+		<script type="text/javascript" src="common.js"></script>
+		<script type="text/javascript" src="hac.js"></script>
+	</head>
+	<body>
+		<table id="login_form">
+			<tr>
+				<th>Username</th>
+				<th>Password</th>
+				<th>Student ID</th>
+				<th>&nbsp;</th>
+			</tr>
+			<tr>
+				<td><input id="login" name="login"></td>
+				<td><input type="password" id="password" name="password"></td>
+				<td><input id="studentid" name="studentid"></td>
+				<td><button id="do_login">Login</button></td>
+			</tr>
+		</table>
+		<div id="direct_access_form">
+			Access code: <input id="direct_url">
+			<button id="do_direct_access">Update Grades</button>
+			<button id="do_logout">Logout</button>
+		</div>
+		<hr>
+		<div id="grades"></div>
+		<div id="classgrades"></div>
+	</body>
+</html>

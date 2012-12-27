@@ -1,0 +1,34 @@
+body {
+	min-width: 600px;
+
+	-webkit-animation: background 1s;
+}
+
+body.busy {
+	background: #eee;
+}
+
+* {
+	font-size: 12px;
+	font-family: "Trebuchet MS";
+}
+
+table {
+	width: 100%;
+}
+
+th {
+	border-bottom: 1px dashed #666;
+}
+
+.classTitle {
+	background: #ddd;
+}
+
+.exam {
+	border: 1px dashed #fd8;
+}
+
+.semester {
+	border: 1px dashed #8df;
+}
