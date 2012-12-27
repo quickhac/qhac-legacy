@@ -30,4 +30,4 @@ $(function() {
 
 	// update once
 	silent_update();
-})
+});

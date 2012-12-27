@@ -74,7 +74,15 @@ function loadClassGrades(data) {
 
 	HAC.get_classGradeHTML(localStorage["url"], data, function(stuff) {
 		$("#classgrades").html(stuff).find(".AssignmentGrade").each(function(e) {
-			$(this).css("backgroundColor", HAC_HTML.colorize(this.textContent));
+			if (!isNaN(parseInt(this.textContent))) {
+				var pointsPossible = $(this).parent().children(".AssignmentPointsPossible");
+				if (pointsPossible.length == 0) {
+					$(this).css("backgroundColor", HAC_HTML.colorize(this.textContent));
+				}
+				else {
+					$(this).css("backgroundColor", HAC_HTML.colorize(100 * this.textContent / pointsPossible[0].textContent));
+				}
+			}
 		});
 		$(".CurrentAverage").each(function(e) {
 			$(this).css("backgroundColor", HAC_HTML.colorize(this.textContent.substr(17)));

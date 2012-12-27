@@ -17,16 +17,29 @@ body.busy {
 table {
 	width: 100%;
 	border-spacing: 0;
+	line-height: 120%;
 }
 
 th {
-	background: #fdc;
-	padding: 0;
-	border-bottom: 1px solid #666;
+	padding-bottom: 4px;
+}
+
+th.gradeHeader {
+	font-size: 12px;
+	text-align: left;
+	font-weight: normal;
+}
+
+td {
+	padding-top: 2px;
+}
+
+a {
+	color: #78c9d0;
 }
 
 .classTitle {
-	background: #ddd;
+	background: #f8f8f8;
 }
 
 .exam {
@@ -45,7 +58,7 @@ th {
 #direct_access_form {
 	position: fixed;
 	top: 0;
-	background: rgba(245, 250, 255, 0.8);
+	background: rgba(255, 202, 8, 0.6);
 	border-bottom: 1px solid #888;
 	box-shadow: 0px 0px 4px #888;
 	z-index: 9001;
@@ -55,7 +68,7 @@ th {
 
 #grades {
 	position: relative;
-	margin-top: 2em;
+	margin-top: 2.5em;
 }
 
 #update_wrapper, #lastupdated {

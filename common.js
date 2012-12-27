@@ -107,9 +107,10 @@ var HAC_HTML =
 
 		// header row
 		var header = document.createElement("tr");
-		["Class", "Cycle 1", "Cycle 2", "Cycle 3", "Exam 1", "Semester 1", "Cycle 4", "Cycle 5", "Cycle 6", "Exam 2", "Semester 2"].forEach(function(e,i) {
+		["COURSE", "CYCLE 1", "CYCLE 2", "CYCLE 3", "EXAM 1", "SEMESTER 1", "CYCLE 4", "CYCLE 5", "CYCLE 6", "EXAM 2", "SEMESTER 2"].forEach(function(e,i) {
 			var cell = document.createElement("th");
 			cell.textContent = e;
+			$(cell).addClass("gradeHeader");
 
 			$(header).append(cell);
 		});
@@ -162,12 +163,10 @@ var HAC_HTML =
 		// interpolate a hue gradient and convert to rgb
 		var h, s, v, r, g, b;
 
-		// determine hue
-		h = 0.25 * Math.pow(grade / 100, asianness);
-
-		// other values
-		s = 0.75;
-		v = 1;
+		// determine color. ***MAGIC DO NOT TOUCH UNDER ANY CIRCUMSTANCES***
+		h = Math.min(0.25 * Math.pow(grade / 100, asianness), 0.13056);
+		s = 1 - Math.pow(grade / 100, asianness);
+		v = 0.86944 + h;
 
 		// convert to rgb: http://goo.gl/J9ra3
 		var i = Math.floor(h * 6);
