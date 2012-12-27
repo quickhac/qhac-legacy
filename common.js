@@ -157,7 +157,7 @@ var HAC_HTML =
 
 	colorize: function(grade) {
 		// color is only for numerical grades
-		if (isNaN(grade)) return "#FFF";
+		if (isNaN(parseInt(grade))) return "#FFF";
 
 		// interpolate a hue gradient and convert to rgb
 		var h, s, v, r, g, b;

@@ -1,11 +1,12 @@
 body {
 	min-width: 600px;
 
-	-webkit-animation: background 1s;
+	-webkit-transition: none;
 }
 
 body.busy {
-	background: #eee;
+	opacity: 0.5;
+	-webkit-transition: opacity 0.2s linear;
 }
 
 * {
@@ -15,10 +16,13 @@ body.busy {
 
 table {
 	width: 100%;
+	border-spacing: 0;
 }
 
 th {
-	border-bottom: 1px dashed #666;
+	background: #fdc;
+	padding: 0;
+	border-bottom: 1px solid #666;
 }
 
 .classTitle {
@@ -31,4 +35,29 @@ th {
 
 .semester {
 	border: 1px dashed #8df;
+}
+
+.CategoryName {
+	font-weight: bold;
+	font-size: 14px;
+}
+
+#direct_access_form {
+	position: fixed;
+	top: 0;
+	background: rgba(245, 250, 255, 0.8);
+	border-bottom: 1px solid #888;
+	box-shadow: 0px 0px 4px #888;
+	z-index: 9001;
+	border-bottom-left-radius: 4px;
+	border-bottom-right-radius: 4px;
+}
+
+#grades {
+	position: relative;
+	margin-top: 2em;
+}
+
+#update_wrapper, #lastupdated {
+	font-size: 10px;
 }

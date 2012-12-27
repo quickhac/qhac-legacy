@@ -23,7 +23,11 @@ function login(uname, pass, studentid) {
 					// output
 					var doc_json = HAC_HTML.html_to_jso(doc);
 					$("#grades").html("").append(HAC_HTML.json_to_html(doc_json));
+
+					// store
 					localStorage.setItem("grades", JSON.stringify(doc_json));
+					localStorage.setItem("lastupdated", (new Date()).toString());
+					$("#lastupdated").html(localStorage['lastupdated']);
 
 					// hide login
 					$("#direct_access_form").show();
@@ -46,13 +50,14 @@ function update(sID) {
 		HAC_HTML.compare_grades(JSON.parse(localStorage["grades"]), doc_json);
 		// store
 		localStorage.setItem("grades", JSON.stringify(doc_json));
+		localStorage.setItem("lastupdated", (new Date()).toString());
+		$("#lastupdated").html(localStorage['lastupdated']);
 
 		$("body").removeClass("busy");
 	});
 }
 
 function logout() {
-
 	// show login
 	$("#direct_access_form").hide();
 	$("#login_form").show();
@@ -106,5 +111,6 @@ $(function(){
 	else {
 		$("#login_form").hide();
 		$("#direct_url").val(localStorage['url']);
+		$("#lastupdated").html(localStorage['lastupdated']);
 	}
 });

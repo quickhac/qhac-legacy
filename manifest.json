@@ -1,8 +1,8 @@
 {
   "name": "HACaccess 9001",
-  "version": "1.0",
+  "version": "0.9",
   "manifest_version": 2,
-  "description": "Quickly and efficiently check your grades!",
+  "description": "Quickly and efficiently check your grades.",
   "browser_action": {
     "default_icon": "icon.png",
     "default_popup": "hac.html"
@@ -17,5 +17,6 @@
   ],
   "web_accessible_resources": ["icon.png"],
   "options_page": "options.html",
-  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+  "update_url": "https://hacaccess.herokuapp.com/public/update.xml"
 }
