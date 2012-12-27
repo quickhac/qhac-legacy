@@ -113,4 +113,7 @@ $(function(){
 		$("#direct_url").val(localStorage['url']);
 		$("#lastupdated").html(localStorage['lastupdated']);
 	}
+
+	// badge
+	chrome.browserAction.setBadgeText({"text": ""});
 });
