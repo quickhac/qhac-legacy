@@ -8,7 +8,7 @@ function silent_update() {
 		HAC_HTML.compare_grades(JSON.parse(localStorage["grades"]), doc_json);
 		// store
 		localStorage.setItem("grades", JSON.stringify(doc_json));
-		localStorage.setItem("lastupdated", (new Date()).toString();
+		localStorage.setItem("lastupdated", (new Date()).toString());
 	});
 }
 
