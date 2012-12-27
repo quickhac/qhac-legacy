@@ -116,4 +116,5 @@ $(function(){
 
 	// badge
 	chrome.browserAction.setBadgeText({"text": ""});
+	localStorage.setItem("badge", "0");
 });

@@ -188,12 +188,13 @@ var HAC_HTML =
     return "rgb(" + parseInt(r * 255) + "," + parseInt(g * 255) + "," + parseInt(b * 255) + ")";
 	},
 
-	compare_grades: function(oldgrade, newgrade) {
+	compare_grades: function(oldgrade, newgrade, on_notify) {
 		var labels = ["Cycle 1", "Cycle 2", "Cycle 3", "Exam 1", "Semester 1", "Cycle 4", "Cycle 5", "Cycle 6", "Exam 2", "Semester 2"];
 		for (var r = 0; r < Math.min(oldgrade.length, newgrade.length); r++) {
 			for (var c = 0; c < 10; c++) {
 				if (oldgrade[r].grades[c] != newgrade[r].grades[c]) {
 					HAC_HTML._notify(newgrade[r].title, labels[c], oldgrade[r].grades[c], newgrade[r].grades[c]);
+					if (typeof on_notify === "function") on_notify();
 				}
 			}
 		}
