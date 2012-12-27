@@ -26,8 +26,8 @@ function login(uname, pass, studentid) {
 
 					// store
 					localStorage.setItem("grades", JSON.stringify(doc_json));
-					localStorage.setItem("lastupdated", (new Date()).toString());
-					$("#lastupdated").html(localStorage['lastupdated']);
+					$("#lastupdated").html(Updater.get_update_text());
+					Updater.set_updated();
 
 					// hide login
 					$("#direct_access_form").show();
@@ -50,8 +50,8 @@ function update(sID) {
 		HAC_HTML.compare_grades(JSON.parse(localStorage["grades"]), doc_json);
 		// store
 		localStorage.setItem("grades", JSON.stringify(doc_json));
-		localStorage.setItem("lastupdated", (new Date()).toString());
-		$("#lastupdated").html(localStorage['lastupdated']);
+		$("#lastupdated").html(Updater.get_update_text());
+		Updater.set_updated();
 
 		$("body").removeClass("busy");
 	});
@@ -73,6 +73,7 @@ function loadClassGrades(data) {
 	$("body").addClass("busy");
 
 	HAC.get_classGradeHTML(localStorage["url"], data, function(stuff) {
+		// color in assignment grades
 		$("#classgrades").html(stuff).find(".AssignmentGrade").each(function(e) {
 			if (!isNaN(parseInt(this.textContent))) {
 				var pointsPossible = $(this).parent().children(".AssignmentPointsPossible");
@@ -84,9 +85,14 @@ function loadClassGrades(data) {
 				}
 			}
 		});
+		// color in averages
 		$(".CurrentAverage").each(function(e) {
 			$(this).css("backgroundColor", HAC_HTML.colorize(this.textContent.substr(17)));
-		})
+		});
+		$(".DataTable tr:last-child").each(function(e) {
+			var avg = $(this).children()[3];
+			$(avg).css("backgroundColor", HAC_HTML.colorize(avg.textContent));		});
+		// remove extraneous information
 		$(".PageHeader, .PageNote, .StudentHeader, .StudentHeader+table").remove();
 
 		$("body").removeClass("busy");
@@ -102,6 +108,7 @@ $(function(){
 	// handlers
 	$("#do_login").click(function() { login($("#login").attr("value"), $("#password").attr("value"), $("#studentid").attr("value")); });
 	$("#do_direct_access").click(function() { update($("#direct_url").val()); });
+	$("#do_options").click(function() { chrome.tabs.create({url: "options.html"}); });
 	$("#do_logout").click(logout);
 
 	// fill in form
@@ -119,7 +126,7 @@ $(function(){
 	else {
 		$("#login_form").hide();
 		$("#direct_url").val(localStorage['url']);
-		$("#lastupdated").html(localStorage['lastupdated']);
+		$("#lastupdated").html(Updater.get_update_text());
 	}
 
 	// badge

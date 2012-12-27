@@ -15,7 +15,7 @@ function silent_update() {
 		});
 		// store
 		localStorage.setItem("grades", JSON.stringify(doc_json));
-		localStorage.setItem("lastupdated", (new Date()).toString());
+		Updater.set_updated();
 	});
 }
 

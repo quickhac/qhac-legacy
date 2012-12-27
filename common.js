@@ -22,6 +22,17 @@ String.prototype.decrypt = function() {
 	return this.rot13().b64dec();
 }
 
+// date setting
+var Updater =
+{
+	set_updated: function() {
+		localStorage.setItem("lastupdated", (new Date()).getTime());
+	},
+	get_update_text: function() {
+		return moment(parseInt(localStorage["lastupdated"])).fromNow();
+	}
+}
+
 // working with HACaccess
 var HAC =
 {
@@ -145,7 +156,8 @@ var HAC_HTML =
 				if ((c == 3) || (c == 8)) classes += " exam";
 				else if ((c == 4) || (c == 9)) classes += " semester";
 				$(cell).addClass(classes);
-				$(cell).css("backgroundColor", HAC_HTML.colorize(parseInt(json[r].grades[c])));
+				var color = HAC_HTML.colorize(parseInt(json[r].grades[c]));
+				$(cell).css({"backgroundColor": color, "box-shadow": "0px 0px 4px " + color});
 
 				$(row).append(cell);
 			}
