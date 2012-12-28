@@ -21,9 +21,12 @@ function generate_color_table() {
 $(function(){
 	// load
 	if (localStorage["asianness"] != undefined)
-		{ $("#asianness").val(localStorage["asianness"]); asianness = localStorage["asianness"]; generate_color_table(); }
+		{ $("#asianness").val(localStorage["asianness"]); asianness = localStorage["asianness"]; }
+	else
+		{ asianness = 4; }
 	if (localStorage["r_int"] != undefined)
 		$("#r_interval").val(localStorage["r_int"]);
+	generate_color_table();
 	// save
 	$("#save").click(function() {
 		var level = $("#asianness").val();

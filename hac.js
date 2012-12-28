@@ -132,4 +132,16 @@ $(function(){
 	// badge
 	chrome.browserAction.setBadgeText({"text": ""});
 	localStorage.setItem("badge", "0");
+
+	// shadow on scrolling
+	$(window).scroll(function() {
+		var pos = $(window).scrollTop();
+		if (pos == 0)
+			$("#direct_access_form").css("box-shadow", "none");
+		else if (pos < 32)
+			$("#direct_access_form").css("box-shadow", "0px 0px " +
+				parseInt(pos / 4) + "px #888");
+		else
+			$("#direct_access_form").css("box-shadow", "0px 0px 8px #888");
+	});
 });
