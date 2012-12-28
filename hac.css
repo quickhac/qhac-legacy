@@ -54,7 +54,7 @@ td {
 }
 
 td, td a {
-	text-shadow: 0px 1px 1px rgba(255, 255, 255, 0.5);
+	text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.3);
 }
 
 a {
@@ -115,13 +115,13 @@ a:hover {
 }
 
 #direct_access_form {
-	/*position: fixed;*/
-	/*top: 0;*/
-	/*left: 0;*/
-	/*right: 0;*/
-	/*padding: 8px 8px 4px 8px;*/
-	/*background: rgba(255, 255, 255, 0.8);*/
-	/*z-index: 9001;*/
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	padding: 8px 8px 4px 8px;
+	background: rgba(255, 255, 255, 0.8);
+	z-index: 9001;
 }
 
 #update_wrapper {
@@ -149,9 +149,8 @@ a:hover {
 }
 
 #grades {
-	/*position: relative;*/
-	/*margin-top: 4.5em;*/
-	margin-top: 4px;
+	position: relative;
+	margin-top: 4.5em;
 	background: #eeeeee;
 	padding: 4px;
 	border-radius: 4px;
@@ -171,9 +170,23 @@ a:hover {
 }
 
 #update_wrapper, #lastupdated {
-	font-size: 10px;
+	font-size: 12px;
 }
 
 #access_code_wrapper {
 	display: none;
+}
+
+/* minimal processing for class grades */
+.DataTable {
+	background: #eee;
+	border-radius: 4px;
+}
+
+.DataRow td, .DataRowAlt td {
+	background: white;
+}
+
+.DataRow .AssignmentName, .DataRowAlt .AssignmentName {
+	background: #eee;
 }
