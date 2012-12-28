@@ -10,20 +10,16 @@
 		<script type="text/javascript" src="hac.js"></script>
 	</head>
 	<body>
-		<table id="login_form">
-			<tr>
-				<th>Username</th>
-				<th>Password</th>
-				<th>Student ID</th>
-				<th>&nbsp;</th>
-			</tr>
-			<tr>
-				<td><input id="login" name="login"></td>
-				<td><input type="password" id="password" name="password"></td>
-				<td><input id="studentid" name="studentid"></td>
-				<td><button id="do_login">Login</button></td>
-			</tr>
-		</table>
+		<div id="login_form">
+			<img id="logo_login" src="logo.png" style="height:56px"><br>
+			<input id="login" name="login" placeholder="username"><br>
+			<div class="sep">&nbsp;</div>
+			<input type="password" id="password" name="password" placeholder="password"><br>
+			<div class="sep">&nbsp;</div>
+			<input id="studentid" name="studentid" placeholder="6-digit id"><br>
+			<div class="sep">&nbsp;</div>
+			<button id="do_login">Login</button>
+		</div>
 		<div id="direct_access_form">
 			<span id="access_code_wrapper">Access code: <input id="direct_url" readonly="true"></span>
 			<img id="logo" src="logo.png" style="height:36px">

@@ -32,6 +32,8 @@ function login(uname, pass, studentid) {
 					// hide login
 					$("#direct_access_form").show();
 					$("#login_form").hide();
+					$("#password").val("");
+					$(document.body).addClass("logged_in");
 
 					$("body").removeClass("busy");
 				});
@@ -61,9 +63,11 @@ function logout() {
 	// show login
 	$("#direct_access_form").hide();
 	$("#login_form").show();
+	$(document.body).removeClass("logged_in");
 
 	// hide grades
 	$("#grades").html("");
+	$("#classgrades").html("");
 
 	// clear cache
 	localStorage.clear();
@@ -121,14 +125,6 @@ $(function(){
 	if (localStorage["grades"] != undefined)
 		$("#grades").append(HAC_HTML.json_to_html(JSON.parse(localStorage["grades"])));
 
-	// login or direct access?
-	if (localStorage["url"] == undefined) $("#direct_access_form").hide();
-	else {
-		$("#login_form").hide();
-		$("#direct_url").val(localStorage['url']);
-		$("#lastupdated").html(Updater.get_update_text());
-	}
-
 	// badge
 	chrome.browserAction.setBadgeText({"text": ""});
 	localStorage.setItem("badge", "0");
@@ -144,4 +140,14 @@ $(function(){
 		else
 			$("#direct_access_form").css("box-shadow", "0px 0px 8px #888");
 	});
+
+	// login or direct access?
+	if (localStorage["url"] == undefined) $("#direct_access_form").hide();
+	else {
+		$("#login_form").hide();
+		$("#direct_url").val(localStorage['url']);
+		$("#lastupdated").html(Updater.get_update_text());
+		// bug: body won't scroll if the "logged_in" class is added immediately
+		window.setTimeout(function(){ $(document.body).addClass("logged_in"); }, 100);
+	}
 });

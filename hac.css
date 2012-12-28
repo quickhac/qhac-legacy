@@ -1,12 +1,6 @@
 @font-face {
-	font-family: "Open Sans Light";
-	src: url('OpenSans-Light.ttf');
-}
-
-body {
-	min-width: 600px;
-
-	-webkit-transition: none;
+	font-family: "Open Sans";
+	src: url('OpenSans.ttf');
 }
 
 body.busy {
@@ -14,9 +8,13 @@ body.busy {
 	-webkit-transition: opacity 0.2s linear;
 }
 
+body.logged_in {
+	width: 600px;
+}
+
 * {
 	font-size: 12px;
-	font-family: "Open Sans Light";
+	font-family: "Open Sans";
 }
 
 table {
@@ -64,12 +62,48 @@ a {
 	font-size: 14px;
 }
 
+#logo_login {
+	margin: 0 auto;
+}
+
+#login, #password, #studentid {
+	border: none;
+	outline-offset: 0 !important;
+	width: 154px;
+	padding: 1px 5px 1px 5px;
+	font-size: 14px;
+}
+
+#do_login {
+	background: #FFCA08;
+	width: 164px;
+	border: 2px solid black;
+	border-radius: 4px;
+}
+
+#do_login:active {
+	box-shadow: inset 0 0 4px #666;
+}
+
+.sep {
+	border: 2px solid #CCC;
+	border-top: none;
+	height: 4px;
+	position: relative;
+	margin-top: -8px;
+	margin-bottom: 6px;
+}
+
+#action_buttons {
+	float: right;
+}
+
 #direct_access_form {
 	position: fixed;
 	top: 0;
 	left: 0;
 	right: 0;
-	padding: 0 8px 0 8px;
+	padding: 8px 8px 0 8px;
 	background: rgba(255, 255, 255, 0.8);
 	z-index: 9001;
 }
@@ -80,16 +114,23 @@ a {
 }
 
 #action_buttons {
-	margin-top: 6px;
+	margin-top: 1px;
 }
 
 #action_buttons button {
-	font-size: 14px;
+	font-size: 16px;
+	background: none;
+	border: none;
+	outline: none;
+}
+
+#action_buttons button:hover {
+	text-decoration: underline;
 }
 
 #grades {
 	position: relative;
-	margin-top: 4em;
+	margin-top: 4.5em;
 }
 
 #grades td {
@@ -106,8 +147,4 @@ a {
 
 #access_code_wrapper {
 	display: none;
-}
-
-#action_buttons {
-	float: right;
 }
