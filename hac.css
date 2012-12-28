@@ -25,6 +25,8 @@ body.logged_in {
 * {
 	font-size: 12px;
 	font-family: "Open Sans";
+	color: #222;
+	-webkit-font-smoothing: antialiased;
 }
 
 table {
@@ -50,9 +52,16 @@ td {
 	line-height: 175%;
 }
 
+td, td a {
+	text-shadow: 0px 1px 1px rgba(255, 255, 255, 0.5);
+}
+
 a {
-	color: #78c9d0;
+	color: #222;
 	text-decoration: none;
+}
+a:hover {
+	text-decoration: underline;
 }
 
 .classTitle {
@@ -130,6 +139,7 @@ a {
 	background: none;
 	border: none;
 	outline: none;
+	cursor: pointer;
 }
 
 #action_buttons button:hover {
@@ -143,6 +153,11 @@ a {
 
 #grades td {
 	text-align: center;
+}
+
+#grades td a {
+	display: block;
+	font-weight: bold;
 }
 
 #grades td:first-child {

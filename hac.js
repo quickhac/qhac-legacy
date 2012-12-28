@@ -5,7 +5,7 @@ function login(uname, pass, studentid) {
 	$("body").addClass("busy");
 
 	localStorage.setItem("login", uname.encrypt().encrypt());
-	localStorage.setItem("pass", pass.encrypt().encrypt());
+	// localStorage.setItem("pass", pass.encrypt().encrypt());
 	localStorage.setItem("studentid", studentid.encrypt().encrypt());
 	// get a session ID
 	HAC.get_session(
