@@ -8,8 +8,9 @@
 }
 
 body {
-	padding-bottom: 3px;
-	height: 177px;
+	/*padding-bottom: 3px;*/
+	/*height: 177px;*/
+	color: #222;
 }
 
 body.busy {
@@ -19,13 +20,13 @@ body.busy {
 
 body.logged_in {
 	width: 600px;
-	min-height: 203px;
+	/*min-height: 203px;*/
 }
 
 * {
-	font-size: 12px;
+	/*font-size: 12px;*/
+	font-size: 14px;
 	font-family: "Open Sans";
-	color: #222;
 	-webkit-font-smoothing: antialiased;
 }
 
@@ -65,7 +66,7 @@ a:hover {
 }
 
 .classTitle {
-	background: #f8f8f8;
+	/*background: #f8f8f8;*/
 }
 
 .exam {
@@ -114,22 +115,23 @@ a:hover {
 }
 
 #direct_access_form {
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
-	padding: 8px 8px 0 8px;
-	background: rgba(255, 255, 255, 0.8);
-	z-index: 9001;
+	/*position: fixed;*/
+	/*top: 0;*/
+	/*left: 0;*/
+	/*right: 0;*/
+	/*padding: 8px 8px 4px 8px;*/
+	/*background: rgba(255, 255, 255, 0.8);*/
+	/*z-index: 9001;*/
 }
 
 #update_wrapper {
 	position: relative;
 	bottom: 3px;
+	color: #808080;
 }
 
 #action_buttons {
-	margin-top: 1px;
+	margin-top: 4px;
 	float: right;
 }
 
@@ -147,8 +149,12 @@ a:hover {
 }
 
 #grades {
-	position: relative;
-	margin-top: 4.5em;
+	/*position: relative;*/
+	/*margin-top: 4.5em;*/
+	margin-top: 4px;
+	background: #eeeeee;
+	padding: 4px;
+	border-radius: 4px;
 }
 
 #grades td {
