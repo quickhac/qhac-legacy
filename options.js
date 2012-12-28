@@ -2,7 +2,7 @@ var asianness;
 
 function generate_color_table() {
 	var table = document.createElement("table");
-	$(table).attr("cellpadding", "8px").attr("cellspacing", "0px");
+	$(table).attr("cellpadding", "8px").attr("cellspacing", "0px").css("width", "100%");
 	for (var r = 0; r < 10; r++) {
 		var row = document.createElement("tr");
 		for (var c = 0; c < 10; c++) {
@@ -33,7 +33,7 @@ $(function(){
 		if (isNaN(level)) alert("Asianness level must be a number!");
 		else { localStorage.setItem("asianness", level); asianness = level; generate_color_table(); }
 		var r_int = $("#r_interval").val();
-		if (isNaN(r_int) || (r_int <= 0)) alert("Refresh interval must be a positive number!");
+		if (isNaN(r_int) || (r_int < 0)) alert("Refresh interval must be a positive number or zero!");
 		else localStorage.setItem("r_int", r_int);
 	});
 });

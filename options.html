@@ -1,22 +1,51 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>qHAC settings</title>
+		<title>QuickHAC settings</title>
 		<style>
-			* { font-family: 'Trebuchet MS'; }
+			@font-face {
+				font-family: "Open Sans";
+				src: url('OpenSans.ttf');
+			}
+			@font-face {
+				font-family: "Open Sans Light";
+				src: url('OpenSans-Light.ttf');
+			}
+			body {
+				width: 600px;
+				margin: 0 auto;
+				border-left: 2px solid #CCC;
+				border-right: 2px solid #CCC;
+				padding: 32px;
+			}
+			* { font-family: 'Open Sans Light'; }
+			#save {
+				background: #FFCA08;
+				width: 164px;
+				border: 2px solid black;
+				border-radius: 4px;
+				font-size: 16px;
+			}
+			#save:active {
+				box-shadow: inset 0 0 4px #666;
+			}
 		</style>
 		<script type="text/javascript" src="jq.js"></script>
 		<script type="text/javascript" src="common.js"></script>
 		<script type="text/javascript" src="options.js"></script>
 	</head>
 	<body>
+		<img src="logo.png" style="width:600px">
+		<p style="font-size:12px;font-family:'Open Sans';text-align:center;margin-top:-16px;color:#ccc">by Xuming Zeng. Logo and design by Max Ciotti. Uses server-side code by Yash Aggarwal.</p>
 		<img src="heaf.png" style="float:right">
-		<h1>qHAC Settings</h1>
-		<p>Asianness level: <input id="asianness" name="asianness" value="4"></p>
-		<p>Refresh interval (mins): <input id="r_interval" name="r_interval" value="60"></p>
-		<p><button id="save">Save Options</button></p>
-		<h3>Grade gradient scale:</h3>
-		<p>Grades in qHAC are colored in according to their grade. The amount of color indicates how bad the grade is. This allows for you to be able to pick out bad grades at a glance and quickly figure out what you need to improve. You can control the threshold for the colorization of grades by adjusting the Asianness level. The default, 4, gives you light yellow for the 90s, light orange for the 80s, orange for the 70s, dark orange for the 60s, and crimson red for anything below. You can adjust the threshold up and down according to how much you care about your grades or how colorful you want your qHAC to be.</p>
+		<h1 style="text-align:right">QuickHAC Settings</h1>
+		<p style="text-align:right">Asianness level: <input id="asianness" name="asianness" value="4"></p>
+		<p style="text-align:right">Refresh interval (mins): <input id="r_interval" name="r_interval" value="60"></p>
+		<p style="text-align:right"><sup>Enter 0 to turn off auto-update.</sup></p>
+		<p style="text-align:center"><button id="save">Save Options</button></p>
+		<hr>
+		<h2>Grade gradient (Asianness) scale:</h2>
+		<p style="text-align:justify">Grades in qHAC are colored in according to their grade. The amount of color indicates how bad the grade is. This allows for you to be able to pick out bad grades at a glance and quickly figure out what you need to improve. You can control the threshold for the colorization of grades by adjusting the Asianness level. The default, 4, gives you light yellow for the 90s, light orange for the 80s, orange for the 70s, dark orange for the 60s, and crimson red for anything below. You can adjust the threshold up and down according to how much you care about your grades or how colorful you want your qHAC to be.</p>
 		<div id="color_table"></div>
 	</body>
 </htmtl>

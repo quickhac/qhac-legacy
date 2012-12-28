@@ -1,6 +1,6 @@
 {
-  "name": "Quick HAC",
-  "version": "0.9.3",
+  "name": "QuickHAC",
+  "version": "0.9.5",
   "manifest_version": 2,
   "description": "Quickly and efficiently check your grades.",
   "browser_action": {

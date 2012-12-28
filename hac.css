@@ -2,6 +2,15 @@
 	font-family: "Open Sans";
 	src: url('OpenSans.ttf');
 }
+@font-face {
+	font-family: "Open Sans Light";
+	src: url('OpenSans-Light.ttf');
+}
+
+body {
+	padding-bottom: 3px;
+	height: 177px;
+}
 
 body.busy {
 	opacity: 0.5;
@@ -10,6 +19,7 @@ body.busy {
 
 body.logged_in {
 	width: 600px;
+	min-height: 203px;
 }
 
 * {
@@ -94,10 +104,6 @@ a {
 	margin-bottom: 6px;
 }
 
-#action_buttons {
-	float: right;
-}
-
 #direct_access_form {
 	position: fixed;
 	top: 0;
@@ -115,10 +121,12 @@ a {
 
 #action_buttons {
 	margin-top: 1px;
+	float: right;
 }
 
 #action_buttons button {
 	font-size: 16px;
+	font-family: "Open Sans Light";
 	background: none;
 	border: none;
 	outline: none;

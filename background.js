@@ -3,6 +3,11 @@ var theInterval;
 
 function silent_update() {
 	HAC.get_gradesHTML_direct(localStorage['url'], function(doc) {
+		// should this even continue?
+		if (localStorage["r_int"] == 0) {
+			window.clearInterval(theInterval);
+			return;
+		}
 		// compare
 		var doc_json = HAC_HTML.html_to_jso(doc);
 		HAC_HTML.compare_grades(JSON.parse(localStorage["grades"]), doc_json, function () {
@@ -24,6 +29,7 @@ $(function() {
 	// get interval
 	var r_int = localStorage["r_int"];
 	if (r_int == undefined) r_int = 60;
+	else if (r_int == 0) return;
 
 	// set interval
 	theInterval = window.setInterval(silent_update, r_int * 60000);
