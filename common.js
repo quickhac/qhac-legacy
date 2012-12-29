@@ -177,7 +177,7 @@ var HAC_HTML =
 
 		// determine color. ***MAGIC DO NOT TOUCH UNDER ANY CIRCUMSTANCES***
 		h = Math.min(0.25 * Math.pow(grade / 100, asianness), 0.13056);
-		s = 1 - Math.pow(grade / 100, asianness * 1.5);
+		s = 1 - Math.pow(grade / 100, asianness * 2);
 		v = 0.86944 + h;
 
 		// convert to rgb: http://goo.gl/J9ra3
