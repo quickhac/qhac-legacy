@@ -112,7 +112,7 @@ $(function(){
 	// handlers
 	$("#login_form").submit(function(e) {
 		e.preventDefault();
-		login($("#login").attr("value"), $("#password").attr("value"), $("#studentid").attr("value"));
+		login($("#login").val(), $("#password").val(), $("#studentid").val());
 		return false;
 	});
 	$("#do_direct_access").click(function() { update($("#direct_url").val()); });

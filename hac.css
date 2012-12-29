@@ -11,6 +11,7 @@ body {
 	/*padding-bottom: 3px;*/
 	/*height: 177px;*/
 	color: #222;
+	cursor: default;
 }
 
 body.busy {
@@ -121,14 +122,21 @@ a:hover {
 	top: 0;
 	left: 0;
 	right: 0;
-	padding: 8px 8px 4px 8px;
-	background: rgba(255, 255, 255, 0.9);
+	padding: 8px;
+	background: -webkit-linear-gradient(top,rgba(255, 255, 255, 1),rgba(255, 255, 255, 0.9));
 	z-index: 9001;
+	user-select: none;
+	-webkit-user-select: none;
+}
+
+#logo {
+	vertical-align: middle;
+	margin-right: 8px;
 }
 
 #update_wrapper {
 	position: relative;
-	bottom: 3px;
+	bottom: -4px;
 	color: #808080;
 }
 
@@ -152,7 +160,7 @@ a:hover {
 
 #grades {
 	position: relative;
-	margin-top: 4.5em;
+	margin-top: 52px;
 	background: #eeeeee;
 	padding: 4px;
 	border-radius: 4px;
