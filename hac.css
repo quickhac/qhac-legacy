@@ -14,9 +14,10 @@ body {
 	cursor: default;
 }
 
-body.busy {
+body.busy #grades, body.busy #classgrades {
 	opacity: 0.5;
 	-webkit-transition: opacity 0.2s linear;
+	-webkit-user-select: none;
 }
 
 body.logged_in {
@@ -168,6 +169,30 @@ a:hover {
 
 #action_buttons button:hover {
 	text-decoration: underline;
+}
+
+/* loading 'gif' png */
+@-webkit-keyframes rotate {
+	from {
+		-webkit-transform: rotate(0deg);
+	}
+	to { 
+		-webkit-transform: rotate(360deg);
+	}
+}
+
+.loading
+{
+	display: none;
+	height: 12px;
+	-webkit-animation-name:             rotate; 
+	-webkit-animation-duration:         1.2s; 
+	-webkit-animation-iteration-count:  infinite;
+	-webkit-animation-timing-function: linear;
+}
+
+body.busy .loading {
+	display: inline;
 }
 
 #grades {
