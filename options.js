@@ -3,7 +3,7 @@ var asianness;
 function generate_color_table() {
 	var table = document.createElement("table");
 	$(table).attr("cellpadding", "8px").attr("cellspacing", "0px").css("width", "100%");
-	for (var r = 9; r >= -1; r--) {
+	for (var r = 9; r >= 0; r--) {
 		var row = document.createElement("tr");
 		for (var c = 0; c < 10; c++) {
 			var cell = document.createElement("td");
