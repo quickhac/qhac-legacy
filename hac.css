@@ -44,6 +44,7 @@ th {
 th.gradeHeader {
 	font-size: 10px;
 	font-weight: normal;
+	text-transform: uppercase;
 }
 
 th.gradeHeader:first-child {
