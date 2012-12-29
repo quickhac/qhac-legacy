@@ -4,7 +4,7 @@ var asianness;
 function login(uname, pass, studentid) {
 	$("body").addClass("busy");
 	$("#login_form input").attr("disabled", true);
-	$("#do_login").val("Loading...");
+	$("#do_login").val("Logging in...");
 
 	localStorage.setItem("login", uname.encrypt().encrypt());
 	// localStorage.setItem("pass", pass.encrypt().encrypt());
@@ -17,7 +17,19 @@ function login(uname, pass, studentid) {
 		function (id) {
 			// save url
 			HAC.get_gradesURL(id, function(url) {
-				sID = /id=([\w\d%]*)/.exec(url)[1];
+				var captures = /id=([\w\d%]*)/.exec(url);
+				// if login failed
+				if (captures == undefined) {
+					// return error
+					$("#error_msg").text("Unable to log in");
+
+					// reset login form
+					$("body").removeClass("busy");
+					$("#login_form input").attr("disabled", false);
+					$("#do_login").val("Login");
+				}
+
+				sID = captures[1];
 				localStorage.setItem("url", sID);
 				$("#direct_url").val(sID);
 				// load grades directly
@@ -37,27 +49,30 @@ function login(uname, pass, studentid) {
 					$("#password").val("");
 					$(document.body).addClass("logged_in");
 
+					// reset login form
+					$("#error_msg").text("");
+					$("#login_form input").attr("disabled", false);
+					$("#do_login").val("Login");
+
 					$("body").removeClass("busy");
 				});
 			});
-	},
-	function (jqXHR, textStatus, errorThrown) { // ON ERROR LOGGING IN
-		// console.log(textStatus, errorThrown);
-		// switch (textStatus) {
-		// case "error":
-		$("#error_msg").text("Invalid username or password");
-		console.error("Unable to log into HAC, check username and password combination.");
-		// 	break;
-		// case "timeout":
-		// 	$("#error_msg").text("Login timed out");
-		// 	console.error("Login to http://hacaccess.herokuapp.com/ took too long, aborted.");
-		// 	break;
-		// }
+		},
+		function (jqXHR, textStatus, errorThrown) { // ON ERROR LOGGING IN
+			console.log(textStatus, errorThrown);
+			switch (textStatus) {
+			case "error":
+			$("#error_msg").text("Unable to log in");
+				break;
+			case "timeout":
+				$("#error_msg").text("Login timed out");
+				break;
+			}
 
-		$("body").removeClass("busy");
-		$("#login_form input").attr("disabled", false);
-		$("#do_login").val("Login");
-	});
+			$("body").removeClass("busy");
+			$("#login_form input").attr("disabled", false);
+			$("#do_login").val("Login");
+		});
 }
 
 function update(sID) {

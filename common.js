@@ -37,10 +37,6 @@ var Updater =
 var HAC =
 {
 	get_session: function(login, pass, id, callback, on_error) {
-		$.post("https://hacaccess.herokuapp.com/api/login",
-			{login: login.encrypt(), password: pass.encrypt(), studentid: id.rot13()},
-			function (data) { callback(data); }
-		);
 		$.ajax({
 			url: "https://hacaccess.herokuapp.com/api/login",
 			error: on_error,
@@ -51,9 +47,9 @@ var HAC =
 				password: pass.encrypt(),
 				studentid: id.rot13()
 			},
-			success: callback
-		})
-		on_error();
+			success: callback,
+			error: on_error
+		});
 	},
 
 	get_gradesURL: function(id, callback) {
