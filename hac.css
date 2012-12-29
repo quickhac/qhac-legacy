@@ -83,22 +83,24 @@ a:hover {
 }
 
 #logo_login {
-	margin: 0 auto;
+	margin: 0 auto 8px auto;
 }
 
 #login, #password, #studentid {
 	border: none;
 	outline-offset: 0 !important;
-	width: 154px;
-	padding: 1px 5px 1px 5px;
-	font-size: 14px;
+	width: 185px;
+	padding: 2px 5px 2px 5px;
+	font-size: 20px;
 }
 
 #do_login {
 	background: #FFCA08;
-	width: 164px;
-	border: 2px solid black;
+	width: 100%;
+	border: 2px solid #444;
 	border-radius: 4px;
+	color: #444;
+	font-size: 20px;
 }
 
 #do_login:active {
@@ -106,12 +108,12 @@ a:hover {
 }
 
 .sep {
-	border: 2px solid #CCC;
+	border: 1px solid #CCC;
 	border-top: none;
 	height: 4px;
 	position: relative;
 	margin-top: -8px;
-	margin-bottom: 6px;
+	margin-bottom: 8px;
 }
 
 #direct_access_form {
@@ -154,6 +156,11 @@ a:hover {
 	background: #eeeeee;
 	padding: 4px;
 	border-radius: 4px;
+	display: none;
+}
+
+body.logged_in #grades {
+	display: block;
 }
 
 #grades td {

@@ -110,7 +110,11 @@ $(function(){
 	if ((asianness == null) || (isNaN(asianness))) asianness = 4;
 
 	// handlers
-	$("#do_login").click(function() { login($("#login").attr("value"), $("#password").attr("value"), $("#studentid").attr("value")); });
+	$("#login_form").submit(function(e) {
+		e.preventDefault();
+		login($("#login").attr("value"), $("#password").attr("value"), $("#studentid").attr("value"));
+		return false;
+	});
 	$("#do_direct_access").click(function() { update($("#direct_url").val()); });
 	$("#do_options").click(function() { chrome.tabs.create({url: "options.html"}); });
 	$("#do_logout").click(logout);
