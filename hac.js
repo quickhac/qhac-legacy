@@ -3,6 +3,8 @@ var asianness;
 // handlers
 function login(uname, pass, studentid) {
 	$("body").addClass("busy");
+	$("#login_form input").attr("disabled", true);
+	$("#do_login").val("Loading...");
 
 	localStorage.setItem("login", uname.encrypt().encrypt());
 	// localStorage.setItem("pass", pass.encrypt().encrypt());
@@ -12,7 +14,7 @@ function login(uname, pass, studentid) {
 		uname,
 		pass,
 		studentid,
-		function(id) {
+		function (id) {
 			// save url
 			HAC.get_gradesURL(id, function(url) {
 				sID = /id=([\w\d%]*)/.exec(url)[1];
@@ -38,6 +40,23 @@ function login(uname, pass, studentid) {
 					$("body").removeClass("busy");
 				});
 			});
+	},
+	function (jqXHR, textStatus, errorThrown) { // ON ERROR LOGGING IN
+		// console.log(textStatus, errorThrown);
+		// switch (textStatus) {
+		// case "error":
+		$("#error_msg").text("Invalid username or password");
+		console.error("Unable to log into HAC, check username and password combination.");
+		// 	break;
+		// case "timeout":
+		// 	$("#error_msg").text("Login timed out");
+		// 	console.error("Login to http://hacaccess.herokuapp.com/ took too long, aborted.");
+		// 	break;
+		// }
+
+		$("body").removeClass("busy");
+		$("#login_form input").attr("disabled", false);
+		$("#do_login").val("Login");
 	});
 }
 

@@ -84,8 +84,19 @@ a:hover {
 	font-size: 14px;
 }
 
+#login_form {
+	-webkit-user-select: none;
+	user-select: none;
+}
+
 #logo_login {
 	margin: 0 auto 8px auto;
+}
+
+#error_msg {
+	color: rgb(176, 21, 19);
+	font-size: 12px;
+	text-align: center;
 }
 
 #login, #password, #studentid {
@@ -105,7 +116,7 @@ a:hover {
 	font-size: 20px;
 }
 
-#do_login:active {
+#do_login:not([disabled]):active {
 	box-shadow: inset 0 0 4px #666;
 }
 

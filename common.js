@@ -36,11 +36,24 @@ var Updater =
 // working with HACaccess
 var HAC =
 {
-	get_session: function(login, pass, id, callback) {
+	get_session: function(login, pass, id, callback, on_error) {
 		$.post("https://hacaccess.herokuapp.com/api/login",
 			{login: login.encrypt(), password: pass.encrypt(), studentid: id.rot13()},
 			function (data) { callback(data); }
 		);
+		$.ajax({
+			url: "https://hacaccess.herokuapp.com/api/login",
+			error: on_error,
+			timeout: 15000,
+			type: "POST",
+			data: {
+				login: login.encrypt(),
+				password: pass.encrypt(),
+				studentid: id.rot13()
+			},
+			success: callback
+		})
+		on_error();
 	},
 
 	get_gradesURL: function(id, callback) {
