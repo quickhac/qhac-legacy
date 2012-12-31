@@ -219,6 +219,11 @@ body.logged_in #grades {
 
 #grades td:first-child {
 	text-align: left;
+	width: 120px;
+	overflow: hidden;
+	white-space: nowrap;
+	display: block;
+	text-overflow: ellipsis;
 }
 
 #update_wrapper, #lastupdated {

@@ -39,7 +39,6 @@ var HAC =
 	get_session: function(login, pass, id, callback, on_error) {
 		$.ajax({
 			url: "https://hacaccess.herokuapp.com/api/login",
-			error: on_error,
 			timeout: 15000,
 			type: "POST",
 			data: {

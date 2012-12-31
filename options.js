@@ -1,4 +1,4 @@
-var asianness;
+var asianness, r_interval;
 
 function generate_color_table() {
 	var table = document.createElement("table");
@@ -20,12 +20,18 @@ function generate_color_table() {
 
 $(function(){
 	// load
-	if (localStorage["asianness"] != undefined)
-		{ $("#asianness").val(localStorage["asianness"]); asianness = localStorage["asianness"]; }
-	else
-		{ asianness = 4; }
-	if (localStorage["r_int"] != undefined)
-		$("#r_interval").val(localStorage["r_int"]);
+	if (localStorage["asianness"] != undefined) {
+		asianness = localStorage["asianness"];
+		$("#asianness").val(asianness);
+	} else {
+		asianness = 4;
+	}
+	if (localStorage["r_int"] != undefined) {
+		r_interval = localStorage["r_int"];
+		$("#r_interval").val(r_interval);
+	} else {
+		r_interval = 60;
+	}
 	generate_color_table();
 	// save
 	$("#save").click(function() {
@@ -35,5 +41,10 @@ $(function(){
 		var r_int = $("#r_interval").val();
 		if (isNaN(r_int) || (r_int < 0)) alert("Refresh interval must be a positive number or zero!");
 		else localStorage.setItem("r_int", r_int);
+
+		$("#save_msg").addClass('visible');
+		window.setTimeout(function() {
+			$("#save_msg").removeClass('visible');
+		}, 500);
 	});
 });

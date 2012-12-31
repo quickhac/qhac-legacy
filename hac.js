@@ -3,6 +3,9 @@ var asianness;
 // handlers
 function login(uname, pass, studentid) {
 	$("body").addClass("busy");
+	$("#error_msg").slideUp(250, function () {
+		$("#error_msg").text("");
+	});
 	$("#login_form input").attr("disabled", true);
 	$("#do_login").val("Logging in...");
 
@@ -21,12 +24,13 @@ function login(uname, pass, studentid) {
 				// if login failed
 				if (captures == undefined) {
 					// return error
-					$("#error_msg").text("Unable to log in");
+					$("#error_msg").text("Unable to log in").slideDown();
 
 					// reset login form
 					$("body").removeClass("busy");
 					$("#login_form input").attr("disabled", false);
 					$("#do_login").val("Login");
+					return false;
 				}
 
 				sID = captures[1];
@@ -50,7 +54,6 @@ function login(uname, pass, studentid) {
 					$(document.body).addClass("logged_in");
 
 					// reset login form
-					$("#error_msg").text("");
 					$("#login_form input").attr("disabled", false);
 					$("#do_login").val("Login");
 
@@ -62,10 +65,10 @@ function login(uname, pass, studentid) {
 			console.log(textStatus, errorThrown);
 			switch (textStatus) {
 			case "error":
-			$("#error_msg").text("Unable to log in");
+				$("#error_msg").text("Unable to log in").slideDown();
 				break;
 			case "timeout":
-				$("#error_msg").text("Login timed out");
+				$("#error_msg").text("Login timed out").slideDown();
 				break;
 			}
 
