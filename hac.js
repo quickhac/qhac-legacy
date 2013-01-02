@@ -132,9 +132,10 @@ function loadClassGrades(data) {
 		});
 		$(".DataTable tr:last-child").each(function(e) {
 			var avg = $(this).children()[3];
-			$(avg).css("backgroundColor", HAC_HTML.colorize(avg.textContent));		});
+			$(avg).css("backgroundColor", HAC_HTML.colorize(avg.textContent));
+		});
 		// remove extraneous information
-		$(".PageHeader, .PageNote, .StudentHeader, .StudentHeader+table").remove();
+		$(".PageHeader, .PageNote, .StudentHeader, .StudentHeader+table, .TableHeader th:last-child, .AssignmentNote+td").remove();
 
 		$("body").removeClass("busy");
 	});
