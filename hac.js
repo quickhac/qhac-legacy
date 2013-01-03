@@ -126,14 +126,37 @@ function loadClassGrades(data) {
 				}
 			}
 		});
+
+		// add trailing table cells to fill extra space
+		$('#classgrades .DataTable').each(function(e) {
+			var headers = $(this).find('.TableHeader th');
+			var footers = $(this).find('tr:last-child td');
+			if (headers.length > footers.length) {
+				var newCell = document.createElement('td');
+				newCell.innerHTML = '&nbsp;';
+				$(this).find('tr:last-child').append(newCell);
+			}
+		});
+
 		// color in averages
 		$(".CurrentAverage").each(function(e) {
 			$(this).css("backgroundColor", HAC_HTML.colorize(this.textContent.substr(17)));
 		});
+
 		$(".DataTable tr:last-child").each(function(e) {
+			// style average
+			var avgStyle = {
+				'fontWeight': 'bold'
+			};
 			var avg = $(this).children()[3];
-			$(avg).css("backgroundColor", HAC_HTML.colorize(avg.textContent));
+			$(avg).css("backgroundColor", HAC_HTML.colorize(avg.textContent)).css(avgStyle);
+			// mess around with the text 'Average'
+			$($(avg).siblings()[0]).remove();
+			$($(avg).siblings()[0]).remove();
+			$($(avg).siblings()[2]).remove();
+			$($(avg).siblings()[0]).attr('colspan', '3').css(avgStyle);
 		});
+
 		// remove extraneous information
 		$(".PageHeader, .PageNote, .StudentHeader, .StudentHeader+table, .TableHeader th:last-child, .AssignmentNote+td").remove();
 

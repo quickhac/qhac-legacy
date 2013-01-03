@@ -80,11 +80,6 @@ a:hover {
 	/*border: 1px dashed #8df;*/
 }
 
-.CategoryName {
-	font-weight: bold;
-	font-size: 14px;
-}
-
 #login_form {
 	-webkit-user-select: none;
 	user-select: none;
@@ -241,21 +236,45 @@ body.logged_in #grades {
 	border: 2px solid #eee;
 }
 
-.DataRow td, .DataRowAlt td, .DataTable tr:last-child td {
+.DataRow td, .DataRowAlt td {
 	background: white;
 }
-.DataTable tr:last-child td:first-child {
-	background: #eee;
+.DataTable tr:last-child td {
+	background: #ddd;
 }
 
 .DataRow .AssignmentName, .DataRowAlt .AssignmentName {
 	background: #eee;
 }
 
+.ClassName {
+	font-size: 32px;
+	font-weight: normal;
+	text-align: center;
+	font-family: 'Open Sans Light';
+	color: #444;
+}
+
+.CategoryName {
+	display: block;
+	margin-bottom: -16px;
+	font-size: 24px;
+	font-family: 'Open Sans Light';
+	color: #444;
+}
+
 .CurrentAverage {
 	border-radius: 4px;
 	padding: 4px;
-	margin: 0 200px;
+	margin: 16px 200px;
 	text-align: center;
-	font-weight: bold;
+	text-transform: uppercase;
+	font-size: 16px;
+}
+
+.TableHeader th {
+	font-family: 'Open Sans Light';
+	font-weight: normal;
+	text-transform: uppercase;
+	font-size: 12px;
 }
