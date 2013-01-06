@@ -1,4 +1,6 @@
 var asianness, r_interval;
+var DEFAULT_ASIANNESS = 4;
+var DEFAULT_R_INT = 60;
 
 function generate_color_table() {
 	var table = document.createElement("table");
@@ -18,30 +20,112 @@ function generate_color_table() {
 	$("#color_table").html("").append(table);
 }
 
+var error_id = 0;
+
+function show_error($input, message) {
+	console.error(message);
+	
+	$input.parent().children(".error_msg").detach();
+	
+	$el = $("<div/>");
+	$el.addClass("error_msg")
+		.text(message)
+		.appendTo($input.parent())
+		.addClass("animate");
+	window.setTimeout(function () {
+		$(".error_msg").detach();
+	}, 4000);
+	$input.focus();
+	error_id++;
+}
+
+Validator = function (valid, invalid) {
+	this.inputs = [];
+	this.conditions = [];
+	this.successes = [];
+	this.errors = [];
+	this.valid = valid || function () {};
+	this.invalid = invalid || function () {};
+	this.isValid = false;
+	
+	return this;
+};
+Validator.prototype.add = function (val, condition, success, error) {
+	this.inputs.push(val);
+	this.conditions.push(condition);
+	this.successes.push(success);
+	this.errors.push(error);
+	return this;
+};
+Validator.prototype.validate = function () {
+	var all_valid = true;
+	var val;
+	
+	for (var i = this.conditions.length - 1; i >= 0; i--) {
+		val = this.inputs[i];
+		if (this.conditions[i].call(window, val)) {
+			this.successes[i].call(window, val);
+		} else {
+			all_valid = all_valid && false;
+			this.errors[i].call(window, val);
+		}
+	}
+	
+	if (all_valid) {
+		this.valid.call(window);
+		this.isValid = true;
+	} else {
+		this.invalid.call(window);
+		this.isValid = false;
+	}
+	return this;
+};
+
 $(function(){
 	// load
-	if (localStorage["asianness"] != undefined) {
-		asianness = localStorage["asianness"];
-		$("#asianness").val(asianness);
-	} else {
-		asianness = 4;
-	}
-	if (localStorage["r_int"] != undefined) {
-		r_interval = localStorage["r_int"];
-		$("#r_interval").val(r_interval);
-	} else {
-		r_interval = 60;
-	}
+	asianness = localStorage.hasOwnProperty("asianness") ? localStorage["asianness"] : DEFAULT_ASIANNESS;
+	r_interval = localStorage.hasOwnProperty("r_int") ? localStorage["r_int"] : DEFAULT_R_INT;
+	
+	$("#asianness").val(asianness);
+	$("#slider").val(asianness);
+	$("#r_interval").val(r_interval);
+	
 	generate_color_table();
+	
+	$("#slider").change(function () {
+		asianness = parseInt($(this).val());
+		generate_color_table();
+		$("#asianness").val(asianness);
+	});
+	$("#asianness").change(function () {
+		asianness = $(this).val();
+		generate_color_table();
+		$("#slider").val(asianness);
+	})
+	
 	// save
 	$("#save").click(function() {
-		var level = $("#asianness").val();
-		if (isNaN(level)) alert("Asianness level must be a number!");
-		else { localStorage.setItem("asianness", level); asianness = level; generate_color_table(); }
-		var r_int = $("#r_interval").val();
-		if (isNaN(r_int) || (r_int < 0)) alert("Refresh interval must be a positive number or zero!");
-		else localStorage.setItem("r_int", r_int);
-
+		var new_asianness = parseInt($("#asianness").val());
+		var new_r_int = parseInt($("#r_interval").val());
+		
+		validator = new Validator();
+		
+		validator.add(new_asianness, function (val) {
+			return !isNaN(val);
+		}, function (val) {
+			localStorage.setItem("asianness", val.toString());
+		}, function (val) {
+			show_error($("#asianness"), "Asianness level must be a number!");
+		}).add(new_r_int, function (val) {
+			return !(isNaN(val) || (val < 0));
+		}, function (val) {
+			localStorage.setItem("r_int", val.toString());
+		}, function (val) {
+			show_error($("#r_interval"), "Refresh interval must be a (positive) number!");
+		}).validate();
+		
+		if (!validator.isValid) return false;
+		
 		$("#save_msg").addClass('visible');
 		window.setTimeout(function() {
 			$("#save_msg").removeClass('visible');

@@ -41,6 +41,9 @@
 				padding: 4px;
 				text-align: right;
 			}
+			#settings p {
+				position: relative;
+			}
 			#settings p.info {
 				margin-top: -16px;
 				font-size: 0.75em;
@@ -70,6 +73,61 @@
 				text-align: center;
 				text-shadow: 0 1px rgba(255,255,255,0.3);
 			}
+			
+			@-webkit-keyframes fadeinoutup {
+				0% {
+					-webkit-transform: translateX(25px);
+					opacity: 0;
+				}
+				25% {
+					-webkit-transform: translateX(0px);
+					opacity: 1;
+				}
+				75% {
+					-webkit-transform: translateX(0px);
+					opacity: 1;
+				}
+				100% {
+					-webkit-transform: translateX(-25px);
+					opacity: 0;
+					display: none;
+				}
+			}
+			
+			.error_msg {
+				background-color: #cc3333;
+				color: #660000;
+				padding: 4px 8px;
+				border: 2px solid #660000;
+				text-shadow: 0 1px rgba(255,255,255,0.25);
+				box-shadow: 0 2px 16px rgba(0,0,0,0.5);
+				opacity: 0;
+				position: absolute;
+				top: 0;
+				right: 192px;
+				margin-right: 16px;
+				cursor: default;
+				-webkit-user-select: none;
+				z-index: 100;
+				margin-top: -2px;
+			}
+			.error_msg.animate {
+				-webkit-animation-name: fadeinoutup;
+				-webkit-animation-duration: 4s;
+				-webkit-animation-timing-function: ease;
+			}
+			
+			#slider_wrapper {
+				text-align: center;
+				color: #888;
+				font-size: 12px;
+			}
+			#slider {
+				width: 50%;
+				margin: 0 16px;
+				display: inline-block;
+				vertical-align: middle;
+			}
 
 		</style>
 		<script type="text/javascript" src="jq.js"></script>
@@ -84,13 +142,15 @@
 				<img src="assets/heaf.png" id="heaf">
 				<h2>QuickHAC Settings</h2>
 				<p>Asianness level: <input type="number" id="asianness" name="asianness"></p>
+				<p class="info">Enter 0 to turn off grade colorization</p>
 				<p>Refresh interval (mins): <input type="number" id="r_interval" name="r_interval"></p>
-				<p class="info">Enter 0 to turn off auto-update.</p>
+				<p class="info">Enter 0 to turn off auto-update</p>
 				<p><span class="info" id="save_msg">Saved!</span> <button id="save">Save Options</button></p>
 				
 			</div>
 			<h2>Grade gradient (Asianness) scale:</h2>
 			<p style="text-align:justify">Grades in qHAC are colored in according to their grade. The amount of color indicates how bad the grade is. This allows for you to be able to pick out bad grades at a glance and quickly figure out what you need to improve. You can control the threshold for the colorization of grades by adjusting the Asianness level. The default, 4, gives you light yellow for the 90s, light orange for the 80s, orange for the 70s, dark orange for the 60s, and crimson red for anything below. You can adjust the threshold up and down according to how much you care about your grades or how colorful you want your qHAC to be.</p>
+			<p id="slider_wrapper">0 <input type="range" min="0" max="10" value="4" id="slider" /> 10</p>
 			<div id="color_table"></div>
 		</div>
 	</body>
