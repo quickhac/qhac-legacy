@@ -87,26 +87,26 @@ $(function(){
 	r_interval = localStorage.hasOwnProperty("r_int") ? localStorage["r_int"] : DEFAULT_R_INT;
 	
 	$("#asianness").val(asianness);
-	$("#slider").val(asianness);
+	$("#slider").val(Math.log(asianness));
 	$("#r_interval").val(r_interval);
 	
 	generate_color_table();
 	
 	$("#slider").change(function () {
-		asianness = parseInt($(this).val());
+		asianness = Math.exp(parseFloat($(this).val()));
 		generate_color_table();
 		$("#asianness").val(asianness);
 	});
 	$("#asianness").change(function () {
 		asianness = $(this).val();
 		generate_color_table();
-		$("#slider").val(asianness);
+		$("#slider").val(Math.log(asianness));
 	})
 	
 	// save
 	$("#save").click(function() {
-		var new_asianness = parseInt($("#asianness").val());
-		var new_r_int = parseInt($("#r_interval").val());
+		var new_asianness = parseFloat($("#asianness").val());
+		var new_r_int = parseFloat($("#r_interval").val());
 		
 		validator = new Validator();
 		
