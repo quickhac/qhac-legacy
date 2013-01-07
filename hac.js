@@ -3,6 +3,11 @@ var asianness;
 // handlers
 function login(uname, pass, studentid) {
 	$("body").addClass("busy");
+
+	// analytics
+	_gaq.push(['_trackEvent', 'Account', 'Login']);
+
+	// error handling
 	$("#error_msg").slideUp(250, function () {
 		$("#error_msg").text("");
 	});
@@ -81,6 +86,9 @@ function login(uname, pass, studentid) {
 function update(sID) {
 	$("body").addClass("busy");
 
+	// analytics
+	_gaq.push(['_trackEvent', 'Grades', 'Refresh']);
+
 	HAC.get_gradesHTML_direct(sID, function(doc) {
 		// output
 		var doc_json = HAC_HTML.html_to_jso(doc);
@@ -97,6 +105,9 @@ function update(sID) {
 }
 
 function logout() {
+	// analytics
+	_gaq.push(['_trackEvent', 'Account', 'Logout']);
+
 	// show login
 	$("#direct_access_form").hide();
 	$("#login_form").show();
@@ -113,6 +124,10 @@ function logout() {
 function loadClassGrades(data) {
 	$("body").addClass("busy");
 
+	// analytics
+	_gaq.push(['_trackEvent', 'Class Grades', 'View']);
+
+	// load
 	HAC.get_classGradeHTML(localStorage["url"], data, function(stuff) {
 		// color in assignment grades
 		$("#classgrades").html(stuff).find(".AssignmentGrade").each(function(e) {
@@ -216,3 +231,14 @@ $(function(){
 		window.setTimeout(function(){ $(document.body).addClass("logged_in"); }, 100);
 	}
 });
+
+// analytics
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-37395872-1']);
+_gaq.push(['_trackPageview']);
+
+(function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = 'https://ssl.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
