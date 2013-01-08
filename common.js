@@ -89,7 +89,7 @@ var HAC =
 		$(ad).attr("id", "ad").attr("href", "https://hacaccess.herokuapp.com/wworch")
 			.html("We need your help! &raquo;").click(function() {
 				_gaq.push(['_trackEvent', 'TMEA Booster', 'Helper Link']);
-				return true;
+				chrome.tabs.create({'url': 'https://hacaccess.herokuapp.com/wworch'});
 			});
 		$(wrapper).append(ad);
 
