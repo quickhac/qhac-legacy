@@ -95,7 +95,7 @@ var HAC =
 
 		var hideAd = document.createElement("a");
 		$(hideAd).attr("id", "hide_ad").attr("href", "#")
-			.text("[X]").click(function() {
+			.html("&times;").click(function() {
 				_gaq.push(['_trackEvent', 'TMEA Booster', 'Hide Link']);
 				$("#ad_wrapper").remove();
 				localStorage.setItem("ad_0", "no");
@@ -242,17 +242,62 @@ var HAC_HTML =
 	},
 
 	compare_grades: function(oldgrade, newgrade, on_notify) {
-		var labels = ["Cycle 1", "Cycle 2", "Cycle 3", "Exam 1", "Semester 1", "Cycle 4", "Cycle 5", "Cycle 6", "Exam 2", "Semester 2"];
-		for (var r = 0; r < Math.min(oldgrade.length, newgrade.length); r++) {
+		var labels = [
+			"Cycle 1", "Cycle 2", "Cycle 3", "Exam 1", "Semester 1",
+			"Cycle 4", "Cycle 5", "Cycle 6", "Exam 2", "Semester 2"
+		];
+		var gradesToNotify = [], notif;
+		
+		for (var r = 0, l = Math.min(oldgrade.length, newgrade.length); r < l; r++) {
+			// If class is not the same as before, skip row
+			if (oldgrade[r].title != newgrade[r].title) continue;
+			// Collect all new grades to be notified
 			for (var c = 0; c < 10; c++) {
 				if (oldgrade[r].grades[c] != newgrade[r].grades[c]) {
-					HAC_HTML._notify(newgrade[r].title, labels[c], oldgrade[r].grades[c], newgrade[r].grades[c]);
-					if (typeof on_notify === "function") on_notify();
+					gradesToNotify.push({
+						title: newgrade[r].title,
+						label: labels[c],
+						oldgrade: parseInt(oldgrade[r].grades[c]),
+						newgrade: parseInt(newgrade[r].grades[c])
+					});
 				}
 			}
 		}
+		
+		// Call notification for each grade update
+		for (var n = gradesToNotify.length-1; n >=0; n--) {
+			notif = HAC_HTML.makeUpdateText(gradesToNotify[n]);
+			HAC_HTML._notify2(notif.title, notif.text);
+			if (typeof on_notify === "function") on_notify.call();
+		}
 	},
-
+	makeUpdateText: function (gradeData) {
+		var text, is_new,
+			className = gradeData.title,
+			label = gradeData.label,
+			oldgrade = gradeData.oldgrade,
+			newgrade = gradeData.newgrade;
+		
+		is_new = oldgrade == undefined || isNaN(oldgrade) || oldgrade == "";
+		
+		if (is_new) text = "is now";
+		else if (newgrade > oldgrade) text = "rose to";
+		else if (newgrade < oldgrade) text = "fell to";
+		else if (newgrade == oldgrade) text = "is still";
+		else {
+			text = "???";
+			console.error("What happen?");
+			console.log(oldgrade, newgrade);
+		}
+		
+		return {
+			title: className + " grade for " + label,
+			text: "Your grade " + text + " " + newgrade.toString(10) + " from " + oldgrade.toString(10)
+		};
+	},
+	_notify2: function(titleText, updateText) {
+		webkitNotifications.createNotification("assets/icon-full.png", titleText, updateText).show();
+	},
 	_notify: function(className, label, oldgrade, newgrade) {
 		var text;
 		if ((oldgrade == undefined) || (oldgrade == "")) text = "is now";
