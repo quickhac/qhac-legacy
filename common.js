@@ -76,6 +76,33 @@ var HAC =
 			+ "&data=" + data,
 			function (data) { callback(data); }
 		);
+	},
+
+	generate_ad: function() {
+		if (localStorage["ad_0"] == "no")
+			return document.createDocumentFragment();
+
+		var wrapper = document.createElement("div");
+		$(wrapper).attr("id", "ad_wrapper");;
+
+		var ad = document.createElement("a");
+		$(ad).attr("id", "ad").attr("href", "https://hacaccess.herokuapp.com/wworch")
+			.html("We need your help! &raquo;").click(function() {
+				_gaq.push(['_trackEvent', 'TMEA Booster', 'Helper Link']);
+				return true;
+			});
+		$(wrapper).append(ad);
+
+		var hideAd = document.createElement("a");
+		$(hideAd).attr("id", "hide_ad").attr("href", "#")
+			.text("[X]").click(function() {
+				_gaq.push(['_trackEvent', 'TMEA Booster', 'Hide Link']);
+				$("#ad_wrapper").remove();
+				localStorage.setItem("ad_0", "no");
+			});
+		$(wrapper).append(hideAd);
+
+		return wrapper;
 	}
 }
 
@@ -173,7 +200,14 @@ var HAC_HTML =
 			$(root).append(row);
 		}
 
-		return root;
+		// more root
+		var superRoot = document.createDocumentFragment();
+		$(superRoot).append(root);
+
+		// and an ad
+		$(superRoot).append(HAC.generate_ad());
+
+		return superRoot;
 	},
 
 	colorize: function(grade) {
