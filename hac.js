@@ -97,8 +97,8 @@ function update(sID) {
 		HAC_HTML.compare_grades(JSON.parse(localStorage["grades"]), doc_json);
 		// store
 		localStorage.setItem("grades", JSON.stringify(doc_json));
-		$("#lastupdated").html(Updater.get_update_text());
 		Updater.set_updated();
+		$("#lastupdated").html(Updater.get_update_text());
 
 		$("body").removeClass("busy");
 	});

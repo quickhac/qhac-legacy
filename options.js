@@ -20,6 +20,19 @@ function generate_color_table() {
 	$("#color_table").html("").append(table);
 }
 
+// version number: http://goo.gl/QTj3c
+function getVersion(callback) {
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.open('GET', 'manifest.json');
+        xmlhttp.onload = function (e) {
+            var manifest = JSON.parse(xmlhttp.responseText);
+            callback(manifest.version);
+        }
+        xmlhttp.send(null);
+}
+
+// validation
+
 var error_id = 0;
 
 function show_error($input, message) {
@@ -81,6 +94,7 @@ Validator.prototype.validate = function () {
 	return this;
 };
 
+// events and stuff
 $(function(){
 	// load
 	asianness = localStorage.hasOwnProperty("asianness") ? localStorage["asianness"] : DEFAULT_ASIANNESS;
@@ -91,6 +105,10 @@ $(function(){
 	$("#r_interval").val(r_interval);
 	
 	generate_color_table();
+
+	getVersion(function(v) {
+		$("#version").text("version " + v);
+	});
 	
 	$("#slider").change(function () {
 		asianness = Math.exp(parseFloat($(this).val()));
