@@ -272,13 +272,15 @@ var HAC_HTML =
 		}
 	},
 	makeUpdateText: function (gradeData) {
-		var text, is_new,
+		var text, is_new, fromText,
 			className = gradeData.title,
 			label = gradeData.label,
 			oldgrade = gradeData.oldgrade,
 			newgrade = gradeData.newgrade;
 		
 		is_new = oldgrade == undefined || isNaN(oldgrade) || oldgrade == "";
+		
+		fromText = is_new ? "" : " from " + oldgrade.toString(10);
 		
 		if (is_new) text = "is now";
 		else if (newgrade > oldgrade) text = "rose to";
@@ -292,7 +294,7 @@ var HAC_HTML =
 		
 		return {
 			title: className + " grade for " + label,
-			text: "Your grade " + text + " " + newgrade.toString(10) + " from " + oldgrade.toString(10)
+			text: "Your grade " + text + " " + newgrade.toString(10) + fromText
 		};
 	},
 	_notify2: function(titleText, updateText) {
