@@ -90,18 +90,22 @@ function update(sID) {
 	_gaq.push(['_trackEvent', 'Grades', 'Refresh']);
 
 	HAC.get_gradesHTML_direct(sID, function(doc) {
-		// output
-		var doc_json = HAC_HTML.html_to_jso(doc);
-		$("#grades").html("").append(HAC_HTML.json_to_html(doc_json));
-		// compare
-		HAC_HTML.compare_grades(JSON.parse(localStorage["grades"]), doc_json);
-		// store
-		localStorage.setItem("grades", JSON.stringify(doc_json));
-		Updater.set_updated();
-		$("#lastupdated").html(Updater.get_update_text());
+		processUpdatedGrades(doc);
 
 		$("body").removeClass("busy");
 	});
+}
+
+function processUpdatedGrades(doc) {
+	// output
+	var doc_json = HAC_HTML.html_to_jso(doc);
+	$("#grades").html("").append(HAC_HTML.json_to_html(doc_json));
+	// compare
+	HAC_HTML.compare_grades(JSON.parse(localStorage["grades"]), doc_json);
+	// store
+	localStorage.setItem("grades", JSON.stringify(doc_json));
+	Updater.set_updated();
+	$("#lastupdated").html(Updater.get_update_text());
 }
 
 function logout() {
@@ -129,6 +133,9 @@ function loadClassGrades(data) {
 
 	// load
 	HAC.get_classGradeHTML(localStorage["url"], data, function(stuff) {
+		// reload class grades
+		processUpdatedGrades(stuff);
+
 		// color in assignment grades
 		$("#classgrades").html(stuff).find(".AssignmentGrade").each(function(e) {
 			if (!isNaN(parseInt(this.textContent))) {

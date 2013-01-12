@@ -8,8 +8,6 @@
 }
 
 body {
-	/*padding-bottom: 3px;*/
-	/*height: 177px;*/
 	color: #222;
 	cursor: default;
 }
@@ -22,11 +20,9 @@ body.busy #grades, body.busy #classgrades {
 
 body.logged_in {
 	width: 600px;
-	/*min-height: 203px;*/
 }
 
 * {
-	/*font-size: 12px;*/
 	font-size: 14px;
 	font-family: "Open Sans";
 	-webkit-font-smoothing: antialiased;
@@ -66,18 +62,6 @@ a {
 }
 a:hover {
 	text-decoration: underline;
-}
-
-.classTitle {
-	/*background: #f8f8f8;*/
-}
-
-.exam {
-	/*border: 1px dashed #fd8;*/
-}
-
-.semester {
-	/*border: 1px dashed #8df;*/
 }
 
 /** LOGIN **/

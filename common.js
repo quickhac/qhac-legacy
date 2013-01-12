@@ -111,7 +111,7 @@ var HAC_HTML =
 {
 	html_to_jso: function(html) {
 		myObj = [];
-		rows = $("tr.DataRow, tr.DataRowAlt", html);
+		rows = $(".DataTable:first tr.DataRow, .DataTable:first tr.DataRowAlt", html);
 
 		// each row
 		for (var r = 0; r < rows.length; r++) {
@@ -253,14 +253,16 @@ var HAC_HTML =
 			if (oldgrade[r].title != newgrade[r].title) continue;
 			// Collect all new grades to be notified
 			for (var c = 0; c < 10; c++) {
-				if (oldgrade[r].grades[c] != newgrade[r].grades[c]) {
-					gradesToNotify.push({
-						title: newgrade[r].title,
-						label: labels[c],
-						oldgrade: parseInt(oldgrade[r].grades[c]),
-						newgrade: parseInt(newgrade[r].grades[c])
-					});
-				}
+				// skip semester averages
+				if ((c != 4) && (c != 9))
+					// notify if changed
+					if (oldgrade[r].grades[c] != newgrade[r].grades[c])
+						gradesToNotify.push({
+							title: newgrade[r].title,
+							label: labels[c],
+							oldgrade: parseInt(oldgrade[r].grades[c]),
+							newgrade: parseInt(newgrade[r].grades[c])
+						});
 			}
 		}
 		
@@ -302,7 +304,7 @@ var HAC_HTML =
 	},
 	_notify: function(className, label, oldgrade, newgrade) {
 		var text;
-		if ((oldgrade == undefined) || (oldgrade == "")) text = "is now";
+		if ((oldgrade == undefined) || (oldgrade == "") || (isNaN(oldgrade))) text = "is now";
 		else if (newgrade > oldgrade) text = "rose to";
 		else text = "fell to";
 
