@@ -136,6 +136,9 @@ function loadClassGrades(data) {
 		// reload class grades
 		processUpdatedGrades(stuff);
 
+		// log html (DEBUG)
+		cgHtml = stuff;
+
 		// color in assignment grades
 		$("#classgrades").html(stuff).find(".AssignmentGrade").each(function(e) {
 			if (!isNaN(parseInt(this.textContent))) {
@@ -185,6 +188,8 @@ function loadClassGrades(data) {
 		$("body").removeClass("busy");
 	});
 }
+
+var cgHtml; // DEBUG
 
 // init
 $(function(){

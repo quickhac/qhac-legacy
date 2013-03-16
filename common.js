@@ -212,6 +212,131 @@ var HAC_HTML =
 		return superRoot;
 	},
 
+	cgrades_to_json: function(html) {
+			var myObj = {
+				"title": $("h3.ClassName", html).text(),
+				"currAvg": /Current Average: (\d*)/.exec($("p.CurrentAverage", html).text())[1],
+				"cats": []
+			};
+
+			var categoryPattern = /^(.*) - (\d*)%$/;
+
+			var categories = $(".CategoryName", html);
+			var gradeTables = $("table.DataTable", html);
+			gradeTables.splice(0, 1);
+
+			// in caes of array length mismatch, ignore unmatched array elements
+			var len = Math.min(categories.length, gradeTables.length);
+
+			// for each grade category
+			for (var i = 0; i < len; i++) {
+				var captures = categoryPattern.exec(categories[i].innerText);
+
+				// category name
+				myObj.cats[i] = {"title": captures[1], "percent": parseInt(captures[2])};
+
+				// grades
+				myObj.cats[i].grades = [];
+				var gradeList = $(gradeTables[i]).find("tr.DataRow, tr.DataRowAlt");
+				for (var j = 0; j < gradeList.length; j++) {
+					// get data
+					var title         = $(gradeList[j]).children(".AssignmentName").text();
+					var dueDateElem   = $(gradeList[j]).children(".DateDue");
+					var dueDate       = dueDateElem.text();
+					var noteElem      = $(gradeList[j]).children(".AssignmentNote");
+					var note          = noteElem.text();
+					var ptsEarnedElem = $(gradeList[j]).children(".AssignmentGrade");
+					var ptsEarned     = parseInt(ptsEarnedElem.text());
+					var ptsPossElem   = $(gradeList[j]).children(".AssignmentPointsPossible");
+					if (ptsPossElem.length == 0)
+						ptsPoss = 100;
+					else
+						ptsPoss = parseInt(ptsPossElem.text());
+
+					myObj.cats[i].grades[j] = {
+						"title": title,
+						"dueDate": dueDate,
+						"note": note,
+						"ptsEarned": ptsEarned,
+						"ptsPoss": ptsPoss
+					};
+				}
+
+				// category average
+				myObj.cats[i].average = parseInt(
+					$(gradeTables[i]).find("tr").last().children("td")[3].innerText);
+
+				// 100 point scale?
+				myObj.cats[i].is100Pt = (myObj.cats[i].grades.length == 0 ? true :
+					myObj.cats[i].grades[0].ptsPoss == 100);
+			}
+
+			return myObj;
+	},
+
+	cjson_to_html: function(json) {
+		var root = document.createDocumentFragment();
+
+		var title = document.createElement("h3");
+		$(title).addClass("ClassName").text(json.title);
+		$(root).append(title);
+
+		var currAvg = document.createElement("p");
+		$(currAvg).addClass("CurrentAverage").text(json.currAvg);
+		$(root).append(currAvg);
+
+		for (var i = 0; i < json.cats.length; i++) {
+			var catHeader = document.createElement("span");
+			$(catHeader).text(json.cats[i].title + " - " + json.cats[i].percent);
+			$(root).append(catHeader);
+
+			var catTable = document.createElement("table");
+
+			var catTableHeader = document.createElement("thead");
+			var catTableHeaderRow = document.createElement("tr");
+			$(catTableHeader).append(catTableHeaderRow);
+			$(catTable).append(catTableHeader);
+
+			// TODO: headers
+
+			var catTableBody = document.createElement("tbody");
+			$(catTable).addClass("DataTable").append(catTableBody);
+			for (var j = 0; j < json.cats[i].grades.length; j++) {
+				var gradeRow = document.createElement("tr");
+
+				var gradeTitle = document.createElement("td");
+				$(gradeTitle).addClass("AssignmentName").text(json.cats[i].grades[j].title);
+				$(gradeRow).append(gradeTitle);
+
+				var dueDate = document.createElement("td");
+				$(dueDate).addClass("DateDue").text(json.cats[i].grades[j].dueDate);
+				$(gradeRow).append(dueDate);
+
+				var ptsEarned = document.createElement("td");
+				$(ptsEarned).addClass("AssignmentGrade").text(json.cats[i].grades[j].ptsEarned);
+				$(gradeRow).append(ptsEarned);
+
+				if (!json.cats[i].is100Pt) {
+					var ptsPoss = document.createElement("td");
+					$(ptsPoss).addClass("AssignmentPointsPossible").text(json.cats[i].grades[j].ptsPoss);
+					$(gradeRow).append(ptsPoss);
+				}
+
+				var note = document.createElement("td");
+				$(note).addClass("AssignmentNote").text(json.cats[i].grades[j].note);
+				$(gradeRow).append(note);
+
+				$(catTableBody).append(gradeRow);
+			}
+
+			// TODO: average
+
+			$(root).append(catTable);
+		}
+
+		return root;
+	},
+
 	colorize: function(grade) {
 		// color is only for numerical grades
 		if (isNaN(parseInt(grade))) return "#FFF";
@@ -275,6 +400,7 @@ var HAC_HTML =
 			if (typeof on_notify === "function") on_notify.call();
 		}
 	},
+
 	makeUpdateText: function (gradeData) {
 		var text, is_new, fromText,
 			className = gradeData.title,
@@ -301,9 +427,11 @@ var HAC_HTML =
 			text: "Your grade " + text + " " + newgrade.toString(10) + fromText
 		};
 	},
+
 	_notify2: function(titleText, updateText) {
 		webkitNotifications.createNotification("assets/icon-full.png", titleText, updateText).show();
 	},
+
 	_notify: function(className, label, oldgrade, newgrade) {
 		var text;
 		if ((oldgrade == undefined) || (oldgrade == "") || (isNaN(oldgrade))) text = "is now";
