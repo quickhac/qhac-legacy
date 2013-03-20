@@ -278,31 +278,47 @@ var HAC_HTML =
 		var root = document.createDocumentFragment();
 
 		var title = document.createElement("h3");
-		$(title).addClass("ClassName").text(json.title);
+		$(title).addClass("ClassName").html(json.title);
 		$(root).append(title);
 
 		var currAvg = document.createElement("p");
-		$(currAvg).addClass("CurrentAverage").text(json.currAvg);
+		$(currAvg).addClass("CurrentAverage").html("Current Average: " + json.currAvg)
+			.css('background', HAC_HTML.colorize(json.currAvg));
 		$(root).append(currAvg);
 
 		for (var i = 0; i < json.cats.length; i++) {
+			var percentiles = []; // for the category
+			var total = 0; // for non-100-point scales
+
 			var catHeader = document.createElement("span");
-			$(catHeader).text(json.cats[i].title + " - " + json.cats[i].percent);
+			$(catHeader).addClass("CategoryName").text(json.cats[i].title + " - " + json.cats[i].percent + "%");
 			$(root).append(catHeader);
+			$(root).append(document.createElement("br"));
 
 			var catTable = document.createElement("table");
 
 			var catTableHeader = document.createElement("thead");
 			var catTableHeaderRow = document.createElement("tr");
+			$(catTableHeaderRow).addClass("TableHeader");
 			$(catTableHeader).append(catTableHeaderRow);
 			$(catTable).append(catTableHeader);
 
-			// TODO: headers
+			var headerCells = [];
+			for (var j = 0; j < 4; j++)
+				headerCells[j] = document.createElement("th");
+
+			headerCells[0].innerHTML = "Assignment";
+			headerCells[1].innerHTML = "Due";
+			headerCells[2].innerHTML = "Grade";
+			headerCells[3].innerHTML = "Note";
+
+			$(catTableHeaderRow).append(headerCells);
 
 			var catTableBody = document.createElement("tbody");
 			$(catTable).addClass("DataTable").append(catTableBody);
 			for (var j = 0; j < json.cats[i].grades.length; j++) {
 				var gradeRow = document.createElement("tr");
+				$(gradeRow).addClass("DataRow");
 
 				var gradeTitle = document.createElement("td");
 				$(gradeTitle).addClass("AssignmentName").text(json.cats[i].grades[j].title);
@@ -313,7 +329,10 @@ var HAC_HTML =
 				$(gradeRow).append(dueDate);
 
 				var ptsEarned = document.createElement("td");
-				$(ptsEarned).addClass("AssignmentGrade").text(json.cats[i].grades[j].ptsEarned);
+				var pts = json.cats[i].grades[j].ptsEarned;
+				$(ptsEarned).addClass("AssignmentGrade")
+					.text(isNaN(pts) ? "" : pts)
+					.css('background', HAC_HTML.colorize(pts * 100 / json.cats[i].grades[j].ptsPoss));
 				$(gradeRow).append(ptsEarned);
 
 				if (!json.cats[i].is100Pt) {
@@ -327,9 +346,28 @@ var HAC_HTML =
 				$(gradeRow).append(note);
 
 				$(catTableBody).append(gradeRow);
+
+				if (!isNaN(pts))
+					if (json.cats[i].is100Pt)
+						percentiles.push(json.cats[i].grades[j].ptsEarned / json.cats[i].grades[j].ptsPoss);
+					else {
+						percentiles.push(json.cats[i].grades[j].ptsEarned);
+						total += json.cats[i].grades[j].ptsPoss;
+					}
 			}
 
-			// TODO: average
+			var avgLabel = document.createElement("td");
+			$(avgLabel).attr('colspan', 2).css('fontWeight', 'bold').html("Average");
+			$(catTableBody).append(avgLabel);
+
+			var avgCell = document.createElement("td");
+			var avg = (percentiles.length == 0 ? "" :
+				percentiles.reduce(function(a,b){return a+b;}) * 100 /
+				(json.cats[i].is100Pt ? percentiles.length : total));
+			$(avgCell).css({'fontWeight': 'bold', 'background': HAC_HTML.colorize(avg)})
+				.html(isNaN(avg) ? "" : Math.round(avg * 100) / 100);
+
+			$(catTableBody).append(avgCell);
 
 			$(root).append(catTable);
 		}
