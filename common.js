@@ -79,32 +79,32 @@ var HAC =
 	},
 
 	generate_ad: function() {
-		// if (localStorage["ad_0"] == "no")
-		// 	return document.createDocumentFragment();
+		if (localStorage["ad_1"] == "no")
+			return document.createDocumentFragment();
 
-		// var wrapper = document.createElement("div");
-		// $(wrapper).attr("id", "ad_wrapper");;
+		var wrapper = document.createElement("div");
+		$(wrapper).attr("id", "ad_wrapper");
 
-		// var ad = document.createElement("a");
-		// $(ad).attr("id", "ad").attr("href", "https://hacaccess.herokuapp.com/wworch")
-		// 	.html("We need your help! &raquo;").click(function() {
-		// 		_gaq.push(['_trackEvent', 'TMEA Booster', 'Helper Link']);
-		// 		chrome.tabs.create({'url': 'https://hacaccess.herokuapp.com/wworch'});
-		// 	});
-		// $(wrapper).append(ad);
+		var ad = document.createElement("a");
+		$(ad).attr("id", "ad").attr("href", "https://hacaccess.herokuapp.com/sailesh")
+			.html("Vote for Sailesh! &raquo;").click(function() {
+				_gaq.push(['_trackEvent', 'Sailesh referral', 'Helper Link']);
+				chrome.tabs.create({'url': 'https://hacaccess.herokuapp.com/sailesh'});
+			});
+		$(wrapper).append(ad);
 
-		// var hideAd = document.createElement("a");
-		// $(hideAd).attr("id", "hide_ad").attr("href", "#")
-		// 	.html("&times;").click(function() {
-		// 		_gaq.push(['_trackEvent', 'TMEA Booster', 'Hide Link']);
-		// 		$("#ad_wrapper").remove();
-		// 		localStorage.setItem("ad_0", "no");
-		// 	});
-		// $(wrapper).append(hideAd);
+		var hideAd = document.createElement("a");
+		$(hideAd).attr("id", "hide_ad").attr("href", "#")
+			.html("&times;").click(function() {
+				_gaq.push(['_trackEvent', 'Sailesh referral', 'Hide Link']);
+				$("#ad_wrapper").remove();
+				localStorage.setItem("ad_1", "no");
+			});
+		$(wrapper).append(hideAd);
 
-		// return wrapper;
+		return wrapper;
 
-		return document.createDocumentFragment();
+		// return document.createDocumentFragment();
 	}
 }
 

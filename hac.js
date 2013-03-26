@@ -136,11 +136,18 @@ function loadClassGrades(data) {
 		// reload class grades
 		processUpdatedGrades(stuff);
 
-		$("#classgrades").html(HAC_HTML.cjson_to_html(HAC_HTML.cgrades_to_json(stuff)));
+		// set json var
+		cgrades_json = HAC_HTML.cgrades_to_json(stuff);
+
+		// show grades
+		$("#classgrades").html(HAC_HTML.cjson_to_html(cgrades_json));
 
 		$("body").removeClass("busy");
 	});
 }
+
+// TODO: some pointer voodoo to make this editable from common.js
+var cgrades_json;
 
 // init
 $(function(){
