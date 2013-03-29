@@ -79,32 +79,32 @@ var HAC =
 	},
 
 	generate_ad: function() {
-		// if (localStorage["ad_0"] == "no")
-		// 	return document.createDocumentFragment();
+		if (localStorage["ad_1"] == "no")
+			return document.createDocumentFragment();
 
-		// var wrapper = document.createElement("div");
-		// $(wrapper).attr("id", "ad_wrapper");;
+		var wrapper = document.createElement("div");
+		$(wrapper).attr("id", "ad_wrapper");
 
-		// var ad = document.createElement("a");
-		// $(ad).attr("id", "ad").attr("href", "https://hacaccess.herokuapp.com/wworch")
-		// 	.html("We need your help! &raquo;").click(function() {
-		// 		_gaq.push(['_trackEvent', 'TMEA Booster', 'Helper Link']);
-		// 		chrome.tabs.create({'url': 'https://hacaccess.herokuapp.com/wworch'});
-		// 	});
-		// $(wrapper).append(ad);
+		var ad = document.createElement("a");
+		$(ad).attr("id", "ad").attr("href", "https://hacaccess.herokuapp.com/sailesh")
+			.html("Vote for Sailesh! &raquo;").click(function() {
+				_gaq.push(['_trackEvent', 'Sailesh referral', 'Helper Link']);
+				chrome.tabs.create({'url': 'https://hacaccess.herokuapp.com/sailesh'});
+			});
+		$(wrapper).append(ad);
 
-		// var hideAd = document.createElement("a");
-		// $(hideAd).attr("id", "hide_ad").attr("href", "#")
-		// 	.html("&times;").click(function() {
-		// 		_gaq.push(['_trackEvent', 'TMEA Booster', 'Hide Link']);
-		// 		$("#ad_wrapper").remove();
-		// 		localStorage.setItem("ad_0", "no");
-		// 	});
-		// $(wrapper).append(hideAd);
+		var hideAd = document.createElement("a");
+		$(hideAd).attr("id", "hide_ad").attr("href", "#")
+			.html("&times;").click(function() {
+				_gaq.push(['_trackEvent', 'Sailesh referral', 'Hide Link']);
+				$("#ad_wrapper").remove();
+				localStorage.setItem("ad_1", "no");
+			});
+		$(wrapper).append(hideAd);
 
-		// return wrapper;
+		return wrapper;
 
-		return document.createDocumentFragment();
+		// return document.createDocumentFragment();
 	}
 }
 
@@ -212,6 +212,292 @@ var HAC_HTML =
 		return superRoot;
 	},
 
+	cgrades_to_json: function(html) {
+			var myObj = {
+				"title": $("h3.ClassName", html).text(),
+				"currAvg": /Current Average: (\d*)/.exec($("p.CurrentAverage", html).text())[1],
+				"cats": []
+			};
+
+			var categoryPattern = /^(.*) - (\d*)%$/;
+
+			var categories = $(".CategoryName", html);
+			var gradeTables = $("table.DataTable", html);
+			gradeTables.splice(0, 1);
+
+			// in caes of array length mismatch, ignore unmatched array elements
+			var len = Math.min(categories.length, gradeTables.length);
+
+			// for each grade category
+			for (var i = 0; i < len; i++) {
+				var captures = categoryPattern.exec(categories[i].innerText);
+
+				// category name
+				myObj.cats[i] = {"title": captures[1], "percent": parseInt(captures[2])};
+
+				// grades
+				myObj.cats[i].grades = [];
+				var gradeList = $(gradeTables[i]).find("tr.DataRow, tr.DataRowAlt");
+				for (var j = 0; j < gradeList.length; j++) {
+					// get data
+					var title         = $(gradeList[j]).children(".AssignmentName").text();
+					var dueDateElem   = $(gradeList[j]).children(".DateDue");
+					var dueDate       = dueDateElem.text();
+					var noteElem      = $(gradeList[j]).children(".AssignmentNote");
+					var note          = noteElem.text();
+					var ptsEarnedElem = $(gradeList[j]).children(".AssignmentGrade");
+					var ptsEarned     = parseInt(ptsEarnedElem.text());
+					var ptsPossElem   = $(gradeList[j]).children(".AssignmentPointsPossible");
+					if (ptsPossElem.length == 0)
+						ptsPoss = 100;
+					else
+						ptsPoss = parseInt(ptsPossElem.text());
+
+					myObj.cats[i].grades[j] = {
+						"title": title,
+						"dueDate": dueDate,
+						"note": note,
+						"ptsEarned": ptsEarned,
+						"ptsPoss": ptsPoss
+					};
+				}
+
+				// category average
+				myObj.cats[i].average = parseInt(
+					$(gradeTables[i]).find("tr").last().children("td")[3].innerText);
+
+				// 100 point scale?
+				myObj.cats[i].is100Pt = (myObj.cats[i].grades.length == 0 ? true :
+					myObj.cats[i].grades[0].ptsPoss == 100);
+			}
+
+			return myObj;
+	},
+
+	cjson_to_html: function(json) {
+		var root = document.createDocumentFragment();
+
+		var title = document.createElement("h3");
+		$(title).addClass("ClassName").html(json.title);
+		$(root).append(title);
+
+		var currAvg = document.createElement("p");
+		$(currAvg).addClass("CurrentAverage").html("Current Average: " + json.currAvg)
+			.css('background', HAC_HTML.colorize(json.currAvg));
+		$(root).append(currAvg);
+
+		for (var i = 0; i < json.cats.length; i++) {
+			var percentiles = []; // for the category
+			var total = 0; // for non-100-point scales
+
+			var catHeader = document.createElement("span");
+			$(catHeader).addClass("CategoryName").text(json.cats[i].title + " - " + json.cats[i].percent + "%");
+			$(root).append(catHeader);
+			$(root).append(document.createElement("br"));
+
+			var catTable = document.createElement("table");
+
+			var catTableHeader = document.createElement("thead");
+			var catTableHeaderRow = document.createElement("tr");
+			$(catTableHeaderRow).addClass("TableHeader");
+			$(catTableHeader).append(catTableHeaderRow);
+			$(catTable).append(catTableHeader);
+
+			var headerCells = [];
+			var numHeaders = 4 + (json.cats[i].is100Pt ? 0 : 1);
+			for (var j = 0; j < numHeaders; j++)
+				headerCells[j] = document.createElement("th");
+
+			headerCells[0].innerHTML = "Assignment";
+			headerCells[1].innerHTML = "Due";
+			headerCells[2].innerHTML = "Grade";
+			if (numHeaders == 4)
+				headerCells[3].innerHTML = "Note";
+			else {
+				headerCells[3].innerHTML = "Possible";
+				headerCells[4].innerHTML = "Note";
+			}
+
+			$(catTableHeaderRow).append(headerCells);
+
+			var catTableBody = document.createElement("tbody");
+			$(catTable).addClass("DataTable").append(catTableBody);
+			for (var j = 0; j < json.cats[i].grades.length; j++) {
+				var gradeRow = document.createElement("tr");
+				$(gradeRow).addClass("DataRow");
+
+				var gradeTitle = document.createElement("td");
+				$(gradeTitle).addClass("AssignmentName").text(json.cats[i].grades[j].title);
+				$(gradeRow).append(gradeTitle);
+
+				var dueDate = document.createElement("td");
+				$(dueDate).addClass("DateDue").text(json.cats[i].grades[j].dueDate);
+				$(gradeRow).append(dueDate);
+
+				var ptsEarned = document.createElement("td");
+				var pts = json.cats[i].grades[j].ptsEarned;
+				$(ptsEarned).addClass("AssignmentGrade")
+					.text(isNaN(pts) ? "" : pts).data("editing", "0")
+					.css('background', HAC_HTML.colorize(pts * 100 / json.cats[i].grades[j].ptsPoss))
+					.click(function() {
+						if ($(this).data("editing") == "0") {
+							var editor = document.createElement("input");
+							var kphandler = function(e) {
+								if ((e.keyCode ? e.keyCode : e.which) == 13)
+									HAC_HTML._finalize_grade_edit(this);
+							};
+
+							$(editor).attr("size", "5").val(this.innerText).keypress(kphandler)
+								.blur(function() {HAC_HTML._finalize_grade_edit(this);});
+							$(this).html("").append(editor).data("editing", "1")
+								.children().focus().select();
+						}
+					});
+				$(gradeRow).append(ptsEarned);
+
+				if (!json.cats[i].is100Pt) {
+					var ptsPoss = document.createElement("td");
+					$(ptsPoss).addClass("AssignmentPointsPossible").text(json.cats[i].grades[j].ptsPoss);
+					$(gradeRow).append(ptsPoss);
+				}
+
+				var note = document.createElement("td");
+				$(note).addClass("AssignmentNote").text(json.cats[i].grades[j].note);
+				$(gradeRow).append(note);
+
+				$(catTableBody).append(gradeRow);
+
+				if (!isNaN(pts))
+					if (json.cats[i].is100Pt)
+						percentiles.push(json.cats[i].grades[j].ptsEarned / json.cats[i].grades[j].ptsPoss);
+					else {
+						percentiles.push(json.cats[i].grades[j].ptsEarned);
+						total += json.cats[i].grades[j].ptsPoss;
+					}
+			}
+
+			var avgLabel = document.createElement("td");
+			$(avgLabel).attr('colspan', 2).css('fontWeight', 'bold').html("Average");
+			$(catTableBody).append(avgLabel);
+
+			var avgCell = document.createElement("td");
+			var avg = (percentiles.length == 0 ? "" :
+				percentiles.reduce(function(a,b){return a+b;}) * 100 /
+				(json.cats[i].is100Pt ? percentiles.length : total));
+			$(avgCell).css({'fontWeight': 'bold', 'background': HAC_HTML.colorize(avg)})
+				.html(isNaN(avg) ? "" : Math.round(avg * 100) / 100)
+				.addClass("CategoryAverage");
+
+			$(catTableBody).append(avgCell);
+
+			$(root).append(catTable);
+		}
+
+		return root;
+	},
+
+	_finalize_grade_edit: function(el) {
+		var ptsPoss, ptsPossElem, grade, gradeText;
+
+		// calculate grade
+		if ((ptsPossElem = $(el).parent().parent()
+				.children(".AssignmentPointsPossible")).length == 0)
+			ptsPoss = 100;
+		else
+			ptsPoss = parseInt(ptsPossElem.text());
+		grade = parseFloat($(el).val()) * 100 / ptsPoss;
+		gradeText = parseFloat($(el).val());
+		if (isNaN(gradeText)) gradeText = "";
+
+		// show edited notice
+		var note = $(el).parent().next();
+		if (note.text().indexOf("(User-edited)") == -1) {
+			if (note.text().substr(note.text().length - 1) == " ")
+				note.text(note.text() + "(User-edited)");
+			else
+				note.text(note.text() + " (User-edited)");
+		}
+
+		// re-render grade cell
+		var cell = $(el).parent();
+		$(el).parent().html(gradeText).data("editing", "0")
+			.css("background-color", HAC_HTML.colorize(grade));
+
+		// recalculate category average
+		var earned = 0, poss = 0, earnedCell, possCell, rows;
+		// add up scores
+		rows = cell.parent().parent().find(".DataRow, .DataRowAlt");
+		for (var i = 0; i < rows.length; i++) {
+			var grade = rows[i];
+			if (!(isNaN((earnedCell = $(grade).children(".AssignmentGrade")).text())
+				|| earnedCell.text() == "") && earnedCell.next().text().indexOf("Dropped") == -1) {
+				earned += parseFloat(earnedCell.text());
+				if ((possCell = $(grade).children(".AssignmentPointsPossible")).length == 0)
+					poss += 100;
+				else
+					poss += parseFloat(possCell.text());
+			}
+		}
+		var avg = earned * 100 / poss;
+		var categoryAverage = isNaN(avg) ? 0 : Math.round(avg * 100) / 100;
+
+		// show category average
+		$(cell).parent().siblings(".CategoryAverage").text(categoryAverage)
+			.css("background-color", HAC_HTML.colorize(categoryAverage));
+
+		// sum up the 6 weeks subject average
+		var subjectTotal = 0, weightTotal = 0;
+		rows = $("#classgrades").find(".DataTable");
+		for (var i = 0; i < rows.length; i++) {
+			var weight = parseInt($(rows[i]).prev().prev().text().match(/(\d*)%$/)[1]);
+			categoryAverage = parseFloat($(rows[i]).find(".CategoryAverage").text());
+			subjectTotal += categoryAverage * weight / 100;
+			if ($(rows[i]).find(".AssignmentGrade").length > 0)
+				weightTotal += weight;
+		}
+		subjectTotal *= 100 / weightTotal;
+
+		// show subject average
+		$(".CurrentAverage").html("Current Average: " + Math.round(subjectTotal) + "%")
+			.css("background-color", HAC_HTML.colorize(subjectTotal));
+
+		// show subject average on main grades chart
+		var changedGradeCell = $(".grade a").filter(function(){
+				return $(this).data("data") == $("#classgrades").data("data");
+			})
+			.text(Math.round(subjectTotal))
+			.parent().css("background-color", HAC_HTML.colorize(subjectTotal));
+
+		// add up subject averages
+		var sixWeeksCells, examCell, semAvgCell, subject = changedGradeCell.parent().children();
+		if (changedGradeCell.index() < 5) {
+			sixWeeksCells = [subject[1], subject[2], subject[3]];
+			examCell = subject[4];
+			semAvgCell = subject[5];
+		} else {
+			sixWeeksCells = [subject[6], subject[7], subject[8]];
+			examCell = subject[9];
+			semAvgCell = subject[10];
+		}
+		var semAvg = 0, weightTotal = 0, weightPerSixWeeks = 85 / 300;
+		for (var i = 0; i < sixWeeksCells.length; i++) {
+			cell = sixWeeksCells[i];
+			if (cell.innerHTML != "") {
+				semAvg += parseInt($(cell).children().text()) * weightPerSixWeeks;
+				weightTotal += weightPerSixWeeks;
+			}
+		}
+		if (examCell.innerText != "") {
+			semAvg += parseInt(examCell.innerText) * 0.15;
+			weightTotal += 15;
+		}
+		semAvg *= 1 / weightTotal;
+
+		// show subject average
+		$(semAvgCell).text(Math.round(semAvg))
+			.css("background-color", HAC_HTML.colorize(semAvg));
+	},
+
 	colorize: function(grade) {
 		// color is only for numerical grades
 		if (isNaN(parseInt(grade))) return "#FFF";
@@ -275,6 +561,7 @@ var HAC_HTML =
 			if (typeof on_notify === "function") on_notify.call();
 		}
 	},
+
 	makeUpdateText: function (gradeData) {
 		var text, is_new, fromText,
 			className = gradeData.title,
@@ -301,9 +588,11 @@ var HAC_HTML =
 			text: "Your grade " + text + " " + newgrade.toString(10) + fromText
 		};
 	},
+
 	_notify2: function(titleText, updateText) {
 		webkitNotifications.createNotification("assets/icon-full.png", titleText, updateText).show();
 	},
+
 	_notify: function(className, label, oldgrade, newgrade) {
 		var text;
 		if ((oldgrade == undefined) || (oldgrade == "") || (isNaN(oldgrade))) text = "is now";
