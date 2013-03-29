@@ -146,6 +146,9 @@ function loadClassGrades(data) {
 	});
 }
 
+// globals
+var shadowMax = false;
+
 // init
 $(function(){
 	// asianness
@@ -179,13 +182,19 @@ $(function(){
 	// shadow on scrolling
 	$(window).scroll(function() {
 		var pos = $(window).scrollTop();
-		if (pos == 0)
+		if (pos == 0) {
 			$("#direct_access_form").css("box-shadow", "none");
-		else if (pos < 32)
+			shadowMax = false;
+		}
+		else if (pos < 32) {
 			$("#direct_access_form").css("box-shadow", "0px 0px " +
 				parseInt(pos / 4) + "px #888");
-		else
+			shadowMax = false;
+		}
+		else if (!shadowMax) {
 			$("#direct_access_form").css("box-shadow", "0px 0px 8px #888");
+			shadowMax = true;
+		}
 	});
 
 	// login or direct access?

@@ -346,7 +346,8 @@ var HAC_HTML =
 							};
 
 							$(editor).attr("size", "5").val(this.innerText).keypress(kphandler)
-								.blur(function() {HAC_HTML._finalize_grade_edit(this);});
+								.blur(function() {HAC_HTML._finalize_grade_edit(this);})
+								.addClass("GradeEditor");
 							$(this).html("").append(editor).data("editing", "1")
 								.children().focus().select();
 						}
