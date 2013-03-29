@@ -339,6 +339,7 @@ var HAC_HTML =
 				$(ptsEarned).addClass("AssignmentGrade")
 					.text(isNaN(pts) ? "" : pts).data("editing", "0")
 					.css('background', HAC_HTML.colorize(pts * 100 / json.cats[i].grades[j].ptsPoss))
+					.data("orig", isNaN(pts) ? "" : pts)
 					.click(function() {
 						if ($(this).data("editing") == "0") {
 							var editor = document.createElement("input");
@@ -413,11 +414,17 @@ var HAC_HTML =
 		var note = $(el).parent().next();
 		if (ptsPossElem.length != 0)
 			note = note.next();
-		if (note.text().indexOf("(User-edited)") == -1) {
-			if (note.text().substr(note.text().length - 1) == " ")
-				note.text(note.text() + "(User-edited)");
-			else
-				note.text(note.text() + " (User-edited)");
+		if ($(el).parent().data("orig") != $(el).val()) {
+			if (note.text().indexOf("(User-edited)") == -1) {
+				if (note.text().substr(note.text().length - 1) == " ")
+					note.text(note.text() + "(User-edited)");
+				else
+					note.text(note.text() + " (User-edited)");
+			}
+		} else {
+			var matches = note.text().match(/^(.*) \(User-edited\)$/);
+			if (matches != null && matches.length > 1)
+				note.text(matches[1]);
 		}
 
 		// re-render grade cell
