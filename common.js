@@ -381,7 +381,7 @@ var HAC_HTML =
 			$(catTableBody).append(avgLabel);
 
 			var avgCell = document.createElement("td");
-			var avg = (percentiles.length == 0 ? "" :
+			var avg = (percentiles.length == 0 ? NaN :
 				percentiles.reduce(function(a,b){return a+b;}) * 100 /
 				(json.cats[i].is100Pt ? percentiles.length : total));
 			$(avgCell).css({'fontWeight': 'bold', 'background': HAC_HTML.colorize(avg)})
@@ -411,6 +411,8 @@ var HAC_HTML =
 
 		// show edited notice
 		var note = $(el).parent().next();
+		if (ptsPossElem.length != 0)
+			note = note.next();
 		if (note.text().indexOf("(User-edited)") == -1) {
 			if (note.text().substr(note.text().length - 1) == " ")
 				note.text(note.text() + "(User-edited)");
@@ -439,7 +441,7 @@ var HAC_HTML =
 			}
 		}
 		var avg = earned * 100 / poss;
-		var categoryAverage = isNaN(avg) ? 0 : Math.round(avg * 100) / 100;
+		var categoryAverage = isNaN(avg) ? "" : Math.round(avg * 100) / 100;
 
 		// show category average
 		$(cell).parent().siblings(".CategoryAverage").text(categoryAverage)
@@ -449,16 +451,17 @@ var HAC_HTML =
 		var subjectTotal = 0, weightTotal = 0;
 		rows = $("#classgrades").find(".DataTable");
 		for (var i = 0; i < rows.length; i++) {
-			var weight = parseInt($(rows[i]).prev().prev().text().match(/(\d*)%$/)[1]);
-			categoryAverage = parseFloat($(rows[i]).find(".CategoryAverage").text());
-			subjectTotal += categoryAverage * weight / 100;
-			if ($(rows[i]).find(".AssignmentGrade").length > 0)
+			if ($(rows[i]).find(".CategoryAverage").text() != "") {
+				var weight = parseInt($(rows[i]).prev().prev().text().match(/(\d*)%$/)[1]);
+				categoryAverage = parseFloat($(rows[i]).find(".CategoryAverage").text());
+				subjectTotal += categoryAverage * weight / 100;
 				weightTotal += weight;
+			}
 		}
 		subjectTotal *= 100 / weightTotal;
 
 		// show subject average
-		$(".CurrentAverage").html("Current Average: " + Math.round(subjectTotal) + "%")
+		$(".CurrentAverage").html("Current Average: " + Math.round(subjectTotal))
 			.css("background-color", HAC_HTML.colorize(subjectTotal));
 
 		// show subject average on main grades chart
@@ -487,7 +490,7 @@ var HAC_HTML =
 				weightTotal += weightPerSixWeeks;
 			}
 		}
-		if (examCell.innerText != "") {
+		if (examCell.innerText != "" && !isNaN(examCell.innerText)) {
 			semAvg += parseInt(examCell.innerText) * 0.15;
 			weightTotal += 15;
 		}
