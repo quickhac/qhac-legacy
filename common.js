@@ -304,13 +304,19 @@ var HAC_HTML =
 			$(catTable).append(catTableHeader);
 
 			var headerCells = [];
-			for (var j = 0; j < 4; j++)
+			var numHeaders = 4 + (json.cats[i].is100Pt ? 0 : 1);
+			for (var j = 0; j < numHeaders; j++)
 				headerCells[j] = document.createElement("th");
 
 			headerCells[0].innerHTML = "Assignment";
 			headerCells[1].innerHTML = "Due";
 			headerCells[2].innerHTML = "Grade";
-			headerCells[3].innerHTML = "Note";
+			if (numHeaders == 4)
+				headerCells[3].innerHTML = "Note";
+			else {
+				headerCells[3].innerHTML = "Possible";
+				headerCells[4].innerHTML = "Note";
+			}
 
 			$(catTableHeaderRow).append(headerCells);
 
@@ -331,8 +337,22 @@ var HAC_HTML =
 				var ptsEarned = document.createElement("td");
 				var pts = json.cats[i].grades[j].ptsEarned;
 				$(ptsEarned).addClass("AssignmentGrade")
-					.text(isNaN(pts) ? "" : pts)
-					.css('background', HAC_HTML.colorize(pts * 100 / json.cats[i].grades[j].ptsPoss));
+					.text(isNaN(pts) ? "" : pts).data("editing", "0")
+					.css('background', HAC_HTML.colorize(pts * 100 / json.cats[i].grades[j].ptsPoss))
+					.click(function() {
+						if ($(this).data("editing") == "0") {
+							var editor = document.createElement("input");
+							var kphandler = function(e) {
+								if ((e.keyCode ? e.keyCode : e.which) == 13)
+									HAC_HTML._finalize_grade_edit(this);
+							};
+
+							$(editor).attr("size", "5").val(this.innerText).keypress(kphandler)
+								.blur(function() {HAC_HTML._finalize_grade_edit(this);});
+							$(this).html("").append(editor).data("editing", "1")
+								.children().focus().select();
+						}
+					});
 				$(gradeRow).append(ptsEarned);
 
 				if (!json.cats[i].is100Pt) {
@@ -365,7 +385,8 @@ var HAC_HTML =
 				percentiles.reduce(function(a,b){return a+b;}) * 100 /
 				(json.cats[i].is100Pt ? percentiles.length : total));
 			$(avgCell).css({'fontWeight': 'bold', 'background': HAC_HTML.colorize(avg)})
-				.html(isNaN(avg) ? "" : Math.round(avg * 100) / 100);
+				.html(isNaN(avg) ? "" : Math.round(avg * 100) / 100)
+				.addClass("CategoryAverage");
 
 			$(catTableBody).append(avgCell);
 
@@ -373,6 +394,108 @@ var HAC_HTML =
 		}
 
 		return root;
+	},
+
+	_finalize_grade_edit: function(el) {
+		var ptsPoss, ptsPossElem, grade, gradeText;
+
+		// calculate grade
+		if ((ptsPossElem = $(el).parent().parent()
+				.children(".AssignmentPointsPossible")).length == 0)
+			ptsPoss = 100;
+		else
+			ptsPoss = parseInt(ptsPossElem.text());
+		grade = parseFloat($(el).val()) * 100 / ptsPoss;
+		gradeText = parseFloat($(el).val());
+		if (isNaN(gradeText)) gradeText = "";
+
+		// show edited notice
+		var note = $(el).parent().next();
+		if (note.text().indexOf("(User-edited)") == -1) {
+			if (note.text().substr(note.text().length - 1) == " ")
+				note.text(note.text() + "(User-edited)");
+			else
+				note.text(note.text() + " (User-edited)");
+		}
+
+		// re-render grade cell
+		var cell = $(el).parent();
+		$(el).parent().html(gradeText).data("editing", "0")
+			.css("background-color", HAC_HTML.colorize(grade));
+
+		// recalculate category average
+		var earned = 0, poss = 0, earnedCell, possCell, rows;
+		// add up scores
+		rows = cell.parent().parent().find(".DataRow, .DataRowAlt");
+		for (var i = 0; i < rows.length; i++) {
+			var grade = rows[i];
+			if (!(isNaN((earnedCell = $(grade).children(".AssignmentGrade")).text())
+				|| earnedCell.text() == "") && earnedCell.next().text().indexOf("Dropped") == -1) {
+				earned += parseFloat(earnedCell.text());
+				if ((possCell = $(grade).children(".AssignmentPointsPossible")).length == 0)
+					poss += 100;
+				else
+					poss += parseFloat(possCell.text());
+			}
+		}
+		var avg = earned * 100 / poss;
+		var categoryAverage = isNaN(avg) ? 0 : Math.round(avg * 100) / 100;
+
+		// show category average
+		$(cell).parent().siblings(".CategoryAverage").text(categoryAverage)
+			.css("background-color", HAC_HTML.colorize(categoryAverage));
+
+		// sum up the 6 weeks subject average
+		var subjectTotal = 0, weightTotal = 0;
+		rows = $("#classgrades").find(".DataTable");
+		for (var i = 0; i < rows.length; i++) {
+			var weight = parseInt($(rows[i]).prev().prev().text().match(/(\d*)%$/)[1]);
+			categoryAverage = parseFloat($(rows[i]).find(".CategoryAverage").text());
+			subjectTotal += categoryAverage * weight / 100;
+			if ($(rows[i]).find(".AssignmentGrade").length > 0)
+				weightTotal += weight;
+		}
+		subjectTotal *= 100 / weightTotal;
+
+		// show subject average
+		$(".CurrentAverage").html("Current Average: " + Math.round(subjectTotal) + "%")
+			.css("background-color", HAC_HTML.colorize(subjectTotal));
+
+		// show subject average on main grades chart
+		var changedGradeCell = $(".grade a").filter(function(){
+				return $(this).data("data") == $("#classgrades").data("data");
+			})
+			.text(Math.round(subjectTotal))
+			.parent().css("background-color", HAC_HTML.colorize(subjectTotal));
+
+		// add up subject averages
+		var sixWeeksCells, examCell, semAvgCell, subject = changedGradeCell.parent().children();
+		if (changedGradeCell.index() < 5) {
+			sixWeeksCells = [subject[1], subject[2], subject[3]];
+			examCell = subject[4];
+			semAvgCell = subject[5];
+		} else {
+			sixWeeksCells = [subject[6], subject[7], subject[8]];
+			examCell = subject[9];
+			semAvgCell = subject[10];
+		}
+		var semAvg = 0, weightTotal = 0, weightPerSixWeeks = 85 / 300;
+		for (var i = 0; i < sixWeeksCells.length; i++) {
+			cell = sixWeeksCells[i];
+			if (cell.innerHTML != "") {
+				semAvg += parseInt($(cell).children().text()) * weightPerSixWeeks;
+				weightTotal += weightPerSixWeeks;
+			}
+		}
+		if (examCell.innerText != "") {
+			semAvg += parseInt(examCell.innerText) * 0.15;
+			weightTotal += 15;
+		}
+		semAvg *= 1 / weightTotal;
+
+		// show subject average
+		$(semAvgCell).text(Math.round(semAvg))
+			.css("background-color", HAC_HTML.colorize(semAvg));
 	},
 
 	colorize: function(grade) {

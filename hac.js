@@ -131,23 +131,20 @@ function loadClassGrades(data) {
 	// analytics
 	_gaq.push(['_trackEvent', 'Class Grades', 'View']);
 
+	// pass data
+	$("#classgrades").data("data", data);
+
 	// load
 	HAC.get_classGradeHTML(localStorage["url"], data, function(stuff) {
 		// reload class grades
 		processUpdatedGrades(stuff);
 
-		// set json var
-		cgrades_json = HAC_HTML.cgrades_to_json(stuff);
-
 		// show grades
-		$("#classgrades").html(HAC_HTML.cjson_to_html(cgrades_json));
+		$("#classgrades").html(HAC_HTML.cjson_to_html(HAC_HTML.cgrades_to_json(stuff)));
 
 		$("body").removeClass("busy");
 	});
 }
-
-// TODO: some pointer voodoo to make this editable from common.js
-var cgrades_json;
 
 // init
 $(function(){
