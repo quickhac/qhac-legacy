@@ -5,6 +5,7 @@ QuickHAC (or qHAC) is a Chrome extension that checks grades from roundrockisd.or
 * Automatic updates and notifications for grade changes
 * Colorization of grades depending on how bad they are
 * Extremely pretty interface designed by mdciotti
+* Edit assignment grades locally to see how it would affect your overall grade
 
 ## Installing ##
 
