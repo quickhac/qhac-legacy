@@ -87,13 +87,13 @@ var HAC =
 
 		var ad = document.createElement("span");
 		$(ad).attr("id", "ad")
-			.html("New in 1.2.0: Edit grades locally. Click on any assignment grade to get started!");
+			.html("New in 1.2: Edit grades locally. Click on any assignment grade to get started!");
 		$(wrapper).append(ad);
 
 		var hideAd = document.createElement("a");
 		$(hideAd).attr("id", "hide_ad").attr("href", "#")
 			.html("&times;").click(function() {
-				_gaq.push(['_trackEvent', 'Sailesh referral', 'Hide Link']);
+				// _gaq.push(['_trackEvent', '...', 'Hide Link']);
 				$("#ad_wrapper").remove();
 				localStorage.setItem("ad_1", "no");
 			});
@@ -513,6 +513,9 @@ var HAC_HTML =
 		// show subject average
 		$(semAvgCell).text(Math.round(semAvg))
 			.css("background-color", HAC_HTML.colorize(semAvg));
+
+		// analytics
+		_gaq.push(['_trackEvent', 'Class Grades', 'Edit']);
 	},
 
 	colorize: function(grade) {
