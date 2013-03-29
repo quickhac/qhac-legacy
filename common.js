@@ -85,12 +85,9 @@ var HAC =
 		var wrapper = document.createElement("div");
 		$(wrapper).attr("id", "ad_wrapper");
 
-		var ad = document.createElement("a");
-		$(ad).attr("id", "ad").attr("href", "https://hacaccess.herokuapp.com/sailesh")
-			.html("Vote for Sailesh! &raquo;").click(function() {
-				_gaq.push(['_trackEvent', 'Sailesh referral', 'Helper Link']);
-				chrome.tabs.create({'url': 'https://hacaccess.herokuapp.com/sailesh'});
-			});
+		var ad = document.createElement("span");
+		$(ad).attr("id", "ad")
+			.html("New in 1.2.0: Edit grades locally. Click on any assignment grade to get started!");
 		$(wrapper).append(ad);
 
 		var hideAd = document.createElement("a");
@@ -410,7 +407,7 @@ var HAC_HTML =
 		gradeText = parseFloat($(el).val());
 		if (isNaN(gradeText)) gradeText = "";
 
-		// show edited notice
+		// show/hide edited notice
 		var note = $(el).parent().next();
 		if (ptsPossElem.length != 0)
 			note = note.next();
@@ -434,7 +431,6 @@ var HAC_HTML =
 
 		// recalculate category average
 		var earned = 0, poss = 0, earnedCell, possCell, rows;
-		// add up scores
 		rows = cell.parent().parent().find(".DataRow, .DataRowAlt");
 		for (var i = 0; i < rows.length; i++) {
 			var grade = rows[i];
@@ -455,7 +451,7 @@ var HAC_HTML =
 			.css("background-color", HAC_HTML.colorize(categoryAverage));
 
 		// sum up the 6 weeks subject average
-		var subjectTotal = 0, weightTotal = 0;
+		var subjectTotal = 0, weightTotal = 0, bonus = 0;
 		rows = $("#classgrades").find(".DataTable");
 		for (var i = 0; i < rows.length; i++) {
 			if ($(rows[i]).find(".CategoryAverage").text() != "") {
@@ -463,9 +459,19 @@ var HAC_HTML =
 				categoryAverage = parseFloat($(rows[i]).find(".CategoryAverage").text());
 				subjectTotal += categoryAverage * weight / 100;
 				weightTotal += weight;
+
+				// special case: extra credit
+				if (weight == 0 && $(rows[i]).find(".AssignmentPointsPossible").length != 0) {
+					// add up scores individually
+					var bonuses = $(rows[i]).find(".AssignmentGrade");
+					for (var j = 0; j < bonuses.length; j++)
+						if (!isNaN(bonuses[j].innerText))
+							bonus += parseFloat(bonuses[j].innerText);
+				}
 			}
 		}
 		subjectTotal *= 100 / weightTotal;
+		subjectTotal += bonus;
 
 		// show subject average
 		$(".CurrentAverage").html("Current Average: " + Math.round(subjectTotal))
@@ -522,21 +528,21 @@ var HAC_HTML =
 
 		// convert to rgb: http://goo.gl/J9ra3
 		var i = Math.floor(h * 6);
-    var f = h * 6 - i;
-    var p = v * (1 - s);
-    var q = v * (1 - f * s);
-    var t = v * (1 - (1 - f) * s);
+	    var f = h * 6 - i;
+	    var p = v * (1 - s);
+	    var q = v * (1 - f * s);
+	    var t = v * (1 - (1 - f) * s);
 
-    switch(i % 6){
-        case 0: r = v, g = t, b = p; break;
-        case 1: r = q, g = v, b = p; break;
-        case 2: r = p, g = v, b = t; break;
-        case 3: r = p, g = q, b = v; break;
-        case 4: r = t, g = p, b = v; break;
-        case 5: r = v, g = p, b = q; break;
-    }
+	    switch(i % 6){
+	        case 0: r = v, g = t, b = p; break;
+	        case 1: r = q, g = v, b = p; break;
+	        case 2: r = p, g = v, b = t; break;
+	        case 3: r = p, g = q, b = v; break;
+	        case 4: r = t, g = p, b = v; break;
+	        case 5: r = v, g = p, b = q; break;
+	    }
 
-    return "rgb(" + parseInt(r * 255) + "," + parseInt(g * 255) + "," + parseInt(b * 255) + ")";
+	    return "rgb(" + parseInt(r * 255) + "," + parseInt(g * 255) + "," + parseInt(b * 255) + ")";
 	},
 
 	compare_grades: function(oldgrade, newgrade, on_notify) {
