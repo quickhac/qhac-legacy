@@ -79,11 +79,34 @@ var HAC =
 	},
 
 	generate_ad: function() {
-		if (localStorage["ad_1"] == "no")
-			return document.createDocumentFragment();
-
 		var wrapper = document.createElement("div");
 		$(wrapper).attr("id", "ad_wrapper");
+
+		// workaround for scrolling
+		if ((window.navigator.appVersion.indexOf("OS X 10_8") != -1) && (localStorage["ad_2"] != "no")) {
+			var wrapper = document.createElement("div");
+			$(wrapper).attr("id", "ad_wrapper");
+
+			var ad = document.createElement("a");
+			$(ad).attr("id", "ad")
+				.click(function(){chrome.tabs.create({"url": "https://hacaccess.herokuapp.com/qhac/ml-fix"})})
+				.html("Using Mountain Lion? Scrolling might not work. Here's a fix. &raquo;");
+			$(wrapper).append(ad);
+
+			var hideAd = document.createElement("a");
+			$(hideAd).attr("id", "hide_ad").attr("href", "#")
+				.html("&times;").click(function() {
+					// _gaq.push(['_trackEvent', '...', 'Hide Link']);
+					$("#ad_wrapper").remove();
+					localStorage.setItem("ad_2", "no");
+				});
+			$(wrapper).append(hideAd);
+
+			return wrapper;
+		}
+
+		if (localStorage["ad_1"] == "no")
+			return document.createDocumentFragment();
 
 		var ad = document.createElement("span");
 		$(ad).attr("id", "ad")
