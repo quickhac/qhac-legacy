@@ -149,6 +149,20 @@ function loadClassGrades(data) {
 // globals
 var shadowMax = false;
 
+// throttle, used for scrolling
+function throttle(ms, callback) {
+	var timer, lastCall=0;
+
+	return function() {
+		var now = new Date().getTime(),
+		diff = now - lastCall;
+		if (diff >= ms) {
+			lastCall = now;
+			callback.apply(this, arguments);
+		}
+	};
+}
+
 // init
 $(function(){
 	// asianness
@@ -180,22 +194,25 @@ $(function(){
 	localStorage.setItem("badge", "0");
 
 	// shadow on scrolling
-	$(window).scroll(function() {
-		var pos = $(window).scrollTop();
-		if (pos == 0) {
-			$("#direct_access_form").css("box-shadow", "none");
-			shadowMax = false;
+	$(window).scroll(throttle(30, function() {
+			var pos = $(window).scrollTop();
+			if (pos == 0) {
+				$("#direct_access_form").css("box-shadow", "none");
+				shadowMax = false;
+			}
+			else if (pos < 32) {
+				$("#direct_access_form").css("box-shadow", "0px 0px " +
+					parseInt(pos / 4) + "px #888");
+				shadowMax = false;
+			}
+			else if (!shadowMax) {
+				$("#direct_access_form").css("box-shadow", "0px 0px 8px #888");
+				shadowMax = true;
+			}
+
+			return true;
 		}
-		else if (pos < 32) {
-			$("#direct_access_form").css("box-shadow", "0px 0px " +
-				parseInt(pos / 4) + "px #888");
-			shadowMax = false;
-		}
-		else if (!shadowMax) {
-			$("#direct_access_form").css("box-shadow", "0px 0px 8px #888");
-			shadowMax = true;
-		}
-	});
+	));
 
 	// login or direct access?
 	if (localStorage["url"] == undefined) $("#direct_access_form").hide();
