@@ -230,6 +230,7 @@ var HAC_HTML =
 					.text(isNaN(pts) ? "" : pts).data("editing", "0")
 					.css('background', HAC_HTML.colorize(pts * 100 / json.cats[i].grades[j].ptsPoss))
 					.data("orig", isNaN(pts) ? "" : pts)
+					.attr("title", "Original grade: " + (isNaN(pts) ? "none" : pts))
 					.click(function() {
 						if ($(this).data("editing") == "0") {
 							var editor = document.createElement("input");
@@ -241,10 +242,10 @@ var HAC_HTML =
 							$(editor).attr("size", "5").val(this.innerText).keypress(kphandler)
 								.blur(function() {HAC_HTML._finalize_grade_edit(this);})
 								.addClass("GradeEditor");
-							$(this).html("").append(editor).data("editing", "1")
+							$(this).html("").append(editor).data("editing", "1").tipsy("show")
 								.children().focus().select();
-						}
-					});
+						}})
+					.tipsy({gravity: 'e', trigger: 'manual', fade: true, opacity: 1});
 				$(gradeRow).append(ptsEarned);
 
 				if (!json.cats[i].is100Pt) {
@@ -259,7 +260,7 @@ var HAC_HTML =
 
 				$(catTableBody).append(gradeRow);
 
-				if (!isNaN(pts))
+				if (!isNaN(pts) && json.cats[i].grades[j].note.indexOf("Dropped") == -1)
 					if (json.cats[i].is100Pt)
 						percentiles.push(json.cats[i].grades[j].ptsEarned / json.cats[i].grades[j].ptsPoss);
 					else {
@@ -291,6 +292,9 @@ var HAC_HTML =
 	_finalize_grade_edit: function(el) {
 		var ptsPoss, ptsPossElem, grade, gradeText;
 
+		// hide tipsy
+		$(el).parent().tipsy("hide");
+
 		// calculate grade
 		if ((ptsPossElem = $(el).parent().parent()
 				.children(".AssignmentPointsPossible")).length == 0)
@@ -312,10 +316,14 @@ var HAC_HTML =
 				else
 					note.text(note.text() + " (User-edited)");
 			}
+
+			$(el).parent().addClass("edited");
 		} else {
 			var matches = note.text().match(/^(.*) \(User-edited\)$/);
 			if (matches != null && matches.length > 1)
 				note.text(matches[1]);
+
+			$(el).parent().removeClass("edited");
 		}
 
 		// re-render grade cell
@@ -366,17 +374,20 @@ var HAC_HTML =
 		}
 		subjectTotal *= 100 / weightTotal;
 		subjectTotal += bonus;
+		subjectTotal = Math.max(Math.min(subjectTotal, 100), 0);
 
 		// show subject average
 		$(".CurrentAverage").html("Current Average: " + Math.round(subjectTotal))
 			.css("background-color", HAC_HTML.colorize(subjectTotal));
 
 		// show subject average on main grades chart
+		var sixWeeksColor = HAC_HTML.colorize(subjectTotal);
 		var changedGradeCell = $(".grade a").filter(function(){
 				return $(this).data("data") == $("#classgrades").data("data");
 			})
-			.text(Math.round(subjectTotal))
-			.parent().css("background-color", HAC_HTML.colorize(subjectTotal));
+			.text(Math.round(subjectTotal)).css("color", "#24f")
+			.parent().css({"background-color": sixWeeksColor,
+				"box-shadow": sixWeeksColor + " 0px 0px 4px"});
 
 		// add up subject averages
 		var sixWeeksCells, examCell, semAvgCell, subject = changedGradeCell.parent().children();
@@ -402,10 +413,20 @@ var HAC_HTML =
 			weightTotal += 15;
 		}
 		semAvg *= 1 / weightTotal;
+		semAvg = Math.max(Math.min(semAvg, 100), 0);
 
 		// show subject average
+		var semColor = HAC_HTML.colorize(semAvg);
 		$(semAvgCell).text(Math.round(semAvg))
-			.css("background-color", HAC_HTML.colorize(semAvg));
+			.css({"background-color": semColor,
+				"box-shadow": semColor + " 0px 0px 4px"});
+
+		// show/hide edited notice
+		if ($("#classgrades td.edited").length == 0) {
+			$(document.body).removeClass("edited");
+			changedGradeCell.children().css("color", "#000");
+		} else
+			$(document.body).addClass("edited");
 
 		// analytics
 		_gaq.push(['_trackEvent', 'Class Grades', 'Edit', 'Edit Grades', grade]);
@@ -419,9 +440,19 @@ var HAC_HTML =
 		var h, s, v, r, g, b;
 
 		// determine color. ***MAGIC DO NOT TOUCH UNDER ANY CIRCUMSTANCES***
-		h = Math.min(0.25 * Math.pow(grade / 100, asianness), 0.13056);
-		s = 1 - Math.pow(grade / 100, asianness * 2);
-		v = 0.86944 + h;
+		if (grade > 100) {
+			h = 0.13056;
+			s = 0;
+			v = 1;	
+		} else if (grade < 0) {
+			h = 0;
+			s = 1;
+			v = 0.86944;
+		} else {
+			h = Math.min(0.25 * Math.pow(grade / 100, asianness), 0.13056);
+			s = 1 - Math.pow(grade / 100, asianness * 2);
+			v = 0.86944 + h;
+		}
 
 		// convert to rgb: http://goo.gl/J9ra3
 		var i = Math.floor(h * 6);

@@ -142,7 +142,7 @@ function loadClassGrades(data) {
 		// show grades
 		$("#classgrades").html(HAC_HTML.cjson_to_html(HAC_HTML.cgrades_to_json(stuff)));
 
-		$("body").removeClass("busy");
+		$("body").removeClass("busy").removeClass("edited");
 	});
 }
 

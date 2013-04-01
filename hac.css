@@ -124,6 +124,10 @@ a:hover {
 	-webkit-user-select: none;
 }
 
+body.edited #direct_access_form {
+	background: -webkit-linear-gradient(top,rgba(255, 230, 200, 1),rgba(255, 255, 255, 0.9));
+}
+
 #logo {
 	vertical-align: middle;
 	margin-right: 8px;
@@ -131,8 +135,20 @@ a:hover {
 
 #update_wrapper {
 	position: relative;
-	bottom: -4px;
+	bottom: -6px;
 	color: #808080;
+}
+
+#edited_notice {
+	display: none;
+	position: absolute;
+	top: 6px;
+	left: 141px;
+	color: #f84;
+}
+
+body.edited #edited_notice {
+	display: block;
 }
 
 #action_buttons {
