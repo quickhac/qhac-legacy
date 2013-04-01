@@ -80,7 +80,32 @@ var HAC_HTML =
 				}
 
 				var classes = "grade";
-				if ((c == 3) || (c == 8)) classes += " exam";
+				if ((c == 3) || (c == 8)) {
+					classes += " exam";
+
+					// allow edit
+					$(cell).data("orig", $(cell).text())
+					.attr("title", "Original grade: " +
+						(isNaN($(cell).text()) && ($(cell).text() != "EX")
+							&& ($(cell).text() != "Exc") || ($(cell).text() == "")
+							? "none" : $(cell).text()))
+					.data("editing", "0")
+					.click(function() {
+						if ($(this).data("editing") == "0") {
+							var editor = document.createElement("input");
+							var kphandler = function(e) {
+								if ((e.keyCode ? e.keyCode : e.which) == 13)
+									HAC_HTML._finalize_exam_grade_edit(this);
+							};
+
+							$(editor).attr("size", "2").val(this.innerText).keypress(kphandler)
+								.blur(function() {HAC_HTML._finalize_exam_grade_edit(this);})
+								.addClass("GradeEditor");
+							$(this).html("").append(editor).data("editing", "1").tipsy("show")
+								.children().focus().select();
+						}})
+					.tipsy({gravity: $.fn.tipsy.autoNS, trigger: 'manual', fade: true, opacity: 1});
+				}
 				else if ((c == 4) || (c == 9)) classes += " semester";
 				$(cell).addClass(classes);
 				var color = HAC_HTML.colorize(parseInt(json[r].grades[c]));
@@ -328,7 +353,7 @@ var HAC_HTML =
 
 		// re-render grade cell
 		var cell = $(el).parent();
-		$(el).parent().html(gradeText).data("editing", "0")
+		cell.html(gradeText).data("editing", "0")
 			.css("background-color", HAC_HTML.colorize(grade));
 
 		// recalculate category average
@@ -389,6 +414,48 @@ var HAC_HTML =
 			.parent().css({"background-color": sixWeeksColor,
 				"box-shadow": sixWeeksColor + " 0px 0px 4px"});
 
+		// subject averages
+		HAC_HTML._recalculate_subject_averages(changedGradeCell);
+
+		// analytics
+		_gaq.push(['_trackEvent', 'Class Grades', 'Edit', 'Edit Grades', grade]);
+	},
+
+	_finalize_exam_grade_edit: function(el) {
+		// hide tipsy
+		$(el).parent().tipsy("hide");
+
+		// calculate grade
+		var grade = $(el).val(), grateText;
+		if ((grade == "EX") || (grade == "Exc") || (grade == ""))
+			gradeText = grade;
+		else if (isNaN(grade)) gradeText = "";
+		else if (grade > 100)  gradeText = "100";
+		else if (grade < 0)    gradeText = "0";
+		else                   gradeText = Math.round(grade);
+
+		// show/hide edited notice
+		if ($(el).parent().data("orig") != $(el).val()) {
+			$(el).parent().addClass("edited").css("color", "#24f");
+			$(document.body).addClass("edited");
+		} else {
+			$(el).parent().removeClass("edited").css("color", "#000");
+		}
+
+		// re-render grade cell
+		var cell = $(el).parent(), color = HAC_HTML.colorize(grade);
+		cell.html(gradeText).data("editing", "0")
+			.css({"background-color": color,
+				"box-shadow": "0px 0px 4px " + color});
+
+		// semester averages
+		HAC_HTML._recalculate_subject_averages($(cell));
+
+		// analytics
+		_gaq.push(['_trackEvent', 'Grades', 'Edit', 'Edit Exam Grades', grade]);
+	},
+
+	_recalculate_subject_averages: function(changedGradeCell) {
 		// add up subject averages
 		var sixWeeksCells, examCell, semAvgCell, subject = changedGradeCell.parent().children();
 		if (changedGradeCell.index() < 5) {
@@ -410,7 +477,7 @@ var HAC_HTML =
 		}
 		if (examCell.innerText != "" && !isNaN(examCell.innerText)) {
 			semAvg += parseInt(examCell.innerText) * 0.15;
-			weightTotal += 15;
+			weightTotal += 0.15;
 		}
 		semAvg *= 1 / weightTotal;
 		semAvg = Math.max(Math.min(semAvg, 100), 0);
@@ -422,14 +489,11 @@ var HAC_HTML =
 				"box-shadow": semColor + " 0px 0px 4px"});
 
 		// show/hide edited notice
-		if ($("#classgrades td.edited").length == 0) {
+		if ($("#classgrades td.edited, .exam.edited").length == 0) {
 			$(document.body).removeClass("edited");
 			changedGradeCell.children().css("color", "#000");
 		} else
 			$(document.body).addClass("edited");
-
-		// analytics
-		_gaq.push(['_trackEvent', 'Class Grades', 'Edit', 'Edit Grades', grade]);
 	},
 
 	colorize: function(grade) {
