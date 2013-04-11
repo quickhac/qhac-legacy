@@ -1,4 +1,4 @@
-var asianness, asianness_on;
+var asianness, asianness_on, hue;
 
 // handlers
 function login(uname, pass, studentid) {
@@ -62,7 +62,7 @@ function login(uname, pass, studentid) {
 					$("#login_form input").attr("disabled", false);
 					$("#do_login").val("Login");
 
-					$("body").removeClass("busy");
+					$("body").removeClass("busy").removeClass("edited");
 				});
 			});
 		},
@@ -89,10 +89,20 @@ function update(sID) {
 	// analytics
 	_gaq.push(['_trackEvent', 'Grades', 'Refresh']);
 
+	// show cached grades (this undoes user edits)
+	if (localStorage.hasOwnProperty("grades"))
+		$("#grades").html("").append(
+			HAC_HTML.json_to_html(
+					JSON.parse(
+						localStorage["grades"])));
+
+	// hide class grades
+	$("#classgrades").html("");
+
 	HAC.get_gradesHTML_direct(sID, function(doc) {
 		processUpdatedGrades(doc);
 
-		$("body").removeClass("busy");
+		$("body").removeClass("busy").removeClass("edited");
 	});
 }
 
@@ -106,6 +116,15 @@ function processUpdatedGrades(doc) {
 	localStorage.setItem("grades", JSON.stringify(doc_json));
 	Updater.set_updated();
 	$("#lastupdated").html(Updater.get_update_text());
+}
+
+function processUpdatedClassGrades(data, doc) {
+	// store
+	var cgrades_json = HAC_HTML.cgrades_to_json(doc);
+	localStorage.setItem("class-" + data, JSON.stringify(cgrades_json));
+
+	// show grades
+	$("#classgrades").html(HAC_HTML.cjson_to_html(HAC_HTML.cgrades_to_json(doc)));
 }
 
 function logout() {
@@ -132,15 +151,26 @@ function loadClassGrades(data) {
 	_gaq.push(['_trackEvent', 'Class Grades', 'View']);
 
 	// pass data
-	$("#classgrades").data("data", data);
+	var cg;
+	(cg = $("#classgrades")).data("data", data);
+
+	// show cached grades (this undoes user edits)
+	if (localStorage.hasOwnProperty("grades"))
+		$("#grades").html("").append(
+			HAC_HTML.json_to_html(
+					JSON.parse(
+						localStorage["grades"])));
+	if (localStorage.hasOwnProperty("class-" + data))
+		cg.html("").append(
+			HAC_HTML.cjson_to_html(
+				JSON.parse(
+					localStorage["class-" + data])));
 
 	// load
 	HAC.get_classGradeHTML(localStorage["url"], data, function(stuff) {
 		// reload class grades
 		processUpdatedGrades(stuff);
-
-		// show grades
-		$("#classgrades").html(HAC_HTML.cjson_to_html(HAC_HTML.cgrades_to_json(stuff)));
+		processUpdatedClassGrades(data, stuff);
 
 		$("body").removeClass("busy").removeClass("edited");
 	});
@@ -167,9 +197,18 @@ function throttle(ms, callback) {
 $(function(){
 	// asianness
 	asianness = localStorage.getItem("asianness");
-	if ((asianness == null) || (isNaN(asianness))) asianness = 4;
-	
+	if ((asianness == null) || (isNaN(asianness))) asianness = DEFAULT_ASIANNESS;
+
 	asianness_on = ((localStorage.hasOwnProperty("asianness_on") ? localStorage["asianness_on"] : true) === "true");
+
+	// hue
+	hue = parseFloat(localStorage.getItem("hue"));
+	if ((hue == null) || isNaN(hue)) hue = DEFAULT_HUE;
+
+	// modify the logo
+	$("#logo").load(function () {
+		$(this).pixastic("hsl", {hue: hue * 360});
+	});
 
 	// handlers
 	$("#login_form").submit(function(e) {

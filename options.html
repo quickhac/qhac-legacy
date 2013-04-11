@@ -39,8 +39,9 @@
 				background-color: #EEE;
 				border-radius: 4px;
 				padding: 4px;
+				padding-right: 200px;
 				text-align: right;
-				height: 258px;
+				min-height: 258px;
 			}
 			#settings p {
 				position: relative;
@@ -62,7 +63,8 @@
 			}
 			#heaf {
 				float: right;
-				margin: 8px 0 8px 16px;
+				margin: 8px 0 8px 4px;
+				position: absolute;
 			}
 			h2 {
 				margin-bottom: 0;
@@ -118,12 +120,12 @@
 				-webkit-animation-timing-function: ease;
 			}
 			
-			#slider_wrapper {
+			#slider_wrapper, #hue_slider_wrapper {
 				text-align: center;
 				color: #888;
 				font-size: 12px;
 			}
-			#slider {
+			#slider, #hue_slider {
 				width: 50%;
 				margin: 0 16px;
 				display: inline-block;
@@ -148,13 +150,18 @@
 				<p style="margin-bottom: -8px;"><label for="refresh_check"><input type="checkbox" id="refresh_check" name="refresh_check">Enable Automatic Refresh</label></p>
 				<p style="font-size: 14px; color: #444; height: 25px;">Refresh interval (mins): <input type="number" id="r_interval" name="r_interval" min="0"></p>
 				<!-- <p class="info">Enter 0 to turn off auto-update and notifications</p> -->
+				<p>Hue: <input type="number" id="hue" name="hue"></p>
+				<p class="info">Enter 0 to return to default</p>
 				<p id="save_btn_container"><span class="info" id="save_msg">Saved!</span> <button id="save">Save Options</button></p>
 				
 			</div>
 			<h2>Grade gradient (Asianness) scale:</h2>
 			<p style="text-align:justify">Grades in qHAC are colored in according to their grade. The amount of color indicates how bad the grade is. This allows for you to be able to pick out bad grades at a glance and quickly figure out what you need to improve. You can control the threshold for the colorization of grades by adjusting the Asianness level. The default, 4, gives you light yellow for the 90s, light orange for the 80s, orange for the 70s, dark orange for the 60s, and crimson red for anything below. You can adjust the threshold up and down according to how much you care about your grades or how colorful you want your qHAC to be.</p>
 			<div id="asianness_wrap">
+				<p class="info">Asianness:</p>
 				<p id="slider_wrapper">0 <input type="range" min="0" max="2.5" step="0.1" id="slider" /> 12.182</p>
+				<p class="info">Hue:</p>
+				<p id="hue_slider_wrapper">0 <input type="range" min="0" max="1" step="0.00390625" id="hue_slider"> 1</p>
 				<div id="color_table"></div>
 			</div>
 			<p style="font-size:12px;text-align:center;margin-top:4px;color:#888">QuickHAC is not a registered trademark of The Westwood HAC-ers.<br>Created by Yash Aggarwal, Max Ciotti, Tristan Seifert, and Xuming Zeng.</p>

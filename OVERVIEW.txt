@@ -1,0 +1,44 @@
+hac.js
+
+- HAC
+	- login
+	- update
+	- processUpdatedGrades
+	- processUpdatedClassGrades
+	- logout
+	- loadClassGrades
+	- throttle
+
+remote.js
+	- rot13
+	- b64enc
+	- b64dec
+	- encrypt
+	- decrypt
+	- Updater
+		- setUpdated
+		- get_update_text
+	- HAC
+		- get_session
+		- get_gradesURL
+		- get_gradesHTML
+		- get_gradesHTML_direct
+		- get_classGradeHTML
+		- generate_ad
+
+
+hac_dom.js
+
+- HAC_HTML
+	- html_to_jso
+	- json_to_html
+	- cgrades_to_json
+	- cjson_to_html
+	- _finalize_grade_edit
+	- _finalize_exam_grade_edit
+	- _recalculate_subject_averages
+	- _colorize
+	- compare_grades
+	- makeUpdateText
+	- _notify2
+	- _notify

@@ -1,7 +1,4 @@
-var asianness, r_interval;
-var asianness_on, refresh_enabled;
-var DEFAULT_ASIANNESS = 4;
-var DEFAULT_R_INT = 60;
+var asianness, r_interval, hue, asianness_on, refresh_enabled;
 
 function generate_color_table() {
 	var table = document.createElement("table");
@@ -99,13 +96,14 @@ Validator.prototype.validate = function () {
 function update_options_dom(doAnimation) {
 	if($("#asianness_check").prop('checked')) {
 		$("#asianness").parent().slideDown(doAnimation ? 0 : 500);
-		$("#asianness_wrap").slideDown(doAnimation ? 0 : 500);		
+		// $("#asianness_wrap").slideDown(doAnimation ? 0 : 500);		
 		asianness_on = true;
 		asianness = $("#asianness").val();
 	} else {
 		$("#asianness").parent().slideUp(doAnimation ? 0 : 500);
-		$("#asianness_wrap").slideUp(doAnimation ? 0 : 500);		
+		// $("#asianness_wrap").slideUp(doAnimation ? 0 : 500);		
 		asianness_on = false;
+		asianness = 0;
 	}
 	
 	if($("#refresh_check").prop('checked')) {
@@ -121,7 +119,7 @@ $(function(){
 	// load
 	asianness = localStorage.hasOwnProperty("asianness") ? localStorage["asianness"] : DEFAULT_ASIANNESS;
 	r_interval = localStorage.hasOwnProperty("r_int") ? localStorage["r_int"] : DEFAULT_R_INT;
-	
+	hue = localStorage.hasOwnProperty("hue") ? localStorage["hue"] : DEFAULT_HUE;
 	// Load checkbox states and update DOM
 	asianness_on = (localStorage.hasOwnProperty("asianness") ? (localStorage["asianness"] != 0) : true);
 	refresh_enabled = (localStorage.hasOwnProperty("r_int") ? (localStorage["r_int"] != 0) : true);
@@ -130,6 +128,7 @@ $(function(){
 	$("#asianness").val(asianness_on ? asianness : 4);
 	$("#slider").val(Math.log(asianness_on ? asianness : 4));
 	$("#r_interval").val(refresh_enabled ? r_interval : 60);
+	$("#hue, #hue_slider").val(hue);
 	
 	$("#asianness_check").prop('checked', asianness_on);
 	$("#refresh_check").prop('checked', refresh_enabled);
@@ -163,7 +162,17 @@ $(function(){
 		asianness = $(this).val();
 		generate_color_table();
 		$("#slider").val(Math.log(asianness));
-	})
+	});
+	$("#hue").change(function () {
+		hue = $(this).val();
+		generate_color_table();
+		$("#hue_slider").val(hue);
+	});
+	$("#hue_slider").change(function () {
+		hue = parseFloat($(this).val());
+		generate_color_table();
+		$("#hue").val(hue);
+	});
 	
 	// save
 	$("#save").click(function() {
@@ -173,6 +182,7 @@ $(function(){
 		// actually save
 		var new_asianness = parseFloat($("#asianness").val());
 		var new_r_int = parseFloat($("#r_interval").val());
+		var new_hue = parseFloat($("#hue").val());
 		
 		validator = new Validator();
 		
@@ -188,6 +198,12 @@ $(function(){
 			localStorage.setItem("r_int", $("#refresh_check").prop('checked') ? val.toString() : 0);
 		}, function (val) {
 			show_error($("#r_interval"), "Refresh interval must be a (positive) number!");
+		}).add(new_hue, function (val) {
+			return !(isNaN(val) || (val < 0) || (val > 1));
+		}, function (val) {
+			localStorage.setItem("hue", val.toString());
+		}, function (val) {
+			show_error($("#hue"), "Hue must be between 0 and 1.");
 		}).validate();
 		
 		if (!validator.isValid) return false;
