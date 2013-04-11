@@ -1,4 +1,4 @@
-var asianness, hue;
+var asianness, hue, shadowMax = false;
 
 // handlers
 function login(uname, pass, studentid) {
@@ -177,7 +177,6 @@ function loadClassGrades(data) {
 }
 
 // globals
-var shadowMax = false;
 
 // throttle, used for scrolling
 function throttle(ms, callback) {
