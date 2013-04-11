@@ -1,14 +1,3 @@
-hac.js
-
-- HAC
-	- login
-	- update
-	- processUpdatedGrades
-	- processUpdatedClassGrades
-	- logout
-	- loadClassGrades
-	- throttle
-
 remote.js
 	- rot13
 	- b64enc
@@ -42,3 +31,22 @@ hac_dom.js
 	- makeUpdateText
 	- _notify2
 	- _notify
+
+hac.js
+
+- HAC
+	- login
+	- update
+	- processUpdatedGrades
+	- processUpdatedClassGrades
+	- logout
+	- loadClassGrades
+	- throttle
+
+options.js
+	- generate_color_table
+	- getVersion
+	- show_error
+	- Validator
+		- add
+		- validate
