@@ -1,3 +1,7 @@
+var DEFAULT_ASIANNESS = 4;
+var DEFAULT_R_INT = 60;
+var DEFAULT_HUE = 0;
+
 // parsing and creating DOMs
 var HAC_HTML =
 {
@@ -193,7 +197,9 @@ var HAC_HTML =
 		var root = document.createDocumentFragment();
 
 		var title = document.createElement("h3");
-		$(title).addClass("ClassName").html(json.title);
+		var loadingGif = document.createElement("img");
+		$(loadingGif).attr("src", "assets/loading.png").addClass("loading").css("margin-left", "8px");
+		$(title).addClass("ClassName").html(json.title).append(loadingGif);
 		$(root).append(title);
 
 		var currAvg = document.createElement("p");
@@ -251,11 +257,14 @@ var HAC_HTML =
 
 				var ptsEarned = document.createElement("td");
 				var pts = json.cats[i].grades[j].ptsEarned;
+				var ptsIsNaN = isNaN(pts) || pts == null;
+				if (ptsIsNaN)
+					json.cats[i].grades[j].ptsEarned = NaN;
 				$(ptsEarned).addClass("AssignmentGrade")
-					.text(isNaN(pts) ? "" : pts).data("editing", "0")
-					.css('background', HAC_HTML.colorize(pts * 100 / json.cats[i].grades[j].ptsPoss))
-					.data("orig", isNaN(pts) ? "" : pts)
-					.attr("title", "Original grade: " + (isNaN(pts) ? "none" : pts))
+					.text(ptsIsNaN ? "" : pts).data("editing", "0")
+					.css('background', ptsIsNaN ? "#FFF" : HAC_HTML.colorize(pts * 100 / json.cats[i].grades[j].ptsPoss))
+					.data("orig", ptsIsNaN ? "" : pts)
+					.attr("title", "Original grade: " + (ptsIsNaN ? "none" : pts))
 					.click(function() {
 						if ($(this).data("editing") == "0") {
 							var editor = document.createElement("input");
@@ -285,7 +294,7 @@ var HAC_HTML =
 
 				$(catTableBody).append(gradeRow);
 
-				if (!isNaN(pts) && json.cats[i].grades[j].note.indexOf("Dropped") == -1)
+				if (!ptsIsNaN && json.cats[i].grades[j].note.indexOf("Dropped") == -1)
 					if (json.cats[i].is100Pt)
 						percentiles.push(json.cats[i].grades[j].ptsEarned / json.cats[i].grades[j].ptsPoss);
 					else {
@@ -300,8 +309,11 @@ var HAC_HTML =
 
 			var avgCell = document.createElement("td");
 			var avg = (percentiles.length == 0 ? NaN :
-				percentiles.reduce(function(a,b){return a+b;}) * 100 /
-				(json.cats[i].is100Pt ? percentiles.length : total));
+				percentiles.reduce(function (a,b)
+					{
+						return (isNaN(a) ? 0 : a) + (isNaN(b) ? 0 : b);
+					}) * 100 /
+					(json.cats[i].is100Pt ? percentiles.length : total));
 			$(avgCell).css({'fontWeight': 'bold', 'background': HAC_HTML.colorize(avg)})
 				.html(isNaN(avg) ? "" : Math.round(avg * 100) / 100)
 				.addClass("CategoryAverage");
@@ -484,7 +496,7 @@ var HAC_HTML =
 
 		// show subject average
 		var semColor = HAC_HTML.colorize(semAvg);
-		$(semAvgCell).text(Math.round(semAvg))
+		$(semAvgCell).text(Math.round(Math.round(semAvg * 10000) / 10000)) // FP roundoff error compensation
 			.css({"background-color": semColor,
 				"box-shadow": semColor + " 0px 0px 4px"});
 
@@ -498,7 +510,7 @@ var HAC_HTML =
 
 	colorize: function(grade) {
 		// color is only for numerical grades
-		if (isNaN(parseInt(grade))) return "#FFF";
+		if (isNaN(parseInt(grade)) || grade == null) return "#FFF";
 
 		// interpolate a hue gradient and convert to rgb
 		var h, s, v, r, g, b;
@@ -518,6 +530,11 @@ var HAC_HTML =
 			v = 0.86944 + h;
 		}
 
+		// apply hue transformation
+		h += hue;
+		h %= 1;
+		if (h < 0) h += 1;
+
 		// convert to rgb: http://goo.gl/J9ra3
 		var i = Math.floor(h * 6);
 	    var f = h * 6 - i;
@@ -525,16 +542,16 @@ var HAC_HTML =
 	    var q = v * (1 - f * s);
 	    var t = v * (1 - (1 - f) * s);
 
-	    switch(i % 6){
-	        case 0: r = v, g = t, b = p; break;
-	        case 1: r = q, g = v, b = p; break;
-	        case 2: r = p, g = v, b = t; break;
-	        case 3: r = p, g = q, b = v; break;
-	        case 4: r = t, g = p, b = v; break;
-	        case 5: r = v, g = p, b = q; break;
-	    }
+			switch(i % 6){
+				case 0: r = v, g = t, b = p; break;
+				case 1: r = q, g = v, b = p; break;
+				case 2: r = p, g = v, b = t; break;
+				case 3: r = p, g = q, b = v; break;
+				case 4: r = t, g = p, b = v; break;
+				case 5: r = v, g = p, b = q; break;
+			}
 
-	    return "rgb(" + parseInt(r * 255) + "," + parseInt(g * 255) + "," + parseInt(b * 255) + ")";
+			return "rgb(" + parseInt(r * 255) + "," + parseInt(g * 255) + "," + parseInt(b * 255) + ")";
 	},
 
 	compare_grades: function(oldgrade, newgrade, on_notify) {

@@ -12,11 +12,11 @@ body {
 	cursor: default;
 }
 
-body.busy #grades, body.busy #classgrades {
+/*body.busy #grades, body.busy #classgrades {
 	opacity: 0.5;
 	-webkit-transition: opacity 0.2s linear;
 	-webkit-user-select: none;
-}
+}*/
 
 body.logged_in {
 	width: 600px;

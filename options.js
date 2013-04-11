@@ -1,6 +1,4 @@
-var asianness, r_interval;
-var DEFAULT_ASIANNESS = 4;
-var DEFAULT_R_INT = 60;
+var asianness, r_interval, hue;
 
 function generate_color_table() {
 	var table = document.createElement("table");
@@ -99,10 +97,12 @@ $(function(){
 	// load
 	asianness = localStorage.hasOwnProperty("asianness") ? localStorage["asianness"] : DEFAULT_ASIANNESS;
 	r_interval = localStorage.hasOwnProperty("r_int") ? localStorage["r_int"] : DEFAULT_R_INT;
+	hue = localStorage.hasOwnProperty("hue") ? localStorage["hue"] : DEFAULT_HUE;
 	
 	$("#asianness").val(asianness);
 	$("#slider").val(Math.log(asianness));
 	$("#r_interval").val(r_interval);
+	$("#hue, #hue_slider").val(hue);
 	
 	generate_color_table();
 
@@ -119,7 +119,17 @@ $(function(){
 		asianness = $(this).val();
 		generate_color_table();
 		$("#slider").val(Math.log(asianness));
-	})
+	});
+	$("#hue").change(function () {
+		hue = $(this).val();
+		generate_color_table();
+		$("#hue_slider").val(hue);
+	});
+	$("#hue_slider").change(function () {
+		hue = parseFloat($(this).val());
+		generate_color_table();
+		$("#hue").val(hue);
+	});
 	
 	// save
 	$("#save").click(function() {
@@ -129,6 +139,7 @@ $(function(){
 		// actually save
 		var new_asianness = parseFloat($("#asianness").val());
 		var new_r_int = parseFloat($("#r_interval").val());
+		var new_hue = parseFloat($("#hue").val());
 		
 		validator = new Validator();
 		
@@ -144,6 +155,12 @@ $(function(){
 			localStorage.setItem("r_int", val.toString());
 		}, function (val) {
 			show_error($("#r_interval"), "Refresh interval must be a (positive) number!");
+		}).add(new_hue, function (val) {
+			return !(isNaN(val) || (val < 0) || (val > 1));
+		}, function (val) {
+			localStorage.setItem("hue", val.toString());
+		}, function (val) {
+			show_error($("#hue"), "Hue must be between 0 and 1.");
 		}).validate();
 		
 		if (!validator.isValid) return false;
