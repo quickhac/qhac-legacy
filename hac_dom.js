@@ -534,7 +534,11 @@ var HAC_HTML =
 	        case 5: r = v, g = p, b = q; break;
 	    }
 
-	    return "rgb(" + parseInt(r * 255) + "," + parseInt(g * 255) + "," + parseInt(b * 255) + ")";
+		if(asianness_on == true) {
+	    	return "rgb(" + parseInt(r * 255) + "," + parseInt(g * 255) + "," + parseInt(b * 255) + ")";
+	    } else {
+	    	return "transparent";
+	    } 
 	},
 
 	compare_grades: function(oldgrade, newgrade, on_notify) {

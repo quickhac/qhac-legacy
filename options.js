@@ -1,4 +1,5 @@
 var asianness, r_interval;
+var asianness_on, refresh_enabled;
 var DEFAULT_ASIANNESS = 4;
 var DEFAULT_R_INT = 60;
 
@@ -94,6 +95,23 @@ Validator.prototype.validate = function () {
 	return this;
 };
 
+// Updates options DOM — disables animation if passed true, animates otherwise.
+function update_options_dom(isLoading) {
+	if($("#asianness_check").prop('checked')) {
+		$("#asianness").parent().fadeIn(isLoading ? 0 : 500);
+		$("#asianness_wrap").fadeIn(isLoading ? 0 : 500);		
+	} else {
+		$("#asianness").parent().fadeOut(isLoading ? 0 : 500);
+		$("#asianness_wrap").fadeOut(isLoading ? 0 : 500);		
+	}
+	
+	if($("#refresh_check").prop('checked')) {
+		$("#r_interval").parent().fadeIn(isLoading ? 0 : 500);
+	} else {
+		$("#r_interval").parent().fadeOut(isLoading ? 0 : 500);		
+	}
+}
+
 // events and stuff
 $(function(){
 	// load
@@ -104,11 +122,28 @@ $(function(){
 	$("#slider").val(Math.log(asianness));
 	$("#r_interval").val(r_interval);
 	
+	// Load checkbox states and update DOM (note the boolean conversion magic)
+	asianness_on = ((localStorage.hasOwnProperty("asianness_on") ? localStorage["asianness_on"] : true) === "true");
+	refresh_enabled = ((localStorage.hasOwnProperty("refresh_on") ? localStorage["refresh_on"] : true) === "true");
+	
+	$("#asianness_check").prop('checked', asianness_on);
+	$("#refresh_check").prop('checked', refresh_enabled);
+	
 	generate_color_table();
 
 	getVersion(function(v) {
 		$("#version").text("version " + v);
 	});
+	
+	$("#asianness_check").change(function () {
+		update_options_dom(false);
+	});
+	
+	$("#refresh_check").change(function () {
+		update_options_dom(false);
+	});
+	
+	update_options_dom(true);
 	
 	$("#slider").change(function () {
 		asianness = Math.exp(parseFloat($(this).val()));
@@ -147,6 +182,9 @@ $(function(){
 		}).validate();
 		
 		if (!validator.isValid) return false;
+		
+		localStorage.setItem("asianness_on", $("#asianness_check").prop('checked').toString());
+		localStorage.setItem("refresh_on", $("#refresh_check").prop('checked').toString());
 		
 		$("#save_msg").addClass('visible');
 		window.setTimeout(function() {
