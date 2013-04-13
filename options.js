@@ -100,9 +100,11 @@ function update_options_dom(isLoading) {
 	if($("#asianness_check").prop('checked')) {
 		$("#asianness").parent().fadeIn(isLoading ? 0 : 500);
 		$("#asianness_wrap").fadeIn(isLoading ? 0 : 500);		
+		asianness_on = true;
 	} else {
 		$("#asianness").parent().fadeOut(isLoading ? 0 : 500);
 		$("#asianness_wrap").fadeOut(isLoading ? 0 : 500);		
+		asianness_on = false;	
 	}
 	
 	if($("#refresh_check").prop('checked')) {
@@ -123,8 +125,8 @@ $(function(){
 	$("#r_interval").val(r_interval);
 	
 	// Load checkbox states and update DOM (note the boolean conversion magic)
-	asianness_on = ((localStorage.hasOwnProperty("asianness_on") ? localStorage["asianness_on"] : true) === "true");
-	refresh_enabled = ((localStorage.hasOwnProperty("refresh_on") ? localStorage["refresh_on"] : true) === "true");
+	asianness_on = (localStorage.hasOwnProperty("asianness") ? (localStorage["asianness"] != 0) : true);
+	refresh_enabled = (localStorage.hasOwnProperty("r_int") ? (localStorage["r_int"] != 0) : true);
 	
 	$("#asianness_check").prop('checked', asianness_on);
 	$("#refresh_check").prop('checked', refresh_enabled);
@@ -137,6 +139,9 @@ $(function(){
 	
 	$("#asianness_check").change(function () {
 		update_options_dom(false);
+	
+		// force re-draw of table for asianness enable/disable changes
+		generate_color_table();
 	});
 	
 	$("#refresh_check").change(function () {
@@ -170,21 +175,18 @@ $(function(){
 		validator.add(new_asianness, function (val) {
 			return !isNaN(val);
 		}, function (val) {
-			localStorage.setItem("asianness", val.toString());
+			localStorage.setItem("asianness", $("#asianness_check").prop('checked') ? val.toString() : 0);
 		}, function (val) {
 			show_error($("#asianness"), "Asianness level must be a number!");
 		}).add(new_r_int, function (val) {
 			return !(isNaN(val) || (val < 0));
 		}, function (val) {
-			localStorage.setItem("r_int", val.toString());
+			localStorage.setItem("r_int", $("#refresh_check").prop('checked') ? val.toString() : 0);
 		}, function (val) {
 			show_error($("#r_interval"), "Refresh interval must be a (positive) number!");
 		}).validate();
 		
 		if (!validator.isValid) return false;
-		
-		localStorage.setItem("asianness_on", $("#asianness_check").prop('checked').toString());
-		localStorage.setItem("refresh_on", $("#refresh_check").prop('checked').toString());
 		
 		$("#save_msg").addClass('visible');
 		window.setTimeout(function() {

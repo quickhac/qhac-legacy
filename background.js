@@ -4,7 +4,7 @@ var theInterval;
 function silent_update() {
 	HAC.get_gradesHTML_direct(localStorage['url'], function(doc) {
 		// should this even continue?
-		if (localStorage["r_int"] == 0 || (!localStorage.hasOwnProperty("refresh_on") || (localStorage["refresh_on"] === "false")) {
+		if (localStorage["r_int"] == 0) {
 			window.clearInterval(theInterval);
 			return;
 		}
@@ -29,7 +29,7 @@ $(function() {
 	// get interval
 	var r_int = localStorage["r_int"];
 	if (r_int == undefined) r_int = 60;
-	else if (r_int == 0 || (!localStorage.hasOwnProperty("refresh_on") || (localStorage["refresh_on"] === "false")) return;
+	else if (r_int == 0) return;
 
 	// set interval
 	theInterval = window.setInterval(silent_update, r_int * 60000);
