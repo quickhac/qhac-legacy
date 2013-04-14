@@ -1,5 +1,9 @@
 # Changelog
 
+### 1.2.7
+
+* Add developer credit to Tristan Seifert (oops!)
+
 ### 1.2.6
 
 * Add checkboxes to options page for more intuitive disabling of grade colorization and automatic refresh
