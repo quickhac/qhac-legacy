@@ -1,5 +1,11 @@
 # Changelog
 
+### 1.2.6
+
+* Add checkboxes to options page for more intuitive disabling of grade colorization and automatic refresh
+* Add link to survey
+* Refactor ad generation code
+
 ### 1.2.5
 
 * Add tooltip showing original grade when editing a grade (via tipsy)
