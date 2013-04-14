@@ -197,9 +197,8 @@ $(function(){
 	// asianness
 	asianness = localStorage.getItem("asianness");
 	if ((asianness == null) || (isNaN(asianness))) asianness = DEFAULT_ASIANNESS;
-
 	asianness_on = ((localStorage.hasOwnProperty("asianness_on") ? localStorage["asianness_on"] : true) === "true");
-
+	
 	// hue
 	hue = parseFloat(localStorage.getItem("hue"));
 	if ((hue == null) || isNaN(hue)) hue = DEFAULT_HUE;
