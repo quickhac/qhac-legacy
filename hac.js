@@ -1,4 +1,4 @@
-var asianness;
+var asianness, asianness_on;
 
 // handlers
 function login(uname, pass, studentid) {
@@ -168,6 +168,8 @@ $(function(){
 	// asianness
 	asianness = localStorage.getItem("asianness");
 	if ((asianness == null) || (isNaN(asianness))) asianness = 4;
+	
+	asianness_on = ((localStorage.hasOwnProperty("asianness_on") ? localStorage["asianness_on"] : true) === "true");
 
 	// handlers
 	$("#login_form").submit(function(e) {

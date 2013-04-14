@@ -1,4 +1,5 @@
 var asianness, r_interval;
+var asianness_on, refresh_enabled;
 var DEFAULT_ASIANNESS = 4;
 var DEFAULT_R_INT = 60;
 
@@ -94,15 +95,44 @@ Validator.prototype.validate = function () {
 	return this;
 };
 
+// Updates options DOM — disables animation if passed true, animates otherwise.
+function update_options_dom(doAnimation) {
+	if($("#asianness_check").prop('checked')) {
+		$("#asianness").parent().slideDown(doAnimation ? 0 : 500);
+		$("#asianness_wrap").slideDown(doAnimation ? 0 : 500);		
+		asianness_on = true;
+		asianness = $("#asianness").val();
+	} else {
+		$("#asianness").parent().slideUp(doAnimation ? 0 : 500);
+		$("#asianness_wrap").slideUp(doAnimation ? 0 : 500);		
+		asianness_on = false;
+	}
+	
+	if($("#refresh_check").prop('checked')) {
+		$("#r_interval").parent().slideDown(doAnimation ? 0 : 500);
+		r_int = $("#r_interval").val();
+	} else {
+		$("#r_interval").parent().slideUp(doAnimation ? 0 : 500);		
+	}
+}
+
 // events and stuff
 $(function(){
 	// load
 	asianness = localStorage.hasOwnProperty("asianness") ? localStorage["asianness"] : DEFAULT_ASIANNESS;
 	r_interval = localStorage.hasOwnProperty("r_int") ? localStorage["r_int"] : DEFAULT_R_INT;
 	
-	$("#asianness").val(asianness);
-	$("#slider").val(Math.log(asianness));
-	$("#r_interval").val(r_interval);
+	// Load checkbox states and update DOM
+	asianness_on = (localStorage.hasOwnProperty("asianness") ? (localStorage["asianness"] != 0) : true);
+	refresh_enabled = (localStorage.hasOwnProperty("r_int") ? (localStorage["r_int"] != 0) : true);
+	
+	// update spinbox values (use default values if previously disabled)
+	$("#asianness").val(asianness_on ? asianness : 4);
+	$("#slider").val(Math.log(asianness_on ? asianness : 4));
+	$("#r_interval").val(refresh_enabled ? r_interval : 60);
+	
+	$("#asianness_check").prop('checked', asianness_on);
+	$("#refresh_check").prop('checked', refresh_enabled);
 	
 	generate_color_table();
 
@@ -110,6 +140,20 @@ $(function(){
 		$("#version").text("version " + v);
 	});
 	
+	$("#asianness_check").change(function () {
+		update_options_dom(false);
+	
+		// force re-draw of table for asianness enable/disable changes
+		generate_color_table();
+	});
+	
+	$("#refresh_check").change(function () {
+		update_options_dom(false);
+	});
+	
+	update_options_dom(true);
+	
+	// slider change events
 	$("#slider").change(function () {
 		asianness = Math.exp(parseFloat($(this).val()));
 		generate_color_table();
@@ -135,13 +179,13 @@ $(function(){
 		validator.add(new_asianness, function (val) {
 			return !isNaN(val);
 		}, function (val) {
-			localStorage.setItem("asianness", val.toString());
+			localStorage.setItem("asianness", $("#asianness_check").prop('checked') ? val.toString() : 0);
 		}, function (val) {
 			show_error($("#asianness"), "Asianness level must be a number!");
 		}).add(new_r_int, function (val) {
 			return !(isNaN(val) || (val < 0));
 		}, function (val) {
-			localStorage.setItem("r_int", val.toString());
+			localStorage.setItem("r_int", $("#refresh_check").prop('checked') ? val.toString() : 0);
 		}, function (val) {
 			show_error($("#r_interval"), "Refresh interval must be a (positive) number!");
 		}).validate();

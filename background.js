@@ -1,5 +1,5 @@
 // the main updating function
-var theInterval;
+var theInterval, cached_refresh_interval;
 
 function silent_update() {
 	HAC.get_gradesHTML_direct(localStorage['url'], function(doc) {
@@ -8,6 +8,7 @@ function silent_update() {
 			window.clearInterval(theInterval);
 			return;
 		}
+
 		// compare
 		var doc_json = HAC_HTML.html_to_jso(doc);
 		HAC_HTML.compare_grades(JSON.parse(localStorage["grades"]), doc_json, function () {
@@ -18,9 +19,16 @@ function silent_update() {
 
 			chrome.browserAction.setBadgeText({"text": text.toString(10)});
 		});
+
 		// store
 		localStorage.setItem("grades", JSON.stringify(doc_json));
 		Updater.set_updated();
+
+		// reset interval if changed
+		if (cached_refresh_interval != localStorage["r_int"]) {
+			window.clearInterval(theInterval);
+			theInterval = window.setInterval(silent_update, localStorage["r_int"]);
+		}
 	});
 }
 
@@ -30,6 +38,8 @@ $(function() {
 	var r_int = localStorage["r_int"];
 	if (r_int == undefined) r_int = 60;
 	else if (r_int == 0) return;
+
+	cached_refresh_interval = r_int;
 
 	// set interval
 	theInterval = window.setInterval(silent_update, r_int * 60000);

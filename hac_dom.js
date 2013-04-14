@@ -500,6 +500,9 @@ var HAC_HTML =
 		// color is only for numerical grades
 		if (isNaN(parseInt(grade))) return "#FFF";
 
+		// Makes sure asianness cannot be negative
+		var asianness_limited = Math.max(0, asianness);
+
 		// interpolate a hue gradient and convert to rgb
 		var h, s, v, r, g, b;
 
@@ -513,8 +516,8 @@ var HAC_HTML =
 			s = 1;
 			v = 0.86944;
 		} else {
-			h = Math.min(0.25 * Math.pow(grade / 100, asianness), 0.13056);
-			s = 1 - Math.pow(grade / 100, asianness * 2);
+			h = Math.min(0.25 * Math.pow(grade / 100, asianness_limited), 0.13056);
+			s = 1 - Math.pow(grade / 100, asianness_limited * 2);
 			v = 0.86944 + h;
 		}
 
@@ -534,7 +537,7 @@ var HAC_HTML =
 	        case 5: r = v, g = p, b = q; break;
 	    }
 
-	    return "rgb(" + parseInt(r * 255) + "," + parseInt(g * 255) + "," + parseInt(b * 255) + ")";
+    	return "rgb(" + parseInt(r * 255) + "," + parseInt(g * 255) + "," + parseInt(b * 255) + ")";
 	},
 
 	compare_grades: function(oldgrade, newgrade, on_notify) {
