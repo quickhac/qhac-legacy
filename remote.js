@@ -82,49 +82,63 @@ var HAC =
 		var wrapper = document.createElement("div");
 		$(wrapper).attr("id", "ad_wrapper");
 
+		// survey
+		if (localStorage["ad_3"] != "no")
+			return HAC.generate_ad_inner(
+				"We value your feedback! Take our survey &raquo;",
+				"https://docs.google.com/forms/d/1VcjEbLuRL1AwNE7sXmJ003uM0KJ8bpW_Ev31nII_s1A/viewform",
+				"3");
+
 		// workaround for scrolling
-		if ((window.navigator.appVersion.indexOf("OS X 10_8") != -1) && (localStorage["ad_2"] != "no")) {
-			var wrapper = document.createElement("div");
-			$(wrapper).attr("id", "ad_wrapper");
+		if ((window.navigator.appVersion.indexOf("OS X 10") != -1) && (localStorage["ad_2"] != "no"))
+			return HAC.generate_ad_inner(
+				"Using OS X? Scrolling might not work. Here's a fix. &raquo;",
+				"", "2");
 
-			var ad = document.createElement("a");
-			$(ad).attr("id", "ad")
-				.click(function(){chrome.tabs.create({"url": "https://hacaccess.herokuapp.com/qhac/ml-fix"})})
-				.html("Using Mountain Lion? Scrolling might not work. Here's a fix. &raquo;");
-			$(wrapper).append(ad);
+		// edit grade banner
+		if (localStorage["ad_1"] != "no")
+			return HAC.generate_ad_inner(
+				"New in 1.2: Edit grades locally. Click on any assignment grade to get started!",
+				"", "1");
 
-			var hideAd = document.createElement("a");
-			$(hideAd).attr("id", "hide_ad").attr("href", "#")
-				.html("&times;").click(function() {
-					// _gaq.push(['_trackEvent', '...', 'Hide Link']);
-					$("#ad_wrapper").remove();
-					localStorage.setItem("ad_2", "no");
-				});
-			$(wrapper).append(hideAd);
+		return document.createDocumentFragment();
+	},
 
-			return wrapper;
+	generate_ad_inner: function(text, url, id) {
+		var wrapper = document.createElement("div");
+		wrapper.setAttribute("id", "ad_wrapper");
+
+		// create main ad
+		var ad;
+		if (url == "") {
+			ad = document.createElement("span");
+			$(ad).attr("id", "ad").html(text);
+		} else {
+			ad = document.createElement("a");
+			$(ad).attr("id", "ad").data("label", id)
+				.click(function() {
+					chrome.tabs.create({"url": url});
+					var label = $(this).data("label");
+					if (label != "")
+						_gaq.push(['_trackEvent', 'Ad', 'Follow ' + label]);
+				})
+				.html(text);
 		}
+		wrapper.appendChild(ad);
 
-		if (localStorage["ad_1"] == "no")
-			return document.createDocumentFragment();
-
-		var ad = document.createElement("span");
-		$(ad).attr("id", "ad")
-			.html("New in 1.2: Edit grades locally. Click on any assignment grade to get started!");
-		$(wrapper).append(ad);
-
+		// create link to hide ad
 		var hideAd = document.createElement("a");
-		$(hideAd).attr("id", "hide_ad").attr("href", "#")
+		$(hideAd).attr({"id": "hide_ad", "href": "#"}).data("label", id)
 			.html("&times;").click(function() {
-				// _gaq.push(['_trackEvent', '...', 'Hide Link']);
+				var label = $(this).data("label");
+				if (label != "")
+					_gaq.push(['_trackEvent', 'Ad', 'Hide ' + label]);
 				$("#ad_wrapper").remove();
-				localStorage.setItem("ad_1", "no");
+				localStorage.setItem("ad_" + label, "no");
 			});
-		$(wrapper).append(hideAd);
+		wrapper.appendChild(hideAd);
 
 		return wrapper;
-
-		// return document.createDocumentFragment();
 	}
 }
 
