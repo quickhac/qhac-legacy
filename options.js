@@ -96,21 +96,23 @@ Validator.prototype.validate = function () {
 };
 
 // Updates options DOM — disables animation if passed true, animates otherwise.
-function update_options_dom(isLoading) {
+function update_options_dom(doAnimation) {
 	if($("#asianness_check").prop('checked')) {
-		$("#asianness").parent().fadeIn(isLoading ? 0 : 500);
-		$("#asianness_wrap").fadeIn(isLoading ? 0 : 500);		
+		$("#asianness").parent().slideDown(doAnimation ? 0 : 500);
+		$("#asianness_wrap").slideDown(doAnimation ? 0 : 500);		
 		asianness_on = true;
+		asianness = $("#asianness").val();
 	} else {
-		$("#asianness").parent().fadeOut(isLoading ? 0 : 500);
-		$("#asianness_wrap").fadeOut(isLoading ? 0 : 500);		
-		asianness_on = false;	
+		$("#asianness").parent().slideUp(doAnimation ? 0 : 500);
+		$("#asianness_wrap").slideUp(doAnimation ? 0 : 500);		
+		asianness_on = false;
 	}
 	
 	if($("#refresh_check").prop('checked')) {
-		$("#r_interval").parent().fadeIn(isLoading ? 0 : 500);
+		$("#r_interval").parent().slideDown(doAnimation ? 0 : 500);
+		r_int = $("#r_interval").val();
 	} else {
-		$("#r_interval").parent().fadeOut(isLoading ? 0 : 500);		
+		$("#r_interval").parent().slideUp(doAnimation ? 0 : 500);		
 	}
 }
 
@@ -120,13 +122,14 @@ $(function(){
 	asianness = localStorage.hasOwnProperty("asianness") ? localStorage["asianness"] : DEFAULT_ASIANNESS;
 	r_interval = localStorage.hasOwnProperty("r_int") ? localStorage["r_int"] : DEFAULT_R_INT;
 	
-	$("#asianness").val(asianness);
-	$("#slider").val(Math.log(asianness));
-	$("#r_interval").val(r_interval);
-	
-	// Load checkbox states and update DOM (note the boolean conversion magic)
+	// Load checkbox states and update DOM
 	asianness_on = (localStorage.hasOwnProperty("asianness") ? (localStorage["asianness"] != 0) : true);
 	refresh_enabled = (localStorage.hasOwnProperty("r_int") ? (localStorage["r_int"] != 0) : true);
+	
+	// update spinbox values (use default values if previously disabled)
+	$("#asianness").val(asianness_on ? asianness : 4);
+	$("#slider").val(Math.log(asianness_on ? asianness : 4));
+	$("#r_interval").val(refresh_enabled ? r_interval : 60);
 	
 	$("#asianness_check").prop('checked', asianness_on);
 	$("#refresh_check").prop('checked', refresh_enabled);
@@ -150,6 +153,7 @@ $(function(){
 	
 	update_options_dom(true);
 	
+	// slider change events
 	$("#slider").change(function () {
 		asianness = Math.exp(parseFloat($(this).val()));
 		generate_color_table();
