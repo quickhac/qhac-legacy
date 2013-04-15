@@ -127,9 +127,9 @@ $(function(){
 	refresh_enabled = (localStorage.hasOwnProperty("r_int") ? (localStorage["r_int"] != 0) : true);
 	
 	// update spinbox values (use default values if previously disabled)
-	$("#asianness").val(asianness_on ? asianness : 4);
-	$("#slider").val(Math.log(asianness_on ? asianness : 4));
-	$("#r_interval").val(refresh_enabled ? r_interval : 60);
+	$("#asianness").val(asianness_on ? asianness : DEFAULT_ASIANNESS);
+	$("#slider").val(Math.log(asianness_on ? asianness : DEFAULT_ASIANNESS));
+	$("#r_interval").val(refresh_enabled ? r_interval : DEFAULT_R_INT);
 	
 	$("#asianness_check").prop('checked', asianness_on);
 	$("#refresh_check").prop('checked', refresh_enabled);
