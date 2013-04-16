@@ -176,7 +176,18 @@ function loadClassGrades(data) {
 	});
 }
 
-// globals
+// password protection
+function lock() {
+	$(document.body).addClass("locked").removeClass("logged_in");
+}
+
+function unlock(password) {
+	var hashedInput = CryptoJS.SHA512(password).toString();
+	if (hashedInput == localStorage["password"])
+		$(document.body).removeClass("locked");
+	else
+		$("#restricted_error").text("Incorrect password.").slideDown();
+}
 
 // throttle, used for scrolling
 function throttle(ms, callback) {
@@ -217,6 +228,12 @@ $(function(){
 	$("#do_direct_access").click(function() { update($("#direct_url").val()); });
 	$("#do_options").click(function() { chrome.tabs.create({url: "options.html"}); });
 	$("#do_logout").click(logout);
+	$("#do_close").click(function() {
+		// remove popup by selecting the tab
+		chrome.tabs.getSelected(null, function(tab) {
+			chrome.tabs.update(tab.id, { selected: true } )
+		});
+	});
 
 	// fill in form
 	try {
@@ -261,6 +278,16 @@ $(function(){
 		$("#lastupdated").html(Updater.get_update_text());
 		// bug: body won't scroll if the "logged_in" class is added immediately
 		window.setTimeout(function(){ $(document.body).addClass("logged_in"); }, 100);
+	}
+
+	// password protection
+	if (localStorage.hasOwnProperty("password") && localStorage["password"] != "") {
+		lock();
+		$("#restricted_access").submit(function(e) {
+			e.preventDefault();
+			unlock($("#unlocker").val());
+			return false;
+		});
 	}
 });
 
