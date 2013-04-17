@@ -18,45 +18,44 @@
 				<h2>QuickHAC Settings</h2>				
 
 				<p class="toggler">
-					<input type="checkbox" id="asianness_check" name="asianness_check">
 					<label for="asianness_check">Enable Grade Colorization</label>
+					<input type="checkbox" id="asianness_check" name="asianness_check" />
 				</p>
-				<p class="toggleFeature">Asianness level: <input type="number" id="asianness" name="asianness" min="0"></p>
+				<div id="colorization" class="togglebox">
+					<p class="toggleFeature">Asianness level: <input type="number" id="asianness" name="asianness" min="0"></p>
 
-				<hr>
+					<p class="toggleFeature">Hue: <input type="number" id="hue" name="hue" min="0" max="360" step="30"></p>
+					<p class="info">Enter 0 to return to default</p>
+				</div>
 
 				<p class="toggler">
-					<input type="checkbox" id="refresh_check" name="refresh_check">
 					<label for="refresh_check">Enable Automatic Refresh</label>
+					<input type="checkbox" id="refresh_check" name="refresh_check" />
 				</p>
-				<p class="toggleFeature">Refresh interval (mins): <input type="number" id="r_interval" name="r_interval" min="0"></p>
-
-				<hr>
-
-				<p>Hue: <input type="number" id="hue" name="hue"></p>
-				<p class="info">Enter 0 to return to default</p>
-
-				<hr>
+				<div class="togglebox" id="refresh_opts">
+					<p class="toggleFeature">Refresh interval (mins): <input type="number" id="r_interval" name="r_interval" min="0"></p>
+				</div>
 
 				<p class="toggler">
-					<input type="checkbox" id="password_check" name="password_check">
 					<label for="password_check">Enable Password Protection</label>
+					<input type="checkbox" id="password_check" name="password_check" />
 				</p>
-				<p class="toggleFeature"><button id="change_password">Change password&hellip;</button><input type="hidden" id="the_password" name="the_password"></p>
-
-				<hr>
+				<div class="togglebox" id="pass_opts">
+					<p class="toggleFeature"><button id="change_password">Change password&hellip;</button><input type="hidden" id="the_password" name="the_password" /></p>
+					<p class="info">To reset your password, you must log in again with your HAC username and password. Please note that this will reset all your settings as well.</p>
+				</div>
 
 				<p id="save_btn_container"><span class="info" id="save_msg">Saved!</span> <button id="save" class="orange_button">Save Options</button></p>
 				
 			</div>
-			<h3>Grade gradient (Asianness) scale:</h3>
-			<p style="text-align:justify">Grades in qHAC are colored in according to their grade. The amount of color indicates how bad the grade is. This allows for you to be able to pick out bad grades at a glance and quickly figure out what you need to improve. You can control the threshold for the colorization of grades by adjusting the Asianness level. The default, 4, gives you light yellow for the 90s, light orange for the 80s, orange for the 70s, dark orange for the 60s, and crimson red for anything below. You can adjust the threshold up and down according to how much you care about your grades or how colorful you want your qHAC to be.</p>
 			<div id="asianness_wrap">
+				<h3>Grade gradient (Asianness) scale:</h3>
+				<p style="text-align:justify">Grades in qHAC are colored in according to their grade. The amount of color indicates how bad the grade is. This allows for you to be able to pick out bad grades at a glance and quickly figure out what you need to improve. You can control the threshold for the colorization of grades by adjusting the Asianness level. The default, 4, gives you light yellow for the 90s, light orange for the 80s, orange for the 70s, dark orange for the 60s, and crimson red for anything below. You can adjust the threshold up and down according to how much you care about your grades or how colorful you want your qHAC to be.</p>
 				<p class="info">Asianness level:</p>
 				<p id="slider_wrapper">0 <input type="range" min="0" max="2.5" step="0.1" id="slider" /> 12.182</p>
 				<h3>Hue</h3>
 				<p style="text-align:justify">You can also change the colors that your grades show up as. The scale goes from red all the way back to red, going through every possible hue in the color spectrum.</p>
-				<p id="hue_slider_wrapper">0 <input type="range" min="0" max="1" step="0.00390625" id="hue_slider"> 1</p>
+				<p id="hue_slider_wrapper">0 <input type="range" min="0" max="360" step="1" id="hue_slider"> 360</p>
 				<h3>Grade Colors Preview</h3>
 				<div id="color_table"></div>
 			</div>

@@ -1,4 +1,4 @@
-var asianness, r_interval, hue, asianness_on, refresh_enabled;
+var asianness, r_interval, hue, asianness_on, refresh_enabled, hue_on;
 
 function generate_color_table() {
 	var table = document.createElement("table");
@@ -98,26 +98,47 @@ function update_options_dom(doAnimation) {
 	var anim = doAnimation ? 0 : 500;
 
 	if($("#asianness_check").prop('checked')) {
-		$("#asianness").parent().slideDown(anim);
+		$("#colorization").slideDown(anim);
 		asianness_on = true;
 		asianness = $("#asianness").val();
+
+		hue_on = true;
+		hue = $("#hue").val();
+
+		$("#asianness_check").parent().removeClass('minimized');
+
+		$("#asianness_wrap").slideDown(anim);
 	} else {
-		$("#asianness").parent().slideUp(anim);
+		$("#colorization").slideUp(anim);
 		asianness_on = false;
 		asianness = 0;
+
+		hue_on = false;
+		hue = 0;
+
+		$("#asianness_check").parent().addClass('minimized');
+
+		$("#asianness_wrap").slideUp(anim);
 	}
 	
 	if($("#refresh_check").prop('checked')) {
-		$("#r_interval").parent().slideDown(anim);
+		$("#refresh_check").parent().removeClass('minimized');
+		$("#refresh_opts").slideDown(anim);
 		r_int = $("#r_interval").val();
+		refresh_enabled = false;
 	} else {
-		$("#r_interval").parent().slideUp(anim);		
+		$("#refresh_check").parent().addClass('minimized');
+		$("#refresh_opts").slideUp(anim);
+		refresh_enabled = true;
+		r_int = 0;
 	}
 
 	if ($("#password_check").prop('checked')) {
-		$("#change_password").parent().slideDown(anim);
+		$("#password_check").parent().removeClass('minimized');
+		$("#pass_opts").slideDown(anim);
 	} else {
-		$("#change_password").parent().slideUp(anim);
+		$("#password_check").parent().addClass('minimized');
+		$("#pass_opts").slideUp(anim);
 	}
 }
 
@@ -178,7 +199,7 @@ $(function(){
 	
 	$("#asianness_check").prop('checked', asianness_on);
 	$("#refresh_check").prop('checked', refresh_enabled);
-	$("#password_check").prop('checked', !(localStorage["password"] == ""));
+	$("#password_check").prop('checked', localStorage.hasOwnProperty("password") && localStorage["password"] != "");
 	
 	generate_color_table();
 
@@ -258,14 +279,14 @@ $(function(){
 		$("#slider").val(Math.log(asianness));
 	});
 	$("#hue").change(function () {
-		hue = $(this).val();
+		hue = parseFloat($(this).val())/360;
 		generate_color_table();
-		$("#hue_slider").val(hue);
+		$("#hue_slider").val(hue*360);
 	});
 	$("#hue_slider").change(function () {
-		hue = parseFloat($(this).val());
+		hue = parseFloat($(this).val())/360;
 		generate_color_table();
-		$("#hue").val(hue);
+		$("#hue").val(hue*360);
 	});
 	
 	// save
