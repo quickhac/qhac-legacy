@@ -113,7 +113,16 @@ var HAC_HTML =
 				else if ((c == 4) || (c == 9)) classes += " semester";
 				$(cell).addClass(classes);
 				var color = HAC_HTML.colorize(parseInt(json[r].grades[c]));
-				$(cell).css({"backgroundColor": color, "box-shadow": "0px 0px 4px " + color});
+				
+				
+
+				if(asianness > 0) {
+					$(cell).css({"backgroundColor": color, "box-shadow": "0px 0px 4px " + color});
+				} else {
+					if(r%2 == 0) {
+						$(cell).css({"background": "#ffffff"});
+					}
+				}
 
 				$(row).append(cell);
 			}
