@@ -183,8 +183,11 @@ function lock() {
 
 function unlock(password) {
 	var hashedInput = CryptoJS.SHA512(password).toString();
-	if (hashedInput == localStorage["password"])
-		$(document.body).removeClass("locked");
+	if (hashedInput == localStorage["password"]) {
+		$("#restricted_access_wrapper").fadeOut(200, function () {
+			$(document.body).removeClass("locked");
+		});
+	}
 	else
 		$("#restricted_error").text("Incorrect password.").slideDown();
 }
@@ -281,7 +284,10 @@ $(function(){
 	}
 
 	// password protection
-	if (localStorage.hasOwnProperty("password") && localStorage["password"] != "") {
+	if (!localStorage.hasOwnProperty("password"))
+		localStorage["password"] = ""; // set default if not set
+	// lock if necessary
+	if (localStorage["password"] != "") {
 		lock();
 		$("#restricted_access").submit(function(e) {
 			e.preventDefault();

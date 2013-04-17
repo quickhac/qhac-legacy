@@ -137,9 +137,11 @@ function create_password_prompt(msg, callback) {
 
 	var fuzz = document.createElement("div");
 	fuzz.innerHTML = "&nbsp;";
-	$(fuzz).addClass("fuzz")
+	$(fuzz).addClass("fuzz").hide();
 
 	$(document.body).addClass("overlaid").append(fuzz);
+
+	$(fuzz).fadeIn(250);
 
 	$(modal).data("callback", callback).submit(function(e) {
 		e.preventDefault();

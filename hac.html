@@ -26,13 +26,15 @@
 			<div class="sep"></div>
 			<input type="submit" id="do_login" value="Login">
 		</form>
-		<form id="restricted_access">
-			<img id="logo_restricted" src="assets/logo.png" width="195"><br>
-			<div id="restricted_error" style="display:none;"></div>
-			<input type="password" id="unlocker" name="unlocker" placeholder="password" required>
-			<div class="sep"></div>
-			<input type="submit" id="do_unlock" value="Unlock">
-		</form>
+		<div id="restricted_access_wrapper">
+			<form id="restricted_access">
+				<img id="logo_restricted" src="assets/logo.png" width="195"><br>
+				<div id="restricted_error" style="display:none;"></div>
+				<input type="password" id="unlocker" name="unlocker" placeholder="password" required>
+				<div class="sep"></div>
+				<input type="submit" id="do_unlock" value="Unlock">
+			</form>
+		</div>
 		<div id="direct_access_form">
 			<span id="access_code_wrapper">Access code: <input id="direct_url" readonly="true"></span>
 			<img id="logo" src="assets/logo.png" height="36">

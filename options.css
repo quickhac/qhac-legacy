@@ -53,10 +53,6 @@ body {
 	background: rgba(0, 0, 0, 0.5);
 }
 
-.toggler {
-	margin-bottom: -8px;
-}
-
 .toggleFeature {
 	font-size: 14px;
 	color: #444;
