@@ -365,7 +365,3 @@ body.logged_in #grades {
 #classgrades .GradeEditor {
 	margin-right: -9001px;
 }
-
-.table_striped:nth-child(2n+1) {
-	background-color: #99ff99;
-}
