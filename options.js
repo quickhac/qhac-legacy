@@ -20,13 +20,13 @@ function generate_color_table() {
 
 // version number: http://goo.gl/QTj3c
 function getVersion(callback) {
-        var xmlhttp = new XMLHttpRequest();
-        xmlhttp.open('GET', 'manifest.json');
-        xmlhttp.onload = function (e) {
-            var manifest = JSON.parse(xmlhttp.responseText);
-            callback(manifest.version);
-        }
-        xmlhttp.send(null);
+	var xmlhttp = new XMLHttpRequest();
+	xmlhttp.open('GET', 'manifest.json');
+	xmlhttp.onload = function (e) {
+		var manifest = JSON.parse(xmlhttp.responseText);
+		callback(manifest.version);
+	}
+	xmlhttp.send(null);
 }
 
 // validation
@@ -185,7 +185,7 @@ $(function(){
 	// load
 	asianness = localStorage.hasOwnProperty("asianness") ? localStorage["asianness"] : DEFAULT_ASIANNESS;
 	r_interval = localStorage.hasOwnProperty("r_int") ? localStorage["r_int"] : DEFAULT_R_INT;
-	hue = localStorage.hasOwnProperty("hue") ? localStorage["hue"] : DEFAULT_HUE;
+	hue = localStorage.hasOwnProperty("hue") ? parseFloat(localStorage["hue"]) : DEFAULT_HUE;
 	// Load checkbox states and update DOM
 	asianness_on = (localStorage.hasOwnProperty("asianness") ? (localStorage["asianness"] != 0) : true);
 	refresh_enabled = (localStorage.hasOwnProperty("r_int") ? (localStorage["r_int"] != 0) : true);
@@ -194,7 +194,7 @@ $(function(){
 	$("#asianness").val(asianness_on ? asianness : 4);
 	$("#slider").val(Math.log(asianness_on ? asianness : 4));
 	$("#r_interval").val(refresh_enabled ? r_interval : 60);
-	$("#hue, #hue_slider").val(hue);
+	$("#hue, #hue_slider").val(hue * 360);
 	$("#the_password").val(localStorage["password"]);
 	
 	$("#asianness_check").prop('checked', asianness_on);
@@ -319,9 +319,9 @@ $(function(){
 		})
 
 		.add(new_hue, function (val) {
-			return !(isNaN(val) || (val < 0) || (val > 1));
+			return !(isNaN(val) || (val < 0) || (val > 360));
 		}, function (val) {
-			localStorage.setItem("hue", val.toString());
+			localStorage.setItem("hue", (val / 360).toString());
 		}, function (val) {
 			show_error($("#hue"), "Hue must be between 0 and 1.");
 		})

@@ -52,7 +52,7 @@ body {
 	z-index: 200;
 	background: rgba(0, 0, 0, 0.5);
 }
-.toggler {;
+.toggler {
 	margin-bottom: -8px;
 	background-color: #CCCCCC;
 	border-radius: 4px 4px 0px 0px;
@@ -61,11 +61,14 @@ body {
 	font-weight: bold;
 	font-size: 12px;
 
-	-webkit-transform: all 0.5s linear;
+	-webkit-transition: border-radius 0.5s linear, margin-top 0.5s linear;
 }
 .toggler.minimized {
 	border-radius: 4px;
-	margin-bottom: 0;
+	/*margin-bottom: 0;*/
+}
+.toggler.minimized + .togglebox + .toggler {
+	margin-top: 20px;
 }
 .toggleFeature {
 	font-size: 14px;
