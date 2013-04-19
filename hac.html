@@ -12,32 +12,39 @@
 		<script type="text/javascript" src="lib/pixastic.custom.js"></script>
 		<script type="text/javascript" src="remote.js"></script>
 		<script type="text/javascript" src="hac_dom.js"></script>
+		<script type="text/javascript" src="logo_canvas.js"></script>
 		<script type="text/javascript" src="hac.js"></script>
 	</head>
 	<body>
 		<form id="login_form">
-			<img id="logo_login" src="assets/logo.png" width="195"><br>
+			<img id="logo_login" src="assets/logo.svg" width="195" /><br>
 			<div id="error_msg" style="display: none;"></div>
-			<input id="login" name="login" placeholder="username" required><br>
+			<input id="login" name="login" placeholder="username" required /><br>
 			<div class="sep"></div>
-			<input type="password" id="password" name="password" placeholder="password" required><br>
+			<input type="password" id="password" name="password" placeholder="password" required /><br>
 			<div class="sep"></div>
-			<input id="studentid" name="studentid" placeholder="6-digit id" pattern="[0-9]{6}" required><br>
+			<input id="studentid" name="studentid" placeholder="6-digit id" pattern="[0-9]{6}" required /><br>
 			<div class="sep"></div>
-			<input type="submit" id="do_login" value="Login">
+			<input type="submit" id="do_login" value="Login" />
 		</form>
 		<div id="restricted_access_wrapper">
 			<form id="restricted_access">
-				<img id="logo_restricted" src="assets/logo.png" width="195"><br>
+				<img id="logo_restricted" src="assets/logo.svg" width="195" /><br>
 				<div id="restricted_error" style="display:none;"></div>
-				<input type="password" id="unlocker" name="unlocker" placeholder="password" required>
+				<input type="password" id="unlocker" name="unlocker" placeholder="password" required />
 				<div class="sep"></div>
-				<input type="submit" id="do_unlock" value="Unlock">
+				<input type="submit" id="do_unlock" value="Unlock" />
+				<a href="#" id="resetLink">Forgot Password?</a>
+				<div id="resetInfo">
+					<p>To reset your password, you must log in again with your HAC username and password. Please note that this will reset all your settings as well.</p>
+					<button id="logOutToReset">Log Out &amp; Reset</button> or <a href="#" id="cancelReset">Cancel</a>
+				</div>
 			</form>
 		</div>
 		<div id="direct_access_form">
 			<span id="access_code_wrapper">Access code: <input id="direct_url" readonly="true"></span>
-			<img id="logo" src="assets/logo.png" height="36">
+			<!-- <img src="assets/logo.svg" id="logo" height="36" /> -->
+			<canvas id="logo" height="36" width="121"></canvas>
 			<span id="update_wrapper">Updated <span id="lastupdated"></span></span>
 			<span id="edited_notice">Edited</span>
 			<span id="action_buttons">

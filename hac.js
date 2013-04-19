@@ -182,6 +182,8 @@ function lock() {
 }
 
 function unlock(password) {
+	$("#restricted_error").slideUp();
+
 	var hashedInput = CryptoJS.SHA512(password).toString();
 	if (hashedInput == localStorage["password"]) {
 		$("#restricted_access_wrapper").fadeOut(200, function () {
@@ -217,9 +219,9 @@ $(function(){
 	hue = parseFloat(localStorage.getItem("hue"));
 	if ((hue == null) || isNaN(hue)) hue = DEFAULT_HUE;
 
-	// modify the logo
-	$("#logo").load(function () {
-		$(this).pixastic("hsl", {hue: hue * 360});
+	// paint the logo
+	$(window).focus(function (e) {
+		paintLogo($("#logo")[0], hue*360, 36);
 	});
 
 	// handlers
@@ -282,6 +284,18 @@ $(function(){
 		// bug: body won't scroll if the "logged_in" class is added immediately
 		window.setTimeout(function(){ $(document.body).addClass("logged_in"); }, 100);
 	}
+
+	$("#logOutToReset").click(function () {
+		logout();
+		$("#resetInfo").removeClass("visible");
+		$("#restricted_access_wrapper").hide();
+	});
+	$("#cancelReset").click(function () {
+		$("#resetInfo").removeClass("visible");
+	});
+	$("#resetLink").click(function () {
+		$("#resetInfo").addClass("visible");
+	});
 
 	// password protection
 	if (!localStorage.hasOwnProperty("password"))

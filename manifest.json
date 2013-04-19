@@ -5,7 +5,8 @@
   "description": "Quickly and efficiently check your grades.",
   "browser_action": {
     "default_icon": "assets/icon48.png",
-    "default_popup": "hac.html"
+    "default_popup": "hac.html",
+    "default_title": "QuickHAC"
   },
   "background": {
     "page": "background.html"

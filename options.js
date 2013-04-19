@@ -1,4 +1,4 @@
-var asianness, r_interval, hue, asianness_on, refresh_enabled, hue_on;
+var asianness, r_interval, hue, asianness_on, refresh_enabled, hue_on, password_enabled;
 
 function generate_color_table() {
 	var table = document.createElement("table");
@@ -45,7 +45,7 @@ function show_error($input, message) {
 		.addClass("animate");
 	window.setTimeout(function () {
 		$(".error_msg").detach();
-	}, 4000);
+	}, 5000);
 	$input.focus();
 	error_id++;
 }
@@ -61,8 +61,8 @@ Validator = function (valid, invalid) {
 	
 	return this;
 };
-Validator.prototype.add = function (val, condition, success, error) {
-	this.inputs.push(val);
+Validator.prototype.add = function (vals, condition, success, error) {
+	this.inputs.push(vals);
 	this.conditions.push(condition);
 	this.successes.push(success);
 	this.errors.push(error);
@@ -70,15 +70,15 @@ Validator.prototype.add = function (val, condition, success, error) {
 };
 Validator.prototype.validate = function () {
 	var all_valid = true;
-	var val;
+	var vals;
 	
 	for (var i = this.conditions.length - 1; i >= 0; i--) {
-		val = this.inputs[i];
-		if (this.conditions[i].call(window, val)) {
-			this.successes[i].call(window, val);
+		vals = this.inputs[i];
+		if (this.conditions[i].call(window, vals)) {
+			this.successes[i].call(window, vals);
 		} else {
 			all_valid = all_valid && false;
-			this.errors[i].call(window, val);
+			this.errors[i].call(window, vals);
 		}
 	}
 	
@@ -91,6 +91,42 @@ Validator.prototype.validate = function () {
 	}
 	return this;
 };
+
+function set_password_boxes(checked) {
+	function require(ids, isRequired) {
+		$(ids).prop("required", isRequired).prop("disabled", !isRequired);
+		if (!isRequired) $(ids).val("").parent().slideUp(250);
+		else $(ids).parent().slideDown(250);
+	}
+	function closePassOpts() {
+		$("#pass_opts").slideUp(250).prev(".toggler").addClass("minimized");
+	}
+	function openPassOpts() {
+		$("#pass_opts").slideDown(250).prev(".toggler").removeClass("minimized");
+	}
+
+	if (checked) {
+		// disable_password = false;
+		require("#new_pass, #confirm_pass", true);
+		openPassOpts();
+
+		if (password_enabled) {
+			require("#old_pass", true);
+		} else {
+			require("#old_pass", false);
+		}
+	} else {
+		require("#new_pass, #confirm_pass", false);
+
+		if (password_enabled) {
+			require("#old_pass", true);
+			openPassOpts();
+		} else {
+			require("#old_pass", false);
+			closePassOpts();
+		}
+	}
+}
 
 // Updates options DOM
 // disables animation if passed true, animates otherwise.
@@ -133,51 +169,7 @@ function update_options_dom(doAnimation) {
 		r_int = 0;
 	}
 
-	if ($("#password_check").prop('checked')) {
-		$("#password_check").parent().removeClass('minimized');
-		$("#pass_opts").slideDown(anim);
-	} else {
-		$("#password_check").parent().addClass('minimized');
-		$("#pass_opts").slideUp(anim);
-	}
-}
-
-// create password prompt
-function create_password_prompt(msg, callback) {
-	var modal = document.createElement("form");
-
-	var message = document.createElement("p");
-	$(message).html(msg).appendTo(modal);
-
-	var input = document.createElement("input");
-	$(input).attr({id: "overlay_input", type: "password"}).appendTo(modal);
-
-	var submit = document.createElement("input");
-	$(submit).attr("type", "submit").addClass("white_button")
-		.val("OK").appendTo(modal);
-
-	var fuzz = document.createElement("div");
-	fuzz.innerHTML = "&nbsp;";
-	$(fuzz).addClass("fuzz").hide();
-
-	$(document.body).addClass("overlaid").append(fuzz);
-
-	$(fuzz).fadeIn(250);
-
-	$(modal).data("callback", callback).submit(function(e) {
-		e.preventDefault();
-		$(document.body).removeClass("overlaid");
-		$(".fuzz").remove();
-		$(this).data("callback").call(this, $(this).find("#overlay_input").val());
-		$.modal.close();
-		return false;
-	}).addClass("password_form").modal({onClose: function() {
-		$(document.body).removeClass("overlaid");
-		$(".fuzz").remove();
-		$.modal.close();
-	}});
-
-	$(input).focus();
+	set_password_boxes($("#password_check").prop('checked'));
 }
 
 // events and stuff
@@ -189,17 +181,18 @@ $(function(){
 	// Load checkbox states and update DOM
 	asianness_on = (localStorage.hasOwnProperty("asianness") ? (localStorage["asianness"] != 0) : true);
 	refresh_enabled = (localStorage.hasOwnProperty("r_int") ? (localStorage["r_int"] != 0) : true);
+	password_enabled = localStorage.hasOwnProperty("password") && localStorage["password"] != "";
 	
 	// update spinbox values (use default values if previously disabled)
 	$("#asianness").val(asianness_on ? asianness : 4);
 	$("#slider").val(Math.log(asianness_on ? asianness : 4));
 	$("#r_interval").val(refresh_enabled ? r_interval : 60);
-	$("#hue, #hue_slider").val(hue * 360);
-	$("#the_password").val(localStorage["password"]);
+	$("#hue, #hue_slider").val(hue*360);
+	// $("#the_password").val(localStorage["password"]);
 	
 	$("#asianness_check").prop('checked', asianness_on);
 	$("#refresh_check").prop('checked', refresh_enabled);
-	$("#password_check").prop('checked', localStorage.hasOwnProperty("password") && localStorage["password"] != "");
+	$("#password_check").prop('checked', password_enabled);
 	
 	generate_color_table();
 
@@ -219,50 +212,7 @@ $(function(){
 	});
 
 	$("#password_check").change(function () {
-		if (!this.checked)
-			create_password_prompt("Enter current password to disable:", function (pass) {
-				if (CryptoJS.SHA512(pass) == localStorage["password"]) {
-					update_options_dom(false)
-					$("#the_password").val("");
-				} else {
-					$("#password_check").prop("checked", true);
-					update_options_dom(false);
-					alert("Incorrect password.");
-				}
-			});
-		else
-			create_password_prompt("Enter a new password:", function(pass) {
-				$("#the_password").val(CryptoJS.SHA512(pass).toString());
-			});
-
-		update_options_dom(false);
-	});
-
-	$("#change_password").click(function() {
-		create_password_prompt("Enter your current password:", function (pass) {
-
-			if (CryptoJS.SHA512(pass).toString() == localStorage["password"]) window.setTimeout(function(pass) {
-
-				create_password_prompt("Enter a new password:", function (pass) {
-
-					$("#the_password").data("newpass", CryptoJS.SHA512(pass).toString());
-					window.setTimeout(function() {
-						create_password_prompt("Confirm your new password:", function (pass) {
-							var hashed = CryptoJS.SHA512(pass).toString();
-							if ($("#the_password").data("newpass") == hashed)
-								$("#the_password").val(hashed);
-							else
-								alert("Your passwords do not match.");
-						});
-					}, 100);
-
-				});
-			}, 100, pass);
-
-			else
-				alert("Incorrect password.");
-
-		});
+		set_password_boxes(this.checked);
 	});
 	
 	update_options_dom(true);
@@ -272,6 +222,14 @@ $(function(){
 		asianness = Math.exp(parseFloat($(this).val()));
 		generate_color_table();
 		$("#asianness").val(asianness);
+
+		$(this).parent().prev().children('.sliderIndicator')
+			.addClass('visible')
+			.text(asianness.toPrecision(3).toString())
+			.css('left', Math.round(Math.log(asianness)*(360-16)/2.5 + 120) + 'px');
+	}).mouseup(function () {
+		$(this).parent().prev().children('.sliderIndicator')
+			.removeClass('visible');
 	});
 	$("#asianness").change(function () {
 		asianness = $(this).val();
@@ -287,6 +245,14 @@ $(function(){
 		hue = parseFloat($(this).val())/360;
 		generate_color_table();
 		$("#hue").val(hue*360);
+
+		$(this).parent().prev().children('.sliderIndicator')
+			.addClass('visible')
+			.text(Math.floor(hue*360).toString())
+			.css('left', Math.round(hue*(360-16) + 120) + 'px');
+	}).mouseup(function () {
+		$(this).parent().prev().children('.sliderIndicator')
+			.removeClass('visible');
 	});
 	
 	// save
@@ -297,8 +263,11 @@ $(function(){
 		// actually save
 		var new_asianness = parseFloat($("#asianness").val());
 		var new_r_int = parseFloat($("#r_interval").val());
-		var new_hue = parseFloat($("#hue").val());
-		var new_pass = $("#the_password").val();
+		var new_hue = parseFloat($("#hue").val())/360;
+		// var new_pass = $("#the_password").val();
+		var old_pass = $("#old_pass").val();
+		var new_pass = $("#new_pass").val();
+		var confirm_pass = $("#confirm_pass").val();
 		
 		validator = new Validator();
 		
@@ -323,20 +292,82 @@ $(function(){
 		}, function (val) {
 			localStorage.setItem("hue", (val / 360).toString());
 		}, function (val) {
-			show_error($("#hue"), "Hue must be between 0 and 1.");
-		})
+			show_error($("#hue"), "Hue must be between 0 and 360.");
+		});
+		
+		// && ($("#old_pass").val().length > 0 || $("#new_pass").val().length > 0)
+		if ($("#old_pass").prop("required")) {
+			validator.add({op: old_pass, np: new_pass}, function (val) {
+				var val_hash = CryptoJS.SHA512(val.op).toString();
+				var stored_hash = localStorage["password"];
 
-		.add(new_pass, function (val) {
-			return true;
-		}, function (val) {
-			localStorage.setItem("password", $("#password_check").prop('checked') ? val : "");
-		}, function (val) {
-			show_error($("change_password"), "Invalid password. (This should never happen)");
-		})
+				return (val.op.length > 0) ? val_hash == stored_hash : val.np.length == 0 && password_enabled;
+			}, function (val) {
+				if (val.length > 0) console.log('correct old password');
+				else console.log('no password entered');
+				// $("#old_pass, #new_pass, #confirm_pass").val("");
+			}, function (val) {
+				show_error($("#old_pass"), "Incorrect password.");
+			});
+		}
+		if ($("#new_pass").prop("required")) {
+			validator.add({cp: confirm_pass, np: new_pass, op: old_pass}, function (val) {
+				return (val.np.length > 0) ? val.cp == val.np : true;
+			}, function (val) {
+				if (val.np.length > 0) console.log("passwords match :D");
+				else console.log("no new password entered");
+			}, function (val) {
+				show_error($("#confirm_pass"), "The passwords provided do not match.");
+			})
 
-		.validate();
+			.add({np: new_pass, op: old_pass}, function (val) {
+				return (val.np.length > 0) ? val.np.length > 2 : val.op.length == 0 && password_enabled;
+			}, function (val) {}, function (val) {
+				show_error($("#new_pass"), "The new password must be at least 3 characters long.");
+			});
+		}
+
+		validator.validate();
 		
 		if (!validator.isValid) return false;
+
+		var A = CryptoJS.SHA512(old_pass).toString() == localStorage["password"];
+		var L = password_enabled ? true : false; //to clone boolean object?
+		var E = $("#password_check").prop("checked");
+		var M = new_pass == confirm_pass;
+
+		if (A && L && E && M) {
+			// update password
+			console.log("update password");
+			set_password_boxes(true);
+			localStorage.setItem("password", CryptoJS.SHA512(new_pass).toString());
+
+		} else if (A && L && !E) {
+			// disable password lock
+			console.log("disabled password lock");
+			password_enabled = false;
+			set_password_boxes(false);
+			localStorage.removeItem("password");
+
+		} else if (!L && E && M) {
+			// enable password lock
+			console.log("enabled password lock");
+			password_enabled = true;
+			set_password_boxes(true);
+			localStorage.setItem("password", CryptoJS.SHA512(new_pass).toString());
+
+		}
+		// These theroetically shouldn't happen, because they were taken care of above:
+		// else if (!A && L) {
+		// 	// incorrect lock password
+		// 	console.log("incorrect lock password");
+
+		// } else if (A && E && !M) {
+		// 	// password mismatch
+		// 	console.log("password mismatch");
+		// }
+
+		$("#old_pass, #new_pass, #confirm_pass").val("");
 		
 		$("#save_msg").addClass('visible');
 		window.setTimeout(function() {
