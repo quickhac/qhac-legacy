@@ -524,7 +524,13 @@ var HAC_HTML =
 			s = 1;
 			v = 0.86944;
 		} else {
-			h = Math.min(0.25 * Math.pow(grade / 100, asianness_limited), 0.13056);
+			h = Math.min(0.25 * Math.pow(grade / 100, asianness_limited)
+				// The following line limits the amount hue is allowed to
+				// change in the gradient depending on how far the hue is
+				// from a multiple of 90.
+				+ Math.abs(45 - (hue + 45) % 90) / 256,
+				// The following line puts a hard cap on the hue change.
+				0.13056);
 			s = 1 - Math.pow(grade / 100, asianness_limited * 2);
 			v = 0.86944 + h;
 		}
@@ -548,14 +554,14 @@ var HAC_HTML =
 	    var q = v * (1 - f * s);
 	    var t = v * (1 - (1 - f) * s);
 
-			switch(i % 6){
-				case 0: r = v, g = t, b = p; break;
-				case 1: r = q, g = v, b = p; break;
-				case 2: r = p, g = v, b = t; break;
-				case 3: r = p, g = q, b = v; break;
-				case 4: r = t, g = p, b = v; break;
-				case 5: r = v, g = p, b = q; break;
-			}
+		switch(i % 6){
+			case 0: r = v, g = t, b = p; break;
+			case 1: r = q, g = v, b = p; break;
+			case 2: r = p, g = v, b = t; break;
+			case 3: r = p, g = q, b = v; break;
+			case 4: r = t, g = p, b = v; break;
+			case 5: r = v, g = p, b = q; break;
+		}
 
     	return "rgb(" + parseInt(r * 255) + "," + parseInt(g * 255) + "," + parseInt(b * 255) + ")";
 	},
