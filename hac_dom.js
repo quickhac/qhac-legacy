@@ -530,7 +530,7 @@ var HAC_HTML =
 		}
 
 		// apply hue transformation
-		h += hue;
+		h += hue/360;
 		h %= 1;
 		if (h < 0) h += 1;
 

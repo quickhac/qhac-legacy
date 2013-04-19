@@ -36,13 +36,21 @@
 					<p class="toggleFeature">Refresh interval (mins): <input type="number" id="r_interval" name="r_interval" min="0"></p>
 				</div>
 
+				<p class="toggler minimized">
+					<label for="badge_check">Enable Badge Count</label>
+					<input type="checkbox" id="badge_check" name="badge_check" />
+				</p>
+				<div class="togglebox">
+					<p class="info">Enables the badge on the icon which displays the number of new grade changes.</p>
+				</div>
+
 				<p class="toggler">
 					<label for="password_check">Enable Password Protection</label>
 					<input type="checkbox" id="password_check" name="password_check" />
 				</p>
 				<div class="togglebox" id="pass_opts">
 					<!-- <p class="toggleFeature"><button id="change_password">Change password&hellip;</button><input type="hidden" id="the_password" name="the_password" /></p> -->
-					<h3>Change Password</h3>
+					<h3 id="pass_title">Change Password</h3>
 					<p class="toggleFeature"><label for="old_pass">Old Password:</label> <input type="password" id="old_pass" name="old_pass" /></p>
 					<p class="toggleFeature"><label for="new_pass">New Password:</label> <input type="password" id="new_pass" name="new_pass" /></p>
 					<p class="toggleFeature"><label for="confirm_pass">Confirm Password:</label> <input type="password" id="confirm_pass" name="confirm_pass" /></p>

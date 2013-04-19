@@ -17,7 +17,8 @@ function silent_update() {
 			text = parseInt(text) + 1;
 			localStorage.setItem("badge", text.toString(10));
 
-			chrome.browserAction.setBadgeText({"text": text.toString(10)});
+			if (localStorage["badge_enabled"] == "true")
+				chrome.browserAction.setBadgeText({"text": text.toString(10)});
 		});
 
 		// store

@@ -216,12 +216,12 @@ $(function(){
 	asianness_on = ((localStorage.hasOwnProperty("asianness_on") ? localStorage["asianness_on"] : true) === "true");
 	
 	// hue
-	hue = parseFloat(localStorage.getItem("hue"));
+	hue = parseInt(localStorage.getItem("hue"));
 	if ((hue == null) || isNaN(hue)) hue = DEFAULT_HUE;
 
 	// paint the logo
 	$(window).focus(function (e) {
-		paintLogo($("#logo")[0], hue*360, 36);
+		paintLogo($("#logo")[0], hue, 36);
 	});
 
 	// handlers
@@ -251,8 +251,10 @@ $(function(){
 		$("#grades").append(HAC_HTML.json_to_html(JSON.parse(localStorage["grades"])));
 
 	// badge
-	chrome.browserAction.setBadgeText({"text": ""});
 	localStorage.setItem("badge", "0");
+	if (localStorage["badge_enabled"] == "true")
+		chrome.browserAction.setBadgeText({"text": ""});
+	
 
 	// shadow on scrolling
 	$(window).scroll(throttle(30, function() {

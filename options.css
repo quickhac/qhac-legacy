@@ -126,9 +126,11 @@ input[type="number"] {
 	position: relative;
 }
 #settings p.info {
-	margin-top: -16px;
 	font-size: 0.75em;
 	color: #888;
+}
+#settings p.toggleFeature + p.info {
+	margin-top: -16px;
 }
 #save_msg {
 	cursor: default;
@@ -149,6 +151,12 @@ h2 {
 	margin-bottom: 0;
 }
 h2 + p {
+	margin-top: 8px;
+}
+h3 {
+	margin-bottom: 0;
+}
+h3 + p {
 	margin-top: 8px;
 }
 #color_table td {

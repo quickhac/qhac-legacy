@@ -82,7 +82,7 @@ function paintLogo(canvas, hue, height) {
 	c.save();
 
 	if (window.devicePixelRatio == 2) {
-		canvas.setAttribute('width', Math.round(height*2));
+		canvas.setAttribute('width', Math.round(width*2));
 		canvas.setAttribute('height', Math.round(height*2));
 		c.scale(2, 2);
 	}
