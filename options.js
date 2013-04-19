@@ -1,4 +1,4 @@
-var asianness, r_interval, hue, asianness_on, refresh_enabled, hue_on, password_enabled, badge_enabled;
+var asianness, r_interval, hue, asianness_on, refresh_enabled, hue_on, password_enabled, badge_enabled, single_notif;
 
 function generate_color_table() {
 	var table = document.createElement("table");
@@ -171,11 +171,8 @@ function update_options_dom(doAnimation) {
 		r_int = 0;
 	}
 
-	if ($("#badge_check").prop("checked")) {
-		badge_enabled = true;
-	} else {
-		badge_enabled = false;
-	}
+	badge_enabled = $("#badge_check").prop("checked");
+	single_notif = $("#single_notif_check").prop("checked");
 
 	set_password_boxes($("#password_check").prop('checked'));
 }
@@ -189,6 +186,7 @@ $(function(){
 	// Load checkbox states and update DOM
 	asianness_on = (localStorage.hasOwnProperty("asianness") ? (localStorage["asianness"] != 0) : true);
 	refresh_enabled = (localStorage.hasOwnProperty("r_int") ? (localStorage["r_int"] != 0) : true);
+	single_notif = localStorage.hasOwnProperty("single_notif") && localStorage["single_notif"] == "true";
 	badge_enabled = localStorage.hasOwnProperty("badge_enabled") && localStorage["badge_enabled"] == "true";
 	password_enabled = localStorage.hasOwnProperty("password") && localStorage["password"] != "";
 	
@@ -201,6 +199,7 @@ $(function(){
 	
 	$("#asianness_check").prop('checked', asianness_on);
 	$("#refresh_check").prop('checked', refresh_enabled);
+	$("#single_notif_check").prop('checked', single_notif);
 	$("#badge_check").prop('checked', badge_enabled);
 	$("#password_check").prop('checked', password_enabled);
 
@@ -227,6 +226,10 @@ $(function(){
 	});
 	
 	$("#refresh_check").change(function () {
+		update_options_dom(false);
+	});
+
+	$("#single_notif_check").change(function () {
 		update_options_dom(false);
 	});
 
@@ -382,6 +385,7 @@ $(function(){
 		$("#old_pass, #new_pass, #confirm_pass").val("");
 
 		localStorage.setItem("badge_enabled", (badge_enabled ? "true" : "false"));
+		localStorage.setItem("single_notif", (single_notif ? "true" : "false"));
 		
 		$("#save_msg").addClass('visible');
 		window.setTimeout(function() {

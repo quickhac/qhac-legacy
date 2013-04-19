@@ -590,12 +590,22 @@ var HAC_HTML =
 						});
 			}
 		}
-		
-		// Call notification for each grade update
-		for (var n = gradesToNotify.length-1; n >=0; n--) {
-			notif = HAC_HTML.makeUpdateText(gradesToNotify[n]);
-			HAC_HTML._notify2(notif.title, notif.text);
+
+		if (localStorage["single_notif"] == "true") {
+			// Call notification once for all updates
+			if (gradesToNotify.length > 0) 
+				HAC_HTML._notify2(
+					"Grades Changed", 
+					"Your grade changed in " + gradesToNotify.length + " courses"
+				);
 			if (typeof on_notify === "function") on_notify.call();
+		} else {
+			// Call notification for each grade update
+			for (var n = gradesToNotify.length-1; n >=0; n--) {
+				notif = HAC_HTML.makeUpdateText(gradesToNotify[n]);
+				HAC_HTML._notify2(notif.title, notif.text);
+				if (typeof on_notify === "function") on_notify.call();
+			}
 		}
 	},
 
