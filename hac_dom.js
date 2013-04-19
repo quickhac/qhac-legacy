@@ -600,14 +600,14 @@ var HAC_HTML =
 			oldgrade = gradeData.oldgrade,
 			newgrade = gradeData.newgrade;
 		
-		is_new = oldgrade == undefined || isNaN(oldgrade) || oldgrade == "";
+		is_new = typeof oldgrade == undefined || isNaN(oldgrade) || oldgrade == "";
 		
-		fromText = is_new ? "" : " from " + oldgrade.toString(10);
+		fromText = is_new ? "" : "from " + oldgrade.toString(10);
 		
 		if (is_new) text = "is now";
-		else if (newgrade > oldgrade) text = "rose to";
-		else if (newgrade < oldgrade) text = "fell to";
-		else if (newgrade == oldgrade) text = "is still";
+		else if (newgrade > oldgrade) text = "rose " + fromText + " to " + newgrade.toString(10);
+		else if (newgrade < oldgrade) text = "fell " + fromText + " to " + newgrade.toString(10);
+		else if (newgrade == oldgrade) text = "is still " + newgrade.toString(10);
 		else {
 			text = "???";
 			console.error("What happen?");
@@ -616,7 +616,7 @@ var HAC_HTML =
 		
 		return {
 			title: className + " grade for " + label,
-			text: "Your grade " + text + " " + newgrade.toString(10) + fromText
+			text: "Your grade " + text
 		};
 	},
 
