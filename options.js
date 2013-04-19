@@ -183,8 +183,8 @@ function update_options_dom(doAnimation) {
 // events and stuff
 $(function(){
 	// load
-	asianness = localStorage.hasOwnProperty("asianness") ? localStorage["asianness"] : DEFAULT_ASIANNESS;
-	r_interval = localStorage.hasOwnProperty("r_int") ? localStorage["r_int"] : DEFAULT_R_INT;
+	asianness = localStorage.hasOwnProperty("asianness") ? parseFloat(localStorage["asianness"]) : DEFAULT_ASIANNESS;
+	r_interval = localStorage.hasOwnProperty("r_int") ? parseFloat(localStorage["r_int"]) : DEFAULT_R_INT;
 	hue = localStorage.hasOwnProperty("hue") ? parseFloat(localStorage["hue"]) : DEFAULT_HUE;
 	// Load checkbox states and update DOM
 	asianness_on = (localStorage.hasOwnProperty("asianness") ? (localStorage["asianness"] != 0) : true);
@@ -203,6 +203,15 @@ $(function(){
 	$("#refresh_check").prop('checked', refresh_enabled);
 	$("#badge_check").prop('checked', badge_enabled);
 	$("#password_check").prop('checked', password_enabled);
+
+	$("#slider").parent().prev('.sliderIndicator')
+		.text(asianness.toPrecision(3).toString())
+		.css('left', Math.round(Math.log(asianness)*(360-16)/2.5 + 40) + 'px');
+
+	$("#hue_slider").parent().prev('.sliderIndicator')
+		.text(Math.floor(hue).toString())
+		.css('left', Math.round(hue*(360-15)/360 + 40) + 'px');
+
 	
 	generate_color_table();
 
@@ -237,12 +246,12 @@ $(function(){
 		generate_color_table();
 		$("#asianness").val(asianness);
 
-		$(this).parent().prev().children('.sliderIndicator')
+		$(this).parent().prev('.sliderIndicator')
 			.addClass('visible')
 			.text(asianness.toPrecision(3).toString())
-			.css('left', Math.round(Math.log(asianness)*(360-16)/2.5 + 120) + 'px');
+			.css('left', Math.round(Math.log(asianness)*(360-16)/2.5 + 40) + 'px');
 	}).mouseup(function () {
-		$(this).parent().prev().children('.sliderIndicator')
+		$(this).parent().prev('.sliderIndicator')
 			.removeClass('visible');
 	});
 	$("#asianness").change(function () {
@@ -260,12 +269,12 @@ $(function(){
 		generate_color_table();
 		$("#hue").val(hue);
 
-		$(this).parent().prev().children('.sliderIndicator')
+		$(this).parent().prev('.sliderIndicator')
 			.addClass('visible')
 			.text(Math.floor(hue).toString())
-			.css('left', Math.round(hue*(360-15)/360 + 120) + 'px');
+			.css('left', Math.round(hue*(360-15)/360 + 40) + 'px');
 	}).mouseup(function () {
-		$(this).parent().prev().children('.sliderIndicator')
+		$(this).parent().prev('.sliderIndicator')
 			.removeClass('visible');
 	});
 	
