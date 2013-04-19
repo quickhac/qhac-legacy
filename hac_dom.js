@@ -411,7 +411,7 @@ var HAC_HTML =
 		}
 		subjectTotal *= 100 / weightTotal;
 		subjectTotal += bonus;
-		subjectTotal = Math.max(Math.min(subjectTotal, 100), 0);
+		subjectTotal = Math.max(subjectTotal, 0);
 
 		// show subject average
 		$(".CurrentAverage").html("Current Average: " + Math.round(subjectTotal))
@@ -442,7 +442,7 @@ var HAC_HTML =
 		if ((grade == "EX") || (grade == "Exc") || (grade == ""))
 			gradeText = grade;
 		else if (isNaN(grade)) gradeText = "";
-		else if (grade > 100)  gradeText = "100";
+		else if (grade > 100)  { gradeText = "100"; grade = 100; }
 		else if (grade < 0)    gradeText = "0";
 		else                   gradeText = Math.round(grade);
 
@@ -519,11 +519,7 @@ var HAC_HTML =
 		var h, s, v, r, g, b;
 
 		// determine color. ***MAGIC DO NOT TOUCH UNDER ANY CIRCUMSTANCES***
-		if (grade > 100) {
-			h = 0.13056;
-			s = 0;
-			v = 1;	
-		} else if (grade < 0) {
+		if (grade < 0) {
 			h = 0;
 			s = 1;
 			v = 0.86944;
@@ -537,6 +533,13 @@ var HAC_HTML =
 		h += hue;
 		h %= 1;
 		if (h < 0) h += 1;
+
+		// extra credit gets a special color
+		if (grade > 100) {
+			h = 0.5;
+			s = Math.min((grade - 100) / 15, 1);
+			v = 1;
+		}
 
 		// convert to rgb: http://goo.gl/J9ra3
 		var i = Math.floor(h * 6);
