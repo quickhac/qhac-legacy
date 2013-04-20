@@ -37,7 +37,7 @@ function silent_update() {
 $(function() {
 	// get interval
 	var r_int = localStorage["r_int"];
-	if (r_int == undefined) r_int = 60;
+	if (typeof r_int == "undefined") r_int = 60;
 	else if (r_int == 0) return;
 
 	cached_refresh_interval = r_int;

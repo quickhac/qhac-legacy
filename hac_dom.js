@@ -31,7 +31,7 @@ var HAC_HTML =
 				}
 
 				grades[i] = grade;
-				urls[i] = (urls[i] == undefined ? "" : urls[i]);
+				urls[i] = (typeof urls[i] == "undefined" ? "" : urls[i]);
 			}
 
 			myObj[myObj.length] = {
@@ -197,9 +197,12 @@ var HAC_HTML =
 		var root = document.createDocumentFragment();
 
 		var title = document.createElement("h3");
-		var loadingGif = document.createElement("img");
-		$(loadingGif).attr("src", "assets/loading.png").addClass("loading").css("margin-left", "8px");
-		$(title).addClass("ClassName").html(json.title).append(loadingGif);
+		// var loadingGif = document.createElement("img");
+		// $(loadingGif).attr("src", "assets/loading.png").addClass("loading").css("margin-left", "8px");
+		// $(title).addClass("ClassName").html(json.title).append(loadingGif);
+		var spinner = document.createElement("div");
+		$(spinner).addClass("spinner").css("margin-left", "8px");
+		$(title).addClass("ClassName").html(json.title).append(spinner);
 		$(root).append(title);
 
 		var currAvg = document.createElement("p");
@@ -572,6 +575,7 @@ var HAC_HTML =
 			"Cycle 4", "Cycle 5", "Cycle 6", "Exam 2", "Semester 2"
 		];
 		var gradesToNotify = [], notif;
+		var changedGrades = localStorage.hasOwnProperty("changed_grades") ? JSON.parse(localStorage["changed_grades"]) : {};
 		
 		for (var r = 0, l = Math.min(oldgrade.length, newgrade.length); r < l; r++) {
 			// If class is not the same as before, skip row
@@ -583,6 +587,8 @@ var HAC_HTML =
 					// notify if changed
 					if (oldgrade[r].grades[c] != newgrade[r].grades[c])
 						gradesToNotify.push({
+							uid: newgrade[r].urls[c],
+							row: r+1, col: c,
 							title: newgrade[r].title,
 							label: labels[c],
 							oldgrade: parseInt(oldgrade[r].grades[c]),
@@ -596,7 +602,7 @@ var HAC_HTML =
 			if (gradesToNotify.length > 0) 
 				HAC_HTML._notify2(
 					"Grades Changed", 
-					"Your grade changed in " + gradesToNotify.length + " courses"
+					"Your grade changed in " + gradesToNotify.length + " course" + (gradesToNotify.length > 1 ? "s" : "")
 				);
 			if (typeof on_notify === "function") on_notify.call();
 		} else {
@@ -607,6 +613,21 @@ var HAC_HTML =
 				if (typeof on_notify === "function") on_notify.call();
 			}
 		}
+		// Set grade change indicators
+		for (var n = gradesToNotify.length-1; n >=0; n--) {
+			var dir;
+			if (gradesToNotify[n].newgrade > gradesToNotify[n].oldgrade) dir = "up";
+			else if (gradesToNotify[n].newgrade < gradesToNotify[n].oldgrade) dir = "down";
+			else dir = "same";
+
+			var uid = gradesToNotify[n].uid;
+			var r = gradesToNotify[n].row;
+			var c = gradesToNotify[n].col;
+
+			if (uid.length > 0)
+				changedGrades[uid] = {dir: dir, row: r, col: c};
+		}
+		localStorage.setItem("changed_grades", JSON.stringify(changedGrades));
 	},
 
 	makeUpdateText: function (gradeData) {
@@ -616,7 +637,7 @@ var HAC_HTML =
 			oldgrade = gradeData.oldgrade,
 			newgrade = gradeData.newgrade;
 		
-		is_new = typeof oldgrade == undefined || isNaN(oldgrade) || oldgrade == "";
+		is_new = typeof oldgrade == "undefined" || isNaN(oldgrade) || oldgrade == "";
 		
 		fromText = is_new ? "" : "from " + oldgrade.toString(10);
 		
@@ -642,7 +663,7 @@ var HAC_HTML =
 
 	_notify: function(className, label, oldgrade, newgrade) {
 		var text;
-		if ((oldgrade == undefined) || (oldgrade == "") || (isNaN(oldgrade))) text = "is now";
+		if ((typeof oldgrade == "undefined") || (oldgrade == "") || (isNaN(oldgrade))) text = "is now";
 		else if (newgrade > oldgrade) text = "rose to";
 		else text = "fell to";
 

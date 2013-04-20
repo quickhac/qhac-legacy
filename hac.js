@@ -27,7 +27,7 @@ function login(uname, pass, studentid) {
 			HAC.get_gradesURL(id, function(url) {
 				var captures = /id=([\w\d%]*)/.exec(url);
 				// if login failed
-				if (captures == undefined) {
+				if (typeof captures == "undefined") {
 					// return error
 					$("#error_msg").text("Unable to log in").slideDown();
 
@@ -83,6 +83,15 @@ function login(uname, pass, studentid) {
 		});
 }
 
+function showCachedGrades() {
+	if (localStorage.hasOwnProperty("grades")) {
+		$("#grades").html("").append(HAC_HTML.json_to_html(
+			JSON.parse(localStorage["grades"])));
+
+		setChangedGradeIndicators();
+	}
+}
+
 function update(sID) {
 	$("body").addClass("busy");
 
@@ -90,11 +99,7 @@ function update(sID) {
 	_gaq.push(['_trackEvent', 'Grades', 'Refresh']);
 
 	// show cached grades (this undoes user edits)
-	if (localStorage.hasOwnProperty("grades"))
-		$("#grades").html("").append(
-			HAC_HTML.json_to_html(
-					JSON.parse(
-						localStorage["grades"])));
+	showCachedGrades();
 
 	// hide class grades
 	$("#classgrades").html("");
@@ -106,12 +111,17 @@ function update(sID) {
 	});
 }
 
+function displayGrades(grades_json) {
+	$("#grades").html("").append(HAC_HTML.json_to_html(grades_json));
+}
+
 function processUpdatedGrades(doc) {
-	// output
 	var doc_json = HAC_HTML.html_to_jso(doc);
-	$("#grades").html("").append(HAC_HTML.json_to_html(doc_json));
+	// output
+	displayGrades(doc_json);
 	// compare
 	HAC_HTML.compare_grades(JSON.parse(localStorage["grades"]), doc_json);
+	setChangedGradeIndicators();
 	// store
 	localStorage.setItem("grades", JSON.stringify(doc_json));
 	Updater.set_updated();
@@ -154,12 +164,17 @@ function loadClassGrades(data) {
 	var cg;
 	(cg = $("#classgrades")).data("data", data);
 
+	// Remove grade change indicator
+	if (localStorage.hasOwnProperty("changed_grades")) {
+		var gradeChanges = JSON.parse(localStorage["changed_grades"]);
+		delete gradeChanges[data];
+		localStorage.setItem("changed_grades", JSON.stringify(gradeChanges));
+		// setChangedGradeIndicators();
+	}
+
 	// show cached grades (this undoes user edits)
-	if (localStorage.hasOwnProperty("grades"))
-		$("#grades").html("").append(
-			HAC_HTML.json_to_html(
-					JSON.parse(
-						localStorage["grades"])));
+	showCachedGrades();
+
 	if (localStorage.hasOwnProperty("class-" + data))
 		cg.html("").append(
 			HAC_HTML.cjson_to_html(
@@ -181,17 +196,24 @@ function lock() {
 	$(document.body).addClass("locked").removeClass("logged_in");
 }
 
+var shakeTimer;
 function unlock(password) {
-	$("#restricted_error").slideUp();
+	if (typeof shakeTimer !== "undefined") window.clearTimeout(shakeTimer);
+	// $("#restricted_error").slideUp();
 
 	var hashedInput = CryptoJS.SHA512(password).toString();
 	if (hashedInput == localStorage["password"]) {
-		$("#restricted_access_wrapper").fadeOut(200, function () {
-			$(document.body).removeClass("locked");
-		});
+		$(document.body).removeClass("locked");
+		window.setTimeout(function () {
+			$("#restricted_access_wrapper").hide();
+		}, 1000);
+	} else {
+		// $("#restricted_error").text("Incorrect password.").slideDown();
+		$("#restricted_access").addClass("shake");
+		shakeTimer = window.setTimeout(function () {
+			$("#restricted_access").removeClass("shake");
+		}, 1000);
 	}
-	else
-		$("#restricted_error").text("Incorrect password.").slideDown();
 }
 
 // throttle, used for scrolling
@@ -206,6 +228,38 @@ function throttle(ms, callback) {
 			callback.apply(this, arguments);
 		}
 	};
+}
+
+function imposter(gradesToFake) {
+	// for development testing
+	// gradesToFake = [[
+	// 	1, // row
+	// 	7, // col
+	// 	"100" // grade
+	// ], ... ];
+
+	var fakeGrades = JSON.parse(localStorage["grades"]);
+
+	for (var n = gradesToFake.length - 1; n >=0; n--) {
+		fakeGrades[gradesToFake[n][0]].grades[gradesToFake[n][1]] = gradesToFake[n][2];
+	}
+	localStorage["grades"] = JSON.stringify(fakeGrades);
+	return fakeGrades;
+}
+
+function setChangedGradeIndicators() {
+	if (localStorage.hasOwnProperty("changed_grades")) {
+			var changedGrades = JSON.parse(localStorage["changed_grades"]);
+
+			for (gradeChange in changedGrades) {
+				if (changedGrades.hasOwnProperty(gradeChange)) {
+
+					$("#grades tr").eq(changedGrades[gradeChange].row)
+						.children(".grade").eq(changedGrades[gradeChange].col)
+						.children("a").removeClass().addClass(changedGrades[gradeChange].dir);
+				}
+			}
+		}
 }
 
 // init
@@ -247,8 +301,11 @@ $(function(){
 	} catch (e) { /* it's not filled out yet, carry on */ }
 
 	// fill in grades
-	if (localStorage["grades"] != undefined)
+	if (typeof localStorage["grades"] != "undefined") {
 		$("#grades").append(HAC_HTML.json_to_html(JSON.parse(localStorage["grades"])));
+
+		setChangedGradeIndicators();
+	}
 
 	// badge
 	localStorage.setItem("badge", "0");
@@ -278,7 +335,7 @@ $(function(){
 	));
 
 	// login or direct access?
-	if (localStorage["url"] == undefined) $("#direct_access_form").hide();
+	if (typeof localStorage["url"] == "undefined") $("#direct_access_form").hide();
 	else {
 		$("#login_form").hide();
 		$("#direct_url").val(localStorage['url']);
@@ -293,10 +350,10 @@ $(function(){
 		$("#restricted_access_wrapper").hide();
 	});
 	$("#cancelReset").click(function () {
-		$("#resetInfo").removeClass("visible");
+		$("#restricted_access").removeClass("reset");
 	});
 	$("#resetLink").click(function () {
-		$("#resetInfo").addClass("visible");
+		$("#restricted_access").addClass("reset");
 	});
 
 	// password protection
