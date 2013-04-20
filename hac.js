@@ -1,5 +1,14 @@
 var asianness, asianness_on, hue, shadowMax = false;
 
+// Get the size of an object
+Object.size = function(obj) {
+    var size = 0, key;
+    for (key in obj) {
+        if (obj.hasOwnProperty(key)) size++;
+    }
+    return size;
+};
+
 // handlers
 function login(uname, pass, studentid) {
 	$("body").addClass("busy");
@@ -248,30 +257,41 @@ function imposter(gradesToFake) {
 }
 
 function setChangedGradeIndicators() {
+	var n = 0;
 	if (localStorage.hasOwnProperty("changed_grades")) {
-			var changedGrades = JSON.parse(localStorage["changed_grades"]);
+		var changedGrades = JSON.parse(localStorage["changed_grades"]);
 
-			for (gradeChange in changedGrades) {
-				if (changedGrades.hasOwnProperty(gradeChange)) {
+		for (gradeChange in changedGrades) {
+			if (changedGrades.hasOwnProperty(gradeChange)) {
 
-					$("#grades tr").eq(changedGrades[gradeChange].row)
-						.children(".grade").eq(changedGrades[gradeChange].col)
-						.children("a").removeClass().addClass(changedGrades[gradeChange].dir);
-				}
+				$("#grades tr").eq(changedGrades[gradeChange].row)
+					.children(".grade").eq(changedGrades[gradeChange].col)
+					.children("a").removeClass().addClass(changedGrades[gradeChange].dir);
 			}
 		}
+		n = Object.size(changedGrades);
+	}
+	// Set Badge
+	localStorage.setItem("badge", n.toString());
+	if (localStorage["badge_enabled"] == "true")
+		chrome.browserAction.setBadgeText({"text": n > 0 ? n.toString() : ""});
+
 }
 
 // init
 $(function(){
 	// asianness
-	asianness = localStorage.getItem("asianness");
-	if ((asianness == null) || (isNaN(asianness))) asianness = DEFAULT_ASIANNESS;
-	asianness_on = ((localStorage.hasOwnProperty("asianness_on") ? localStorage["asianness_on"] : true) === "true");
+	if (localStorage.hasOwnProperty("asianness")) {
+		asianness = localStorage.getItem("asianness");
+		if (asianness == null || isNaN(asianness)) asianness = DEFAULT_ASIANNESS;
+	} else asianness = DEFAULT_ASIANNESS;
+	asianness_on = (localStorage.hasOwnProperty("asianness_on") ? localStorage["asianness_on"] : true) === "true";
 	
 	// hue
-	hue = parseInt(localStorage.getItem("hue"));
-	if ((hue == null) || isNaN(hue)) hue = DEFAULT_HUE;
+	if (localStorage.hasOwnProperty("hue")) {
+		hue = parseInt(localStorage.getItem("hue"));
+		if (hue == null || isNaN(hue)) hue = DEFAULT_HUE;
+	} else hue = DEFAULT_HUE;
 
 	// paint the logo
 	$(window).focus(function (e) {
@@ -301,18 +321,12 @@ $(function(){
 	} catch (e) { /* it's not filled out yet, carry on */ }
 
 	// fill in grades
-	if (typeof localStorage["grades"] != "undefined") {
+	if (localStorage.hasOwnProperty("grades") && localStorage["grades"] != "") {
 		$("#grades").append(HAC_HTML.json_to_html(JSON.parse(localStorage["grades"])));
 
 		setChangedGradeIndicators();
 	}
-
-	// badge
-	localStorage.setItem("badge", "0");
-	if (localStorage["badge_enabled"] == "true")
-		chrome.browserAction.setBadgeText({"text": ""});
 	
-
 	// shadow on scrolling
 	$(window).scroll(throttle(30, function() {
 			var pos = $(window).scrollTop();
@@ -322,7 +336,7 @@ $(function(){
 			}
 			else if (pos < 32) {
 				$("#direct_access_form").css("box-shadow", "0px 0px " +
-					parseInt(pos / 4) + "px #888");
+					Math.round(pos / 4) + "px #888");
 				shadowMax = false;
 			}
 			else if (!shadowMax) {

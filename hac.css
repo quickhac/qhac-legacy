@@ -355,6 +355,63 @@ body.locked #grades {
 	line-height: 1;
 	text-decoration: none;
 }
+#grades .GradeEditor {
+	padding: 0;
+	margin: 0;
+	border: 0;
+	text-align: center;
+	outline: none;
+	width: 100%;
+}
+/*#grades .grade.exam {
+	position: relative;
+}
+#grades .grade.exam:not(:empty)::before {
+	content: attr(original-title);
+	display: block;
+	position: absolute;
+	bottom: -28px;
+	z-index: 100;
+	background-color: rgba(0,0,0,0.8);
+	color: #CCCCCC;
+	font-size: 12px;
+	padding: 1px 2px;
+	box-sizing: border-box;
+	left: 50%;
+	margin-left: -50px;
+	border-radius: 4px;
+	width: 120px;
+	opacity: 0;
+
+	-webkit-transition: opacity 0.5s linear;
+	transition: opacity 0.5s linear;
+}
+#grades .grade.exam:not(:empty)::after {
+	content: '';
+	height: 0;
+	width: 0;
+	display: block;
+	position: absolute;
+	border-bottom: 6px solid rgba(0,0,0,0.8);
+	border-left: 6px solid transparent;
+	border-right: 6px solid transparent;
+	bottom: -2px;
+	z-index: 101;
+	left: 50%;
+	margin-left: -6px;
+	box-sizing: border-box;
+	opacity: 0;
+
+	-webkit-transition: opacity 0.5s linear;
+	transition: opacity 0.5s linear;
+}
+#grades .grade.exam:not(:empty):hover::before,
+#grades .grade.exam:not(:empty):hover::after {
+	opacity: 1;
+
+	-webkit-transition: opacity 0.1s linear;
+	transition: opacity 0.1s linear;
+}*/
 
 #grades td:first-child {
 	text-align: left;
@@ -475,5 +532,11 @@ body.locked #grades {
 }
 
 #classgrades .GradeEditor {
-	margin-right: -9001px;
+	padding: 0;
+	margin: 0;
+	border: 0;
+	text-align: center;
+	outline: none;
+	width: 100%;
 }
+
