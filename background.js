@@ -1,18 +1,27 @@
 // the main updating function
 var theInterval, cached_refresh_interval;
 
+// Get the size of an object
+Object.size = function (obj) {
+    var size = 0, key;
+    for (key in obj) {
+        if (obj.hasOwnProperty(key)) size++;
+    }
+    return size;
+};
+
 function process_update(doc) {
+	var count = 0;
 	// compare
 	var doc_json = HAC_HTML.html_to_jso(doc);
-	HAC_HTML.compare_grades(JSON.parse(localStorage["grades"]), doc_json, function () {
-		text = localStorage["badge"];
-		if (isNaN(parseInt(text))) text = 0;
-		text = parseInt(text) + 1;
-		localStorage.setItem("badge", text.toString(10));
+	HAC_HTML.compare_grades(JSON.parse(localStorage["grades"]), doc_json);
 
-		if (localStorage["badge_enabled"] == "true")
-			chrome.browserAction.setBadgeText({"text": text.toString(10)});
-	});
+	var count = Object.size(JSON.parse(localStorage["changed_grades"]));
+
+	localStorage.setItem("badge", count.toString(10));
+
+	if (localStorage["badge_enabled"] == "true")
+		chrome.browserAction.setBadgeText({"text": count > 0 ? count.toString(10) : ""});
 
 	// store
 	localStorage.setItem("grades", JSON.stringify(doc_json));
