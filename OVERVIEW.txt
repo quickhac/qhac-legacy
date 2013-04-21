@@ -1,4 +1,4 @@
-=========================
+`=========================
 ## remote.js           ##
 =========================
 
@@ -10,14 +10,20 @@ String::decrypt()
 Updater:
 	#setUpdated()
 	#get_update_text()
-HAC:
+Ad:
+	#generate_ad()
+	#generate_ad_inner(string text, string URL, string ID)
+RRISD_HAC:
 	#get_session(string login, string password, string studentID, function callback, function on_error)
 	#get_gradesURL(string studentID, function callback)
 	#get_gradesHTML(string studentID, function callback)
 	#get_gradesHTML_direct(string URL, function callback)
 	#get_classGradeHTML(string studentID, string uniqueURL, function callback)
-	#generate_ad()
-	#generate_ad_inner(string text, string URL, string ID)
+AISD_HAC:
+	host
+	#get_session(string login, string password, string studentID, function callback, function on_error)
+	#get_gradesHTML(string studentID, function callback)
+	#get_classGradeHTML(string studentID, string uniqueURL, function callback)
 
 =========================
 ## hac_dom.js          ##
@@ -41,9 +47,18 @@ HAC_HTML:
 ## hac.js              ##
 =========================
 
-#login(string username, string password, string studentID)
+Object#size(object anObject)
+#disable_login_form()
+#reset_login_form()
+#show_login_error(string text)
+#hide_login_form()
+#on_error_logging_in(jqXHR, string textStatus, string errorThrown)
+#login_to_rrisd(string username, string password, string studentID)
+#login_to_aisd(string username, string password, string studentID)
+#load_aisd_session(function callback)
+#login(string username, string password, string studentID, string district)
 #showCachedGrades()
-#update(string studentID)
+#update()
 #displayGrades(object grades)
 #processUpdatedGrades(string gradesHTML)
 #processUpdatedClassGrades(string uniqueDataURL, string classHTMLDoc)
@@ -67,6 +82,13 @@ Validator(function valid, function invalid):
 	#validate()
 #set_password_boxes(bool passwordLock_checked)
 #update_options_dom(int doAnimation)
+
+=========================
+## background.js       ##
+=========================
+
+#process_update(string gradesHTML)
+#silent_update()
 
 =========================
 ## logo_canvas.js      ##

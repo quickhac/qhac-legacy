@@ -34,7 +34,7 @@ var Updater = {
 
 // ads
 var Ad = {
-	generate_ad: function() {
+	generate_ad: function () {
 		var wrapper = document.createElement("div");
 		$(wrapper).attr("id", "ad_wrapper");
 
@@ -99,7 +99,7 @@ var Ad = {
 };
 
 var RRISD_HAC = {
-	get_session: function(login, pass, id, callback, on_error) {
+	get_session: function (login, pass, id, callback, on_error) {
 		$.ajax({
 			url: "https://hacaccess.herokuapp.com/api/rrisd/login",
 			timeout: 15000,
@@ -114,20 +114,20 @@ var RRISD_HAC = {
 		});
 	},
 
-	get_gradesURL: function(id, callback) {
+	get_gradesURL: function (id, callback) {
 		$.post("https://hacaccess.herokuapp.com/api/rrisd/gradesURL",
 			{sessionid: id.rot13()},
 			function (data) { callback(data); }
 		);
 	},
 
-	get_gradesHTML: function(url, callback) {
+	get_gradesHTML: function (url, callback) {
 		$.get("https://gradebook.roundrockisd.org/pc/displaygrades.aspx?studentid=" + url,
 			function (data) { callback(data); }
 		);
 	},
 
-	get_classGradeHTML: function(sID, data, callback) {
+	get_classGradeHTML: function (sID, data, callback) {
 		$.get("https://gradebook.roundrockisd.org/pc/displaygrades.aspx?studentid=" + sID
 			+ "&data=" + data,
 			function (data) { callback(data); }
@@ -138,7 +138,7 @@ var RRISD_HAC = {
 var AISD_HAC = {
 	host: "https://hacaccess.herokuapp.com/",
 
-	get_session: function(login, pass, id, callback, on_error) {
+	get_session: function (login, pass, id, callback, on_error) {
 		$.ajax({
 			url: AISD_HAC.host + "api/aisd/login",
 			timeout: 15000,
@@ -153,14 +153,14 @@ var AISD_HAC = {
 		});
 	},
 
-	get_gradesHTML: function(id, studentid, callback) {
+	get_gradesHTML: function (id, studentid, callback) {
 		$.post(AISD_HAC.host + "api/aisd/gradesHTML",
 			{ sessionid: id.rot13(), studentid: studentid.rot13() },
 			function (data) { callback(data); }
 		);
 	},
 
-	get_classGradeHTML: function(id, studentid, data, callback) {
+	get_classGradeHTML: function (id, studentid, data, callback) {
 		$.post(AISD_HAC.host + "api/aisd/gradesHTML",
 			{ sessionid: id.rot13(), studentid: studentid.rot13(), data: data.rot13() },
 			function (data) { callback(data); }

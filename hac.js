@@ -1,7 +1,7 @@
 var asianness, asianness_on, hue, shadowMax = false;
 
 // Get the size of an object
-Object.size = function(obj) {
+Object.size = function (obj) {
     var size = 0, key;
     for (key in obj) {
         if (obj.hasOwnProperty(key)) size++;
@@ -381,7 +381,7 @@ $(function(){
 	// backwards compatibility with 1.x: update district if not set
 	// (in 1.x, the only valid district was RRISD)
 	if (!localStorage.hasOwnProperty("district"))
-		localStorage["district"] = "rrisd";
+		localStorage.setItem("district", "rrisd");
 
 	// asianness
 	if (localStorage.hasOwnProperty("asianness")) {
@@ -452,7 +452,7 @@ $(function(){
 	));
 
 	// login or direct access?
-	if (typeof localStorage["url"] == "undefined" && typeof localStorage["aisd_password"] == undefined)
+	if (typeof localStorage["url"] == "undefined" && typeof localStorage["aisd_password"] == "undefined")
 		$("#direct_access_form").hide();
 	else {
 		$("#login_form").hide();
