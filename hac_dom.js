@@ -449,8 +449,8 @@ var HAC_HTML =
 		$(el).parent().tipsy("hide");
 
 		// calculate grade
-		var grade = $(el).val(), grateText;
-		if ((grade == "EX") || (grade == "Exc") || (grade == ""))
+		var grade = $(el).val(), gradeText;
+		if (grade.indexOf("EX") >= 0 || grade.indexOf("Exc") >= 0 || grade == "")
 			gradeText = grade;
 		else if (isNaN(grade)) gradeText = "";
 		else if (grade > 100)  { gradeText = "100"; grade = 100; }
@@ -519,9 +519,9 @@ var HAC_HTML =
 			$(document.body).addClass("edited");
 	},
 
-	colorize: function(grade) {
+	colorize: function (grade) {
 		// color is only for numerical grades
-		if (isNaN(parseInt(grade)) || grade == null) return "#FFF";
+		if ( typeof grade != "number" || isNaN(parseInt(grade)) || grade == null) return "#FFF";
 
 		// Makes sure asianness cannot be negative
 		var asianness_limited = Math.max(0, asianness);
@@ -577,7 +577,7 @@ var HAC_HTML =
     	return "rgb(" + parseInt(r * 255) + "," + parseInt(g * 255) + "," + parseInt(b * 255) + ")";
 	},
 
-	compare_grades: function(oldgrade, newgrade, on_notify) {
+	compare_grades: function (oldgrade, newgrade, on_notify) {
 		var labels = [
 			"Cycle 1", "Cycle 2", "Cycle 3", "Exam 1", "Semester 1",
 			"Cycle 4", "Cycle 5", "Cycle 6", "Exam 2", "Semester 2"
@@ -665,7 +665,7 @@ var HAC_HTML =
 		};
 	},
 
-	_notify2: function(titleText, updateText) {
+	_notify2: function (titleText, updateText) {
 		webkitNotifications.createNotification("assets/icon-full.png", titleText, updateText).show();
 	},
 
