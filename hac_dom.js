@@ -9,17 +9,25 @@ var HAC_HTML =
 		myObj = [];
 		rows = $(".DataTable:first tr.DataRow, .DataTable:first tr.DataRowAlt", html);
 
+		// hard-coded offsets
+		var titleOffset, gradesOffset;
+		if (localStorage["district"] == "rrisd") {
+			titleOffset = 0; gradesOffset = 2;
+		} else if (localStorage["district"] == "aisd") {
+			titleOffset = 1; gradesOffset = 3;
+		}
+
 		// each row
 		for (var r = 0; r < rows.length; r++) {
 			var title, grades, cells, grade;
-			cells = $(rows[r]).children("td");
-			title = $(cells[0]).html();
+			cells = $(rows).eq(r).children("td");
+			title = $(cells).eq(titleOffset).html();
 			grades = [];
 			urls = [];
 
 			// each cell
 			for (var i = 0; i < 10; i++) {
-				grade = $(cells[i + 2]).html();
+				grade = cells.eq(i + gradesOffset).html();
 				if (grade.indexOf("<") != -1) {
 					if (grade.indexOf("<a href") != -1)
 						urls[i] = /\?data=([\w\d%]*)"/g.exec(grade)[1];
@@ -126,7 +134,7 @@ var HAC_HTML =
 		$(superRoot).append(root);
 
 		// and an ad
-		$(superRoot).append(HAC.generate_ad());
+		$(superRoot).append(Ad.generate_ad());
 
 		return superRoot;
 	},

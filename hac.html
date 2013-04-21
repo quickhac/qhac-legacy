@@ -23,8 +23,12 @@
 			<div class="sep"></div>
 			<input type="password" id="password" name="password" placeholder="password" required /><br>
 			<div class="sep"></div>
-			<input id="studentid" name="studentid" placeholder="6-digit id" pattern="[0-9]{6}" required /><br>
+			<input id="studentid" name="studentid" placeholder="student id" pattern="[0-9]{6,7}" required /><br>
 			<div class="sep"></div>
+			<select id="district" name="district">
+				<option value="rrisd">Round Rock ISD</option>
+				<option value="aisd">Austin ISD</option>
+			</select>
 			<input type="submit" id="do_login" value="Login" />
 		</form>
 		<div id="restricted_access_wrapper">

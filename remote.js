@@ -31,73 +31,31 @@ var Updater =
 	get_update_text: function() {
 		return moment(parseInt(localStorage["lastupdated"])).fromNow();
 	}
-}
+};
 
-// working with HACaccess
-var HAC =
+// ads
+var Ad =
 {
-	get_session: function(login, pass, id, callback, on_error) {
-		$.ajax({
-			url: "https://hacaccess.herokuapp.com/api/login",
-			timeout: 15000,
-			type: "POST",
-			data: {
-				login: login.encrypt(),
-				password: pass.encrypt(),
-				studentid: id.rot13()
-			},
-			success: callback,
-			error: on_error
-		});
-	},
-
-	get_gradesURL: function(id, callback) {
-		$.post("https://hacaccess.herokuapp.com/api/gradesURL",
-			{sessionid: id.rot13()},
-			function (data) { callback(data); }
-		);
-	},
-
-	get_gradesHTML: function(id, callback) {
-		$.post("https://hacaccess.herokuapp.com/api/gradesHTML",
-			{sessionid: id.rot13()},
-			function (data) { callback(data); }
-		);
-	},
-
-	get_gradesHTML_direct: function(url, callback) {
-		$.get("https://gradebook.roundrockisd.org/pc/displaygrades.aspx?studentid=" + url,
-			function (data) { callback(data); }
-		);
-	},
-
-	get_classGradeHTML: function(sID, data, callback) {
-		$.get("https://gradebook.roundrockisd.org/pc/displaygrades.aspx?studentid=" + sID
-			+ "&data=" + data,
-			function (data) { callback(data); }
-		);
-	},
-
 	generate_ad: function() {
 		var wrapper = document.createElement("div");
 		$(wrapper).attr("id", "ad_wrapper");
 
 		// survey
 		if (localStorage["ad_3"] != "no")
-			return HAC.generate_ad_inner(
+			return Ad.generate_ad_inner(
 				"We value your feedback! Take our survey &raquo;",
 				"https://docs.google.com/forms/d/1VcjEbLuRL1AwNE7sXmJ003uM0KJ8bpW_Ev31nII_s1A/viewform",
 				"3");
 
 		// workaround for scrolling
 		if ((window.navigator.appVersion.indexOf("OS X 10") != -1) && (localStorage["ad_2"] != "no"))
-			return HAC.generate_ad_inner(
+			return Ad.generate_ad_inner(
 				"Using OS X? Scrolling might not work. Here's a fix. &raquo;",
 				"", "2");
 
 		// edit grade banner
 		if (localStorage["ad_1"] != "no")
-			return HAC.generate_ad_inner(
+			return Ad.generate_ad_inner(
 				"New in 1.2: Edit grades locally. Click on any assignment grade to get started!",
 				"", "1");
 
@@ -142,4 +100,74 @@ var HAC =
 	}
 }
 
+var RRISD_HAC =
+{
+	get_session: function(login, pass, id, callback, on_error) {
+		$.ajax({
+			url: "https://hacaccess.herokuapp.com/api/rrisd/login",
+			timeout: 15000,
+			type: "POST",
+			data: {
+				login: login.encrypt(),
+				password: pass.encrypt(),
+				studentid: id.rot13()
+			},
+			success: callback,
+			error: on_error
+		});
+	},
 
+	get_gradesURL: function(id, callback) {
+		$.post("https://hacaccess.herokuapp.com/api/rrisd/gradesURL",
+			{sessionid: id.rot13()},
+			function (data) { callback(data); }
+		);
+	},
+
+	get_gradesHTML: function(url, callback) {
+		$.get("https://gradebook.roundrockisd.org/pc/displaygrades.aspx?studentid=" + url,
+			function (data) { callback(data); }
+		);
+	},
+
+	get_classGradeHTML: function(sID, data, callback) {
+		$.get("https://gradebook.roundrockisd.org/pc/displaygrades.aspx?studentid=" + sID
+			+ "&data=" + data,
+			function (data) { callback(data); }
+		);
+	},
+}
+
+var AISD_HAC =
+{
+	host: "https://hacaccess.herokuapp.com/",
+
+	get_session: function(login, pass, id, callback, on_error) {
+		$.ajax({
+			url: AISD_HAC.host + "api/aisd/login",
+			timeout: 15000,
+			type: "POST",
+			data: {
+				login: login.encrypt(),
+				password: pass.encrypt(),
+				studentid: id.encrypt()
+			},
+			success: callback,
+			error: on_error
+		});
+	},
+
+	get_gradesHTML: function(id, studentid, callback) {
+		$.post(AISD_HAC.host + "api/aisd/gradesHTML",
+			{ sessionid: id.rot13(), studentid: studentid.rot13() },
+			function (data) { callback(data); }
+		);
+	},
+
+	get_classGradeHTML: function(id, studentid, data, callback) {
+		$.post(AISD_HAC.host + "api/aisd/gradesHTML",
+			{ sessionid: id.rot13(), studentid: studentid.rot13(), data: data.rot13() },
+			function (data) { callback(data); }
+		);
+	},
+}

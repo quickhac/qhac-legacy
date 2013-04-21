@@ -192,6 +192,11 @@ a:hover {
 	font-size: 20px;
 }
 
+#district {
+	width: 100%;
+	margin-bottom: 8px;
+}
+
 #do_login, #do_unlock {
 	background: #FFCA08;
 	width: 100%;
