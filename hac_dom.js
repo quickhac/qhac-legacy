@@ -215,7 +215,7 @@ var HAC_HTML =
 
 		var currAvg = document.createElement("p");
 		$(currAvg).addClass("CurrentAverage").html("Current Average: " + json.currAvg)
-			.css('background', HAC_HTML.colorize(json.currAvg));
+			.css('background', HAC_HTML.colorize(parseInt(json.currAvg)));
 		$(root).append(currAvg);
 
 		for (var i = 0; i < json.cats.length; i++) {
