@@ -49,7 +49,7 @@ var Ad = {
 		if ((window.navigator.appVersion.indexOf("OS X 10") != -1) && (localStorage["ad_2"] != "no"))
 			return Ad.generate_ad_inner(
 				"Using OS X? Scrolling might not work. Here's a fix. &raquo;",
-				"", "2");
+				"http://hacaccess.herokuapp.com/qhac/ml-fix", "2");
 
 		// edit grade banner
 		if (localStorage["ad_1"] != "no")
