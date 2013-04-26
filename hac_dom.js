@@ -1,6 +1,7 @@
 var DEFAULT_ASIANNESS = 4;
 var DEFAULT_R_INT = 60;
 var DEFAULT_HUE = 0;
+var DEFAULT_NOTIF_DURATION = 5;
 
 // parsing and creating DOMs
 var HAC_HTML =
@@ -605,20 +606,24 @@ var HAC_HTML =
 			}
 		}
 
-		if (localStorage["single_notif"] == "true") {
-			// Call notification once for all updates
-			if (gradesToNotify.length > 0) 
-				HAC_HTML._notify2(
-					"Grades Changed", 
-					"Your grade changed in " + gradesToNotify.length + " course" + (gradesToNotify.length > 1 ? "s" : "")
-				);
-			if (typeof on_notify === "function") on_notify.call();
-		} else {
-			// Call notification for each grade update
-			for (var n = gradesToNotify.length-1; n >=0; n--) {
-				notif = HAC_HTML.makeUpdateText(gradesToNotify[n]);
-				HAC_HTML._notify2(notif.title, notif.text);
+		if (localStorage.hasOwnProperty("notifs_enabled") && localStorage["notifs_enabled"]) {
+			if (localStorage.hasOwnProperty("single_notif") && localStorage["single_notif"] === "true"
+				|| localStorage.hasOwnProperty("password") && localStorage["password"] === ""
+				|| !localStorage.hasOwnProperty("password")) {
+				// Call notification once for all updates
+				if (gradesToNotify.length > 0) 
+					HAC_HTML._notify2(
+						"Grades Changed", 
+						"Your grade changed in " + gradesToNotify.length + " course" + (gradesToNotify.length > 1 ? "s" : "")
+					);
 				if (typeof on_notify === "function") on_notify.call();
+			} else {
+				// Call notification for each grade update
+				for (var n = gradesToNotify.length-1; n >=0; n--) {
+					notif = HAC_HTML.makeUpdateText(gradesToNotify[n]);
+					HAC_HTML._notify2(notif.title, notif.text);
+					if (typeof on_notify === "function") on_notify.call();
+				}
 			}
 		}
 		// Set grade change indicators
@@ -666,7 +671,20 @@ var HAC_HTML =
 	},
 
 	_notify2: function (titleText, updateText) {
-		webkitNotifications.createNotification("assets/icon-full.png", titleText, updateText).show();
+		var notif = webkitNotifications.createNotification("assets/icon-full.png", titleText, updateText).show();
+
+		if (localStorage.hasOwnProperty("notif_duration")) {
+			var duration = parseInt(localStorage["notif_duration"]);
+			if (duration > 0 && duration <= 60) {
+				window.setTimeout(function () {
+					notif.cancel();
+				}, duration * 1000);
+			}
+		} else {
+			window.setTimeout(function () {
+				notif.cancel();
+			}, DEFAULT_NOTIF_DURATION * 1000);
+		}
 	},
 
 	_notify: function(className, label, oldgrade, newgrade) {

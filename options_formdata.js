@@ -96,7 +96,7 @@ var options_formdata = {
 			},
 			options: [
 				{
-					title: "Refresh Interval (mins)",
+					title: "Refresh Interval (min)",
 					id: "r_interval",
 					type: "number",
 					info: "",
@@ -133,16 +133,57 @@ var options_formdata = {
 			sections: []
 		},
 		{
-			title: "Consolidate Update Notifications",
-			id: "single_notif",
+			title: "Notifications",
+			id: "notifs_enabled",
 			type: "toggle",
-			default_value: false,
-			info: "Notify once for all grade updates, instead of once for each individual update.",
+			default_value: true,
+			info: "Enables a notification in the corner of the screen when grades change.",
 			attributes: {},
 			on_change: function (el) {
 				update_options_dom(false);
 			},
-			options: [],
+			options: [
+				{
+					title: "Consolidate Updates",
+					id: "single_notif",
+					type: "toggle",
+					info: "Notify once for all grade changes, instead of once for each individual change. This is required if password lock is enabled.",
+					default_value: false,
+					attributes: {},
+					on_change: function (el) {},
+					validation_input: function () {},
+					validation_rules: {},
+					validation_responses: []
+				},
+				{
+					title: "Auto-Hide Duration (sec)",
+					id: "notif_duration",
+					type: "number",
+					info: "Set to 0 to disable auto-hide.",
+					default_value: "5",
+					attributes: {
+						"min": "0",
+						"max": "60",
+						"step": "1"
+					},
+					on_change: function (el) {},
+					validation_input: function () {
+						return parseInt($("#notif_duration").val());
+					},
+					validation_rules: {
+						"in_range": function (val) { return val >= 0 && val <= 60; }
+					},
+					validation_responses: [
+						{
+							states: [{ "in_range": false }],
+							success: function (val) {
+								show_error($("#notif_duration"), "Duration must be between 0 and 60 seconds")
+								return false;
+							}
+						}
+					]
+				}
+			],
 			sections: []
 		},
 		{
@@ -339,10 +380,17 @@ var options_formdata = {
 		var new_asianness = $("#colorization").prop('checked') ? parseFloat($("#asianness").val()) : 0;
 		var new_r_int = $("#auto_refresh").prop('checked') ? parseFloat($("#r_interval").val()) : 0;
 		var new_hue = parseInt($("#hue").val());
+		var new_notif_duration = parseInt($("#notif_duration").val());
+		single_notif = $("#single_notif").prop("checked");
 
 		localStorage.setItem("asianness", new_asianness.toString());
 		localStorage.setItem("r_int", new_r_int.toString());
 		localStorage.setItem("hue", new_hue.toString());
+		localStorage.setItem("notif_duration", new_notif_duration.toString());
+
+		localStorage.setItem("notifs_enabled", notifs_enabled ? "true" : "false");
+		localStorage.setItem("single_notif", single_notif ? "true" : "false");
+		localStorage.setItem("badge_enabled", badge_enabled ? "true" : "false");
 
 		// Deal with password crap
 

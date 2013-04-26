@@ -42,7 +42,7 @@ body {
 	cursor: default;
 	-webkit-user-select: none;
 	user-select: none;
-	padding-bottom: 16px;
+	/*padding-bottom: 16px;*/
 	/*border: 2px solid #BBBBBB;*/
 
 	-webkit-transition: padding-bottom 0.2s linear;
@@ -75,41 +75,58 @@ body {
 	-webkit-flex: 0 0 auto;
 	margin-right: 8px;
 }
-.toggle:not(.minimized) .titlebar + .info:not(:empty) {
-	margin: 12px 16px 0px 16px;
+.toggle .titlebar + .info:not(:empty) {
+	padding: 12px 16px 12px 16px;
+}
+.toggle .titlebar + .info:not(:empty) + .option {
+	/*padding-top: 12px;*/
+}
+.toggle.minimized .titlebar + .info:not(:empty) + .option {
+	padding-top: 0;
 }
 .option {
-	margin: 0 16px;
+	padding: 0 16px;
 	font-size: 14px;
 	color: #404040;
 	position: relative;
 }
-.option + .option, .info + .option {
-	margin-top: 8px;
+.option:last-child {
+	padding-bottom: 12px;
+}
+.option + .option {
+	padding-top: 8px;
+}
+.titlebar + .info:empty + .option {
+	padding-top: 12px;
 }
 .option .info {
 	/*margin-top: -16px;*/
 	/*margin-bottom: 16px;*/
 }
 .info {
+	padding: 0;
 	margin: 0;
-	font-size: 0.75em;
+	font-size: 12px;
 	color: #888888;
-
-	-webkit-transition: margin-top 0.2s linear;
-	transition: margin-top 0.2s linear;
+}
+section > .info:last-child {
+	padding-bottom: 12px !important;
 }
 .toggle.minimized .info {
-	margin: 0 16px 0 16px !important;
+	padding-top: 0;
+	padding-bottom: 0;
+}
+#settings_wrapper .info:not(:empty) + section h3 {
+	margin-top: 4px;
 }
 #settings_wrapper section h3 {
-	margin: 16px 16px 0 16px;
+	margin: 8px 16px 0 16px;
 	cursor: default;
 	-webkit-user-select: none;
 	user-select: none;
 }
 #settings_wrapper section h3 + .info {
-	margin: 8px 16px 0px 16px;
+	padding: 8px 16px 0px 16px;
 }
 
 .orange_button {
@@ -153,6 +170,7 @@ input[type="number"] {
 	float: right;
 	margin: 8px 0 8px 4px;
 	position: absolute;
+	-webkit-filter: drop-shadow(0 0 15px black);
 }
 
 

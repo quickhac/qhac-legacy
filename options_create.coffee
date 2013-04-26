@@ -159,7 +159,7 @@ class Option
 		if typeof default_value is "undefined" then return @_default_value
 		@_default_value = default_value
 		switch @_type
-			when "toggle" then @input.checked = true
+			when "toggle" then @input.checked = default_value
 			else @input.value = default_value
 		@
 	

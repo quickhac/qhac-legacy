@@ -121,17 +121,35 @@ var RRISD_HAC = {
 		);
 	},
 
-	get_gradesHTML: function (url, callback) {
-		$.get("https://gradebook.roundrockisd.org/pc/displaygrades.aspx?studentid=" + url,
-			function (data) { callback(data); }
-		);
+	get_gradesHTML: function (url, callback, on_error) {
+		// $.get("https://gradebook.roundrockisd.org/pc/displaygrades.aspx?studentid=" + url,
+		// 	function (data) { callback(data); }
+		// );
+		$.ajax({
+			url: "https://gradebook.roundrockisd.org/pc/displaygrades.aspx?studentid=" + url,
+			timeout: 15000,
+			method: "GET",
+			success: callback,
+			error: on_error || function (e) { console.error(e); }
+		})
 	},
 
-	get_classGradeHTML: function (sID, data, callback) {
-		$.get("https://gradebook.roundrockisd.org/pc/displaygrades.aspx?studentid=" + sID
-			+ "&data=" + data,
-			function (data) { callback(data); }
-		);
+	get_classGradeHTML: function (sID, data, callback, on_error) {
+		// $.get("https://gradebook.roundrockisd.org/pc/displaygrades.aspx?studentid=" + sID
+		// 	+ "&data=" + data,
+		// 	function (data) { callback(data); }
+		// );
+		$.ajax({
+			url: "https://gradebook.roundrockisd.org/pc/displaygrades.aspx",
+			timeout: 15000,
+			method: "GET",
+			data: {
+				"studentid": sID,
+				"data": data
+			},
+			success: callback,
+			error: on_error || function (e) { console.error(e); }
+		})
 	}
 };
 

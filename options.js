@@ -1,4 +1,4 @@
-var asianness, r_interval, hue, asianness_enabled, refresh_enabled, hue_enabled, password_enabled, badge_enabled, single_notif;
+var asianness, r_interval, hue, colorization_enabled, refresh_enabled, hue_enabled, password_enabled, badge_enabled, notifs_enabled, single_notif;
 
 function generate_color_table() {
 	var table = document.createElement("table");
@@ -25,7 +25,7 @@ function getVersion(callback) {
 	xmlhttp.onload = function (e) {
 		var manifest = JSON.parse(xmlhttp.responseText);
 		callback(manifest.version);
-	}
+	};
 	xmlhttp.send(null);
 }
 
@@ -35,7 +35,8 @@ var error_id = 0;
 
 function show_error($input, message) {
 	console.error(message);
-	
+
+	// Hide old error messages
 	$input.parent().children(".error_msg").detach();
 	
 	$el = $(document.createElement("div"));
@@ -44,53 +45,53 @@ function show_error($input, message) {
 		.appendTo($input.parent())
 		.addClass("animate");
 	window.setTimeout(function () {
-		$(".error_msg").detach();
+		$el.detach();
 	}, 4000);
 	$input.focus();
 	error_id++;
 }
 
-Validator_old = function (valid, invalid) {
-	this.inputs = [];
-	this.conditions = [];
-	this.successes = [];
-	this.errors = [];
-	this.valid = valid || function () {};
-	this.invalid = invalid || function () {};
-	this.isValid = false;
+// Validator_old = function (valid, invalid) {
+// 	this.inputs = [];
+// 	this.conditions = [];
+// 	this.successes = [];
+// 	this.errors = [];
+// 	this.valid = valid || function () {};
+// 	this.invalid = invalid || function () {};
+// 	this.isValid = false;
 	
-	return this;
-};
-Validator_old.prototype.add = function (vals, condition, success, error) {
-	this.inputs.push(vals);
-	this.conditions.push(condition);
-	this.successes.push(success);
-	this.errors.push(error);
-	return this;
-};
-Validator_old.prototype.validate = function () {
-	var all_valid = true;
-	var vals;
+// 	return this;
+// };
+// Validator_old.prototype.add = function (vals, condition, success, error) {
+// 	this.inputs.push(vals);
+// 	this.conditions.push(condition);
+// 	this.successes.push(success);
+// 	this.errors.push(error);
+// 	return this;
+// };
+// Validator_old.prototype.validate = function () {
+// 	var all_valid = true;
+// 	var vals;
 	
-	for (var i = this.conditions.length - 1; i >= 0; i--) {
-		vals = this.inputs[i];
-		if (this.conditions[i].call(window, vals)) {
-			this.successes[i].call(window, vals);
-		} else {
-			all_valid = all_valid && false;
-			this.errors[i].call(window, vals);
-		}
-	}
+// 	for (var i = this.conditions.length - 1; i >= 0; i--) {
+// 		vals = this.inputs[i];
+// 		if (this.conditions[i].call(window, vals)) {
+// 			this.successes[i].call(window, vals);
+// 		} else {
+// 			all_valid = all_valid && false;
+// 			this.errors[i].call(window, vals);
+// 		}
+// 	}
 	
-	if (all_valid) {
-		this.valid.call(window);
-		this.isValid = true;
-	} else {
-		this.invalid.call(window);
-		this.isValid = false;
-	}
-	return this;
-};
+// 	if (all_valid) {
+// 		this.valid.call(window);
+// 		this.isValid = true;
+// 	} else {
+// 		this.invalid.call(window);
+// 		this.isValid = false;
+// 	}
+// 	return this;
+// };
 
 function set_password_boxes(checked) {
 	function require(ids, isRequired) {
@@ -118,6 +119,7 @@ function set_password_boxes(checked) {
 	if (checked) {
 		require("#new_password, #confirm_password", true);
 		openPassOpts();
+		$("#single_notif").prop({"required": true, "disabled": true, "checked": true});
 
 		if (password_enabled) {
 			$("#settings section:first-of-type h3").text("Change Password");
@@ -127,6 +129,7 @@ function set_password_boxes(checked) {
 		}
 	} else {
 		require("#new_password, #confirm_password", false);
+		$("#single_notif").prop({"required": false, "disabled": false, "checked": single_notif});
 
 		if (password_enabled) {
 			$("#settings section:first-of-type h3").text("Disable Password");
@@ -145,7 +148,7 @@ function update_options_dom(noAnimation) {
 
 	if ($("#colorization").prop('checked')) {
 		// $("#asianness_wrapper, #hue_wrapper").slideDown(anim);
-		asianness_enabled = true;
+		colorization_enabled = true;
 		asianness = $("#asianness").val();
 
 		hue_enabled = true;
@@ -156,7 +159,7 @@ function update_options_dom(noAnimation) {
 		$("#asianness_wrapper, #hue_wrapper").slideDown(anim);
 	} else {
 		// $("#colorization").slideUp(anim);
-		asianness_enabled = false;
+		colorization_enabled = false;
 		asianness = 0;
 
 		hue_enabled = false;
@@ -169,20 +172,33 @@ function update_options_dom(noAnimation) {
 	
 	if ($("#auto_refresh").prop('checked')) {
 		$("#auto_refresh_wrapper").removeClass('minimized');
-		$("#auto_refresh_wrapper .option, #auto_refresh_wrapper .info")
+		$("#auto_refresh_wrapper .option, #auto_refresh_wrapper section .info")
 			.slideDown(anim);
 		r_int = $("#r_interval").val();
-		refresh_enabled = false;
+		refresh_enabled = true;
 	} else {
 		$("#auto_refresh_wrapper").addClass('minimized');
-		$("#auto_refresh_wrapper .option, #auto_refresh_wrapper .info")
+		$("#auto_refresh_wrapper .option, #auto_refresh_wrapper section .info")
 			.slideUp(anim);
-		refresh_enabled = true;
+		refresh_enabled = false;
 		r_int = 0;
 	}
 
+	if ($("#notifs_enabled").prop("checked")) {
+		$("#notifs_enabled_wrapper").removeClass("minimized");
+		$("#notifs_enabled_wrapper .option, #notifs_enabled_wrapper section .info")
+			.slideDown(anim);
+		notif_duration = $("#notif_duration").val();
+		single_notif = $("#single_notif").prop("checked");
+		notifs_enabled = true;
+	} else {
+		$("#notifs_enabled_wrapper").addClass("minimized");
+		$("#notifs_enabled_wrapper .option, #notifs_enabled_wrapper section .info")
+			.slideUp(anim);
+		notifs_enabled = false;
+	}
+
 	badge_enabled = $("#badge_count").prop("checked");
-	single_notif = $("#single_notif").prop("checked");
 
 	set_password_boxes($("#password_protection").prop('checked'));
 }
@@ -193,10 +209,12 @@ $(function(){
 	asianness = localStorage.hasOwnProperty("asianness") ? parseFloat(localStorage["asianness"]) : DEFAULT_ASIANNESS;
 	r_interval = localStorage.hasOwnProperty("r_int") ? parseFloat(localStorage["r_int"]) : DEFAULT_R_INT;
 	hue = localStorage.hasOwnProperty("hue") ? parseFloat(localStorage["hue"]) : DEFAULT_HUE;
+	notif_duration = localStorage.hasOwnProperty("notif_duration") ? parseFloat(localStorage["notif_duration"]) : DEFAULT_NOTIF_DURATION;
 	
 	// Load toggles states from storage
-	asianness_enabled = (localStorage.hasOwnProperty("asianness") ? (localStorage["asianness"] != 0) : true);
-	refresh_enabled = (localStorage.hasOwnProperty("r_int") ? (localStorage["r_int"] != 0) : true);
+	colorization_enabled = (localStorage.hasOwnProperty("asianness") ? (parseFloat(localStorage["asianness"]) != 0) : true);
+	refresh_enabled = (localStorage.hasOwnProperty("r_int") ? (parseFloat(localStorage["r_int"]) != 0) : true);
+	notifs_enabled = localStorage.hasOwnProperty("notifs_enabled") && localStorage["notifs_enabled"] == "true";
 	single_notif = localStorage.hasOwnProperty("single_notif") && localStorage["single_notif"] == "true";
 	badge_enabled = localStorage.hasOwnProperty("badge_enabled") && localStorage["badge_enabled"] == "true";
 	password_enabled = localStorage.hasOwnProperty("password") && localStorage["password"] != "";
@@ -205,17 +223,19 @@ $(function(){
 	renderOptions(options_formdata, $("#settings")[0]);
 
 	// update toggles
-	$("#colorization").prop('checked', asianness_enabled);
+	$("#colorization").prop('checked', colorization_enabled);
 	$("#auto_refresh").prop('checked', refresh_enabled);
+	$("#notifs_enabled").prop('checked', notifs_enabled);
 	$("#single_notif").prop('checked', single_notif);
 	$("#badge_count").prop('checked', badge_enabled);
 	$("#password_protection").prop('checked', password_enabled);
 
 	// update spinbox values (use default values if previously disabled)
-	$("#asianness").val(asianness_enabled ? asianness : 4);
-	$("#asianness_slider").val(Math.log(asianness_enabled ? asianness : 4));
-	$("#r_interval").val(refresh_enabled ? r_interval : 60);
-	$("#hue, #hue_slider").val(hue);
+	$("#asianness").val(colorization_enabled ? asianness.toString() : DEFAULT_ASIANNESS.toString());
+	$("#asianness_slider").val(Math.log(colorization_enabled ? asianness.toString() : DEFAULT_ASIANNESS.toString()));
+	$("#r_interval").val(refresh_enabled ? r_interval.toString() : DEFAULT_R_INT.toString());
+	$("#hue, #hue_slider").val(hue.toString());
+	$("#notif_duration").val(notifs_enabled ? notif_duration.toString() : "0");
 
 	// Initialize slider indicators
 	$("#asianness_slider").parent().prev('.sliderIndicator')

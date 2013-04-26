@@ -287,7 +287,7 @@ Option = (function() {
     this._default_value = default_value;
     switch (this._type) {
       case "toggle":
-        this.input.checked = true;
+        this.input.checked = default_value;
         break;
       default:
         this.input.value = default_value;

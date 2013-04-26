@@ -50,9 +50,40 @@ function on_error_logging_in(jqXHR, textStatus, errorThrown) {
 	case "timeout":
 		show_login_error("Login timed out");
 		break;
+	default:
+		show_login_error("Failed to log in");
 	}
 
 	reset_login_form();
+}
+function toast(txt) {
+	var toast = document.createElement("div");
+	$(toast).addClass("toast").text(txt);
+	$("body").append(toast);
+	$(toast).addClass("animate");
+	window.setTimeout(function () {
+		$(toast).detach();
+	}, 5000);
+}
+function handle_load_error(jqXHR, textStatus, errorThrown) {
+	console.log(textStatus, errorThrown);
+	switch (textStatus) {
+		case "timeout": error_msg = "Loading grades timed out"; break;
+		case "abort": error_msg = "Loading grades aborted"; break;
+		default: error_msg = "Loading grades failed";
+	}
+	$("body").removeClass("busy").addClass("offline");
+	toast(error_msg);
+}
+function handle_load_error_class(jqXHR, textStatus, errorThrown) {
+	console.log(textStatus, errorThrown);
+	switch (textStatus) {
+		case "timeout": error_msg = "Loading class grades timed out"; break;
+		case "abort": error_msg = "Loading class grades aborted"; break;
+		default: error_msg = "Loading class grades failed";
+	}
+	$("body").removeClass("busy").addClass("offline");
+	toast(error_msg);
 }
 
 // log in to RRISD
@@ -64,7 +95,7 @@ function login_to_rrisd(uname, pass, studentid) {
 		studentid,
 		function (id) {
 			// save url
-			RRISD_HAC.get_gradesURL(id, function(url) {
+			RRISD_HAC.get_gradesURL(id, function (url) {
 				var captures = /id=([\w\d%]*)/.exec(url);
 				// if login failed
 				if (typeof captures == "undefined") {
@@ -78,12 +109,12 @@ function login_to_rrisd(uname, pass, studentid) {
 				localStorage.setItem("url", sID);
 				$("#direct_url").val(sID);
 				// load grades directly
-				RRISD_HAC.get_gradesHTML(sID, function(doc) {
+				RRISD_HAC.get_gradesHTML(sID, function (doc) {
 					processUpdatedGrades(doc);
 					hide_login_form();
 					reset_login_form();
-					$("body").removeClass("busy").removeClass("edited");
-				});
+					$("body").removeClass("busy offline edited");
+				}, handle_load_error);
 			});
 		},
 		on_error_logging_in);
@@ -107,7 +138,7 @@ function login_to_aisd(uname, pass, studentid) {
 					processUpdatedGrades(doc);
 					hide_login_form();
 					reset_login_form();
-					$("body").removeClass("busy").removeClass("edited");
+					$("body").removeClass("busy offline edited");
 				});
 		},
 		on_error_logging_in);
@@ -178,19 +209,19 @@ function update() {
 	// query the correct district
 	switch (localStorage["district"]) {
 	case "rrisd":
-		RRISD_HAC.get_gradesHTML(localStorage["url"], function(doc) {
+		RRISD_HAC.get_gradesHTML(localStorage["url"], function (doc) {
 			processUpdatedGrades(doc);
-			$("body").removeClass("busy").removeClass("edited");
-		});
+			$("body").removeClass("busy offline edited");
+		}, handle_load_error);
 		break;
 	case "aisd":
-		load_aisd_session(function() {
+		load_aisd_session(function () {
 			AISD_HAC.get_gradesHTML(
 				window.session_id,
 				localStorage["studentid"].decrypt().decrypt(),
-				function(doc) {
+				function (doc) {
 					processUpdatedGrades(doc);
-					$("body").removeClass("busy").removeClass("edited");
+					$("body").removeClass("busy offline edited");
 				});
 		});
 		break;
@@ -280,8 +311,8 @@ function loadClassGrades(data) {
 	case "rrisd":
 		RRISD_HAC.get_classGradeHTML(localStorage["url"], data, function(stuff) {
 			processUpdatedClassGrades(data, stuff);
-			$("body").removeClass("busy").removeClass("edited");
-		});
+			$("body").removeClass("busy offline edited");
+		}, handle_load_error_class);
 		break;
 	case "aisd":
 		load_aisd_session(function() {
@@ -291,7 +322,7 @@ function loadClassGrades(data) {
 				data,
 				function(stuff) {
 					processUpdatedClassGrades(data, stuff);
-					$("body").removeClass("busy").removeClass("edited");
+					$("body").removeClass("busy offline edited");
 				});
 		});
 		break;
