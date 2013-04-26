@@ -122,6 +122,30 @@ body.locked #restricted_access_wrapper {
 	border-color: #CC3333;
 }
 
+::-webkit-validation-bubble-message {
+	color: #CCCCCC;
+	background: none;
+	background-color: rgba(0,0,0,0.8);
+	border: none;
+	border-radius: 4px;
+	font-size: 12px;
+	padding: 4px 8px;
+	box-shadow: 0 2px 16px rgba(0,0,0,0.5);
+	cursor: default;
+	-webkit-user-select: none;
+}
+::-webkit-validation-bubble-icon {
+	display: none;
+}
+::-webkit-validation-bubble-arrow-clipper {
+	margin-top: -1px;
+}
+::-webkit-validation-bubble-arrow {
+	/*border: 1px solid rgba(0,0,0,0.8);*/
+	border: none;
+	background-color: rgba(0,0,0,0.8);
+}
+
 #resetLink {
 	font-size: 12px;
 	color: #888888;

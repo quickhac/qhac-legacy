@@ -30,8 +30,10 @@ body {
 	min-height: 258px;
 }
 #settings_wrapper h2 {
-	margin-bottom: 1em;
+	margin-bottom: 0.5em;
 	cursor: default;
+	font-size: 32px;
+	font-weight: 200;
 	-webkit-user-select: none;
 	user-select: none;
 }
@@ -109,6 +111,23 @@ body {
 	font-size: 12px;
 	color: #888888;
 }
+.info a:link, .info a:visited {
+	/*color: #404040;*/
+	color: #EEEEEE;
+	text-decoration: none;
+	/*display: inline-block;*/
+	width: 1.25em;
+	height: 1.25em;
+	line-height: 1;
+	/*background: #FFCA08;*/
+	background-color: #BBBBBB;
+	border-radius: 50%;
+	padding: 2px;
+	text-align: center;
+	vertical-align: middle;
+	/*border: 1px solid #404040;*/
+	box-sizing: border-box;
+}
 section > .info:last-child {
 	padding-bottom: 12px !important;
 }
@@ -168,8 +187,7 @@ input[type="number"] {
 }
 #heaf {
 	float: right;
-	margin: 8px 0 8px 4px;
-	position: absolute;
+	margin-right: -200px;
 	-webkit-filter: drop-shadow(0 0 15px black);
 }
 
@@ -256,9 +274,26 @@ h2 + p {
 	border-radius: 15px;
 	background-color: #EEEEEE;
 	box-shadow: inset 0 1px 2px 1px rgba(0,0,0,0.25), inset 0 8px 8px rgba(0,0,0,0.15), 0 1px rgba(255,255,255,0.5);
+	/*overflow: hidden;*/
+}
+#asianness_slider::-webkit-slider-thumb, #hue_slider::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	border-radius: 50%;
+	display: block;
+	height: 14px;
+	width: 14px;
+	background: #DDDDDD -webkit-linear-gradient(top, #EEEEEE, #DDDDDD);
+	margin: -2px 0;
+	box-shadow: 0 0 4px rgba(0,0,0,0.25),
+		inset 0 1px 1px #FFFFFF,
+		inset 0 -1px 1px #BBBBBB;
+	/*border-top: 1px solid #FFFFFF;*/
+	/*border-bottom: 1px solid #BBBBBB;*/
+	box-sizing: border-box;
 }
 #hue_slider {
 	background: url('assets/hue_gradient.svg');
+	box-shadow: inset 0 1px 2px 1px rgba(0,0,0,0.25), inset 0 8px 8px rgba(0,0,0,0.25), 0 1px rgba(255,255,255,0.5);
 }
 .sliderIndicatorWrapper {
 	position: relative;

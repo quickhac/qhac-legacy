@@ -5,7 +5,7 @@ var options_formdata = {
 			id: "colorization",
 			type: "toggle",
 			default_value: true,
-			info: "",
+			info: "Color grades according to severity of the score.",
 			attributes: {},
 			on_change: function (el) {
 				update_options_dom(false);
@@ -159,7 +159,7 @@ var options_formdata = {
 					title: "Auto-Hide Duration (sec)",
 					id: "notif_duration",
 					type: "number",
-					info: "Set to 0 to disable auto-hide.",
+					info: "<strong>Windows only</strong>. Set to 0 to disable auto-hide. If you are on OS X, see system notification settings.",
 					default_value: "5",
 					attributes: {
 						"min": "0",
