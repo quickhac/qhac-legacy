@@ -164,13 +164,13 @@ var RRISD_HAC = {
 
 	get_classGradeHTML: function (sID, data, callback, on_error) {
 		var jqXHR = $.ajax({
-			url: "https://gradebook.roundrockisd.org/pc/displaygrades.aspx",
-			type: "GET",
+			url: "https://gradebook.roundrockisd.org/pc/displaygrades.aspx?data=" + data + "&studentid=" + sID,
+			type: "GET"
 			// dataType: "text cjson",
-			data: {
-				"studentid": sID,
-				"data": data
-			}
+			// data: {
+			// 	"data": data,
+			// 	"studentid": sID
+			// }
 		}).done(function (doc) {
 			if (doc == "Could not decode student id.") {
 				console.log("Error while fetching class grades (could not decode student ID)");

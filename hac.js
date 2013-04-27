@@ -458,7 +458,10 @@ $(function(){
 		return false;
 	});
 	$("#do_direct_access").click(update);
-	$("#cancel_refresh").click(XHR_Queue.abortAll);
+	$("#cancel_refresh").click(function () {
+		$("body").removeClass("busy");
+		XHR_Queue.abortAll();
+	});
 	$("#do_options").click(function() { chrome.tabs.create({url: "options.html"}); });
 	$("#do_logout").click(logout);
 	$("#do_close").click(function() {
@@ -476,7 +479,7 @@ $(function(){
 
 	// fill in grades
 	if (localStorage.hasOwnProperty("grades") && localStorage["grades"] != "") {
-		$("#grades").append(HAC_HTML.json_to_html(JSON.parse(localStorage["grades"])));
+		displayGrades(JSON.parse(localStorage["grades"]));
 
 		setChangedGradeIndicators();
 	}
