@@ -22,6 +22,34 @@ String.prototype.decrypt = function () {
 	return this.rot13().b64dec();
 }
 
+// XHR QUEUE (is this really necessary?)
+// I suppose we could just have a global flag
+// if a request is currently being made...
+// but let's go with the more complex option :P
+Queuer = (function () {
+
+	function Queuer() {
+		this.queue = [];
+	};
+
+	Queuer.prototype.addRequest = function (xhr) {
+		this.queue.push(xhr);
+		return this;
+	};
+
+	Queuer.prototype.abortAll = function () {
+		while (this.queue.length) {
+			this.queue[0].abort();
+			this.queue.splice(0, 1);
+		}
+		return this;
+	};
+
+	return Queuer;
+})();
+
+var XHR_Queue = new Queuer();
+
 // date setting
 var Updater = {
 	set_updated: function () {
@@ -100,9 +128,8 @@ var Ad = {
 
 var RRISD_HAC = {
 	get_session: function (login, pass, id, callback, on_error) {
-		$.ajax({
+		var jqXHR = $.ajax({
 			url: "https://hacaccess.herokuapp.com/api/rrisd/login",
-			timeout: 15000,
 			type: "POST",
 			data: {
 				login: login.encrypt(),
@@ -112,26 +139,28 @@ var RRISD_HAC = {
 			success: callback,
 			error: on_error
 		});
+		XHR_Queue.abortAll().addRequest(jqXHR);
 	},
 
 	get_gradesURL: function (id, callback) {
-		$.post("https://hacaccess.herokuapp.com/api/rrisd/gradesURL",
+		var jqXHR = $.post("https://hacaccess.herokuapp.com/api/rrisd/gradesURL",
 			{sessionid: id.rot13()},
 			function (data) { callback(data); }
 		);
+		XHR_Queue.abortAll().addRequest(jqXHR);
 	},
 
 	get_gradesHTML: function (url, callback, on_error) {
 		// $.get("https://gradebook.roundrockisd.org/pc/displaygrades.aspx?studentid=" + url,
 		// 	function (data) { callback(data); }
 		// );
-		$.ajax({
+		var jqXHR = $.ajax({
 			url: "https://gradebook.roundrockisd.org/pc/displaygrades.aspx?studentid=" + url,
-			timeout: 15000,
-			method: "GET",
+			type: "GET",
 			success: callback,
 			error: on_error || function (e) { console.error(e); }
-		})
+		});
+		XHR_Queue.abortAll().addRequest(jqXHR);
 	},
 
 	get_classGradeHTML: function (sID, data, callback, on_error) {
@@ -139,17 +168,24 @@ var RRISD_HAC = {
 		// 	+ "&data=" + data,
 		// 	function (data) { callback(data); }
 		// );
-		$.ajax({
+		var jqXHR = $.ajax({
 			url: "https://gradebook.roundrockisd.org/pc/displaygrades.aspx",
-			timeout: 15000,
-			method: "GET",
+			type: "GET",
 			data: {
 				"studentid": sID,
 				"data": data
 			},
-			success: callback,
+			success: function (doc) {
+				if (doc == "Could not decode student id.") {
+					console.log("Error while fetching class grades (could not decode student ID)");
+					on_error(new Error("Unable to decode student ID"));
+					return false;
+				}
+				callback(doc);
+			},
 			error: on_error || function (e) { console.error(e); }
-		})
+		});
+		XHR_Queue.abortAll().addRequest(jqXHR);
 	}
 };
 
@@ -157,9 +193,8 @@ var AISD_HAC = {
 	host: "https://hacaccess.herokuapp.com/",
 
 	get_session: function (login, pass, id, callback, on_error) {
-		$.ajax({
+		var jqXHR = $.ajax({
 			url: AISD_HAC.host + "api/aisd/login",
-			timeout: 15000,
 			type: "POST",
 			data: {
 				login: login.encrypt(),
@@ -169,19 +204,22 @@ var AISD_HAC = {
 			success: callback,
 			error: on_error
 		});
+		XHR_Queue.abortAll().addRequest(jqXHR);
 	},
 
 	get_gradesHTML: function (id, studentid, callback) {
-		$.post(AISD_HAC.host + "api/aisd/gradesHTML",
+		var jqXHR = $.post(AISD_HAC.host + "api/aisd/gradesHTML",
 			{ sessionid: id.rot13(), studentid: studentid.rot13() },
 			function (data) { callback(data); }
 		);
+		XHR_Queue.abortAll().addRequest(jqXHR);
 	},
 
 	get_classGradeHTML: function (id, studentid, data, callback) {
-		$.post(AISD_HAC.host + "api/aisd/gradesHTML",
+		var jqXHR = $.post(AISD_HAC.host + "api/aisd/gradesHTML",
 			{ sessionid: id.rot13(), studentid: studentid.rot13(), data: data.rot13() },
 			function (data) { callback(data); }
 		);
+		XHR_Queue.abortAll().addRequest(jqXHR);
 	}
 };

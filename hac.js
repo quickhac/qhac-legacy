@@ -66,7 +66,7 @@ function toast(txt) {
 	}, 5000);
 }
 function handle_load_error(jqXHR, textStatus, errorThrown) {
-	console.log(textStatus, errorThrown);
+	// console.log(textStatus, errorThrown);
 	switch (textStatus) {
 		case "timeout": error_msg = "Loading grades timed out"; break;
 		case "abort": error_msg = "Loading grades aborted"; break;
@@ -76,7 +76,7 @@ function handle_load_error(jqXHR, textStatus, errorThrown) {
 	toast(error_msg);
 }
 function handle_load_error_class(jqXHR, textStatus, errorThrown) {
-	console.log(textStatus, errorThrown);
+	// console.log(textStatus, errorThrown);
 	switch (textStatus) {
 		case "timeout": error_msg = "Loading class grades timed out"; break;
 		case "abort": error_msg = "Loading class grades aborted"; break;
@@ -259,7 +259,7 @@ function processUpdatedClassGrades(data, doc) {
 	localStorage.setItem("class-" + data, JSON.stringify(cgrades_json));
 
 	// show grades
-	$("#classgrades").html(HAC_HTML.cjson_to_html(HAC_HTML.cgrades_to_json(doc)));
+	$("#classgrades").html(HAC_HTML.cjson_to_html(cgrades_json));
 }
 
 function logout() {
@@ -288,6 +288,9 @@ function loadClassGrades(data) {
 	// pass data
 	var cg;
 	(cg = $("#classgrades")).data("data", data);
+
+	// hide old class grades if visible while loading
+	cg.html("");
 
 	// Remove grade change indicator
 	if (localStorage.hasOwnProperty("changed_grades")) {
@@ -409,6 +412,24 @@ function setChangedGradeIndicators() {
 
 // init
 $(function(){
+
+	// Setup AJAX
+	$.ajaxSetup({
+		timeout: 15000,
+		contents: {
+			raw_html: /raw_html/,
+			gen_html: /gen_html/,
+			raw_html_class: /raw_html_class/,
+			gen_html_class: /gen_html_class/
+		},
+		converters: {
+			"raw_html json": HAC_HTML.html_to_jso,
+			"raw_html_class json": HAC_HTML.cgrades_to_json,
+			"json gen_html": HAC_HTML.json_to_html,
+			"json gen_html_class": HAC_HTML.cjson_to_html
+		}
+	});
+
 	// backwards compatibility with 1.x: update district if not set
 	// (in 1.x, the only valid district was RRISD)
 	if (!localStorage.hasOwnProperty("district"))
@@ -439,6 +460,7 @@ $(function(){
 		return false;
 	});
 	$("#do_direct_access").click(update);
+	$("#cancel_refresh").click(XHR_Queue.abortAll);
 	$("#do_options").click(function() { chrome.tabs.create({url: "options.html"}); });
 	$("#do_logout").click(logout);
 	$("#do_close").click(function() {

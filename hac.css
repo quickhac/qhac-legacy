@@ -342,6 +342,21 @@ body.edited #edited_notice {
 body.offline #offline_notice {
 	opacity: 1;
 }
+#direct_access_form button {
+	display: inline-block;
+}
+body:not(.busy) #do_direct_access {
+	display: inline-block;
+}
+body.busy #do_direct_access {
+	display: none;
+}
+body:not(.busy) #cancel_refresh {
+	display: none;
+}
+body.busy #cancel_refresh {
+	display: inline-block;
+}
 
 #action_buttons {
 	margin-top: 4px;
