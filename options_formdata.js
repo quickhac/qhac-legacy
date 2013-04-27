@@ -295,7 +295,8 @@ var options_formdata = {
 									states: [
 										{ "np_required": true, "np_length": false, "op_empty": true, "np_empty": false },
 										{ "np_required": true, "np_length": false, "cp_empty": false, "np_empty": true },
-										{ "np_required": true, "np_length": false, "op_empty": false }
+										{ "np_required": true, "np_length": false, "op_empty": false },
+										{ "np_required": true, "op_required": false, "np_empty": true }
 									],
 									success: function (val) {
 										show_error($("#new_password"), "New password must be at least 3 characters long");
