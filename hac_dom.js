@@ -73,7 +73,7 @@ var HAC_HTML =
 
 			// title cell
 			var title = document.createElement("td");
-			$(title).addClass("classTitle").text(json[r].title);
+			$(title).addClass("classTitle").html(json[r].title);
 			$(row).append(title);
 
 			// each grade cell

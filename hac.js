@@ -417,16 +417,14 @@ $(function(){
 	$.ajaxSetup({
 		timeout: 15000,
 		contents: {
-			raw_html: /raw_html/,
-			gen_html: /gen_html/,
-			raw_html_class: /raw_html_class/,
-			gen_html_class: /gen_html_class/
+			gjson: /gjson/,
+			cjson: /cjson/
 		},
 		converters: {
-			"raw_html json": HAC_HTML.html_to_jso,
-			"raw_html_class json": HAC_HTML.cgrades_to_json,
-			"json gen_html": HAC_HTML.json_to_html,
-			"json gen_html_class": HAC_HTML.cjson_to_html
+			"text gjson": HAC_HTML.html_to_jso,
+			"text cjson": HAC_HTML.cgrades_to_json,
+			"gjson html": HAC_HTML.json_to_html,
+			"cjson html": HAC_HTML.cjson_to_html
 		}
 	});
 

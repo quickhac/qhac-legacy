@@ -50,6 +50,10 @@ Queuer = (function () {
 
 var XHR_Queue = new Queuer();
 
+function default_error_handler(jqXHR, textStatus, errorThrown) {
+	console.error(jqXHR, textStatus, errorThrown)
+}
+
 // date setting
 var Updater = {
 	set_updated: function () {
@@ -135,56 +139,46 @@ var RRISD_HAC = {
 				login: login.encrypt(),
 				password: pass.encrypt(),
 				studentid: id.rot13()
-			},
-			success: callback,
-			error: on_error
-		});
+			}
+		}).done(callback).fail(on_error || default_error_handler);
 		XHR_Queue.abortAll().addRequest(jqXHR);
 	},
 
 	get_gradesURL: function (id, callback) {
-		var jqXHR = $.post("https://hacaccess.herokuapp.com/api/rrisd/gradesURL",
-			{sessionid: id.rot13()},
-			function (data) { callback(data); }
-		);
+		var jqXHR = $.ajax({
+			url: "https://hacaccess.herokuapp.com/api/rrisd/gradesURL",
+			type: "POST",
+			data: { sessionid: id.rot13() }
+		}).done(callback).fail(default_error_handler);
 		XHR_Queue.abortAll().addRequest(jqXHR);
 	},
 
 	get_gradesHTML: function (url, callback, on_error) {
-		// $.get("https://gradebook.roundrockisd.org/pc/displaygrades.aspx?studentid=" + url,
-		// 	function (data) { callback(data); }
-		// );
 		var jqXHR = $.ajax({
 			url: "https://gradebook.roundrockisd.org/pc/displaygrades.aspx?studentid=" + url,
-			type: "GET",
-			success: callback,
-			error: on_error || function (e) { console.error(e); }
-		});
+			type: "GET"
+			// dataType: "text gjson"
+		}).done(callback).fail(on_error || default_error_handler);
 		XHR_Queue.abortAll().addRequest(jqXHR);
 	},
 
 	get_classGradeHTML: function (sID, data, callback, on_error) {
-		// $.get("https://gradebook.roundrockisd.org/pc/displaygrades.aspx?studentid=" + sID
-		// 	+ "&data=" + data,
-		// 	function (data) { callback(data); }
-		// );
 		var jqXHR = $.ajax({
 			url: "https://gradebook.roundrockisd.org/pc/displaygrades.aspx",
 			type: "GET",
+			// dataType: "text cjson",
 			data: {
 				"studentid": sID,
 				"data": data
-			},
-			success: function (doc) {
-				if (doc == "Could not decode student id.") {
-					console.log("Error while fetching class grades (could not decode student ID)");
-					on_error(new Error("Unable to decode student ID"));
-					return false;
-				}
-				callback(doc);
-			},
-			error: on_error || function (e) { console.error(e); }
-		});
+			}
+		}).done(function (doc) {
+			if (doc == "Could not decode student id.") {
+				console.log("Error while fetching class grades (could not decode student ID)");
+				on_error(new Error("Unable to decode student ID"));
+				return false;
+			}
+			callback(doc);
+		}).fail(on_error || default_error_handler);
 		XHR_Queue.abortAll().addRequest(jqXHR);
 	}
 };
@@ -200,10 +194,8 @@ var AISD_HAC = {
 				login: login.encrypt(),
 				password: pass.encrypt(),
 				studentid: id.encrypt()
-			},
-			success: callback,
-			error: on_error
-		});
+			}
+		}).done(callback).fail(on_error || default_error_handler);
 		XHR_Queue.abortAll().addRequest(jqXHR);
 	},
 
