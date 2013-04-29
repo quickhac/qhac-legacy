@@ -24,11 +24,13 @@ function silent_update() {
 		localStorage.setItem("grades", JSON.stringify(doc_json));
 		Updater.set_updated();
 
-		// reset interval if changed
-		if (cached_refresh_interval != localStorage["r_int"]) {
-			window.clearInterval(theInterval);
-			theInterval = window.setInterval(silent_update, localStorage["r_int"]);
-		}
+	 	// reset interval if changed
+		var new_r_int = localStorage["r_int"];
+		if (typeof new_r_int == "undefined") new_r_int = 60;
+		if (cached_refresh_interval != new_r_int) {
+	 		window.clearInterval(theInterval);
+			theInterval = window.setInterval(silent_update, new_r_int * 60000);
+	 	}
 	});
 }
 
