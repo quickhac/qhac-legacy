@@ -1,4 +1,4 @@
-var asianness, r_interval, hue, asianness_on, refresh_enabled, hue_on, password_enabled, badge_enabled, single_notif;
+var asianness, r_interval, hue, colorization_enabled, refresh_enabled, hue_enabled, password_enabled, badge_enabled, notifs_enabled, single_notif;
 
 function generate_color_table() {
 	var table = document.createElement("table");
@@ -25,7 +25,7 @@ function getVersion(callback) {
 	xmlhttp.onload = function (e) {
 		var manifest = JSON.parse(xmlhttp.responseText);
 		callback(manifest.version);
-	}
+	};
 	xmlhttp.send(null);
 }
 
@@ -35,96 +35,107 @@ var error_id = 0;
 
 function show_error($input, message) {
 	console.error(message);
-	
+
+	// Hide old error messages
 	$input.parent().children(".error_msg").detach();
 	
-	$el = $("<div/>");
+	$el = $(document.createElement("div"));
 	$el.addClass("error_msg")
 		.text(message)
 		.appendTo($input.parent())
 		.addClass("animate");
 	window.setTimeout(function () {
-		$(".error_msg").detach();
-	}, 5000);
+		$el.detach();
+	}, 4000);
 	$input.focus();
 	error_id++;
 }
 
-Validator = function (valid, invalid) {
-	this.inputs = [];
-	this.conditions = [];
-	this.successes = [];
-	this.errors = [];
-	this.valid = valid || function () {};
-	this.invalid = invalid || function () {};
-	this.isValid = false;
+// Validator_old = function (valid, invalid) {
+// 	this.inputs = [];
+// 	this.conditions = [];
+// 	this.successes = [];
+// 	this.errors = [];
+// 	this.valid = valid || function () {};
+// 	this.invalid = invalid || function () {};
+// 	this.isValid = false;
 	
-	return this;
-};
-Validator.prototype.add = function (vals, condition, success, error) {
-	this.inputs.push(vals);
-	this.conditions.push(condition);
-	this.successes.push(success);
-	this.errors.push(error);
-	return this;
-};
-Validator.prototype.validate = function () {
-	var all_valid = true;
-	var vals;
+// 	return this;
+// };
+// Validator_old.prototype.add = function (vals, condition, success, error) {
+// 	this.inputs.push(vals);
+// 	this.conditions.push(condition);
+// 	this.successes.push(success);
+// 	this.errors.push(error);
+// 	return this;
+// };
+// Validator_old.prototype.validate = function () {
+// 	var all_valid = true;
+// 	var vals;
 	
-	for (var i = this.conditions.length - 1; i >= 0; i--) {
-		vals = this.inputs[i];
-		if (this.conditions[i].call(window, vals)) {
-			this.successes[i].call(window, vals);
-		} else {
-			all_valid = all_valid && false;
-			this.errors[i].call(window, vals);
-		}
-	}
+// 	for (var i = this.conditions.length - 1; i >= 0; i--) {
+// 		vals = this.inputs[i];
+// 		if (this.conditions[i].call(window, vals)) {
+// 			this.successes[i].call(window, vals);
+// 		} else {
+// 			all_valid = all_valid && false;
+// 			this.errors[i].call(window, vals);
+// 		}
+// 	}
 	
-	if (all_valid) {
-		this.valid.call(window);
-		this.isValid = true;
-	} else {
-		this.invalid.call(window);
-		this.isValid = false;
-	}
-	return this;
-};
+// 	if (all_valid) {
+// 		this.valid.call(window);
+// 		this.isValid = true;
+// 	} else {
+// 		this.invalid.call(window);
+// 		this.isValid = false;
+// 	}
+// 	return this;
+// };
 
 function set_password_boxes(checked) {
 	function require(ids, isRequired) {
 		$(ids).prop("required", isRequired).prop("disabled", !isRequired);
-		if (!isRequired) $(ids).val("").parent().slideUp(250);
-		else $(ids).parent().slideDown(250);
+		if (!isRequired) {
+			$(ids).val("").parent().slideUp(250);
+		} else {
+			$(ids).parent().slideDown(250);
+		}
 	}
 	function closePassOpts() {
-		$("#pass_opts").slideUp(250).prev(".toggler").addClass("minimized");
+		$("#password_protection_wrapper").addClass("minimized")
+			.children(".option, .info, section")
+			.slideUp(250);
 	}
 	function openPassOpts() {
-		$("#pass_opts").slideDown(250).prev(".toggler").removeClass("minimized");
+		$("#password_protection_wrapper").removeClass("minimized")
+			.children(".option, .info, section")
+			.slideDown(250);
 	}
 
+	if (password_enabled)
+			require("#old_password", true);
+
 	if (checked) {
-		require("#new_pass, #confirm_pass", true);
+		require("#new_password, #confirm_password", true);
 		openPassOpts();
+		$("#single_notif").prop({"required": true, "disabled": true, "checked": true});
 
 		if (password_enabled) {
-			require("#old_pass", true);
-			$("#pass_title").text("Change Password");
+			$("#settings section:first-of-type h3").text("Change Password");
 		} else {
-			require("#old_pass", false);
-			$("#pass_title").text("Set Password");
+			require("#old_password", false);
+			$("#settings section:first-of-type h3").text("Set Password");
 		}
 	} else {
-		require("#new_pass, #confirm_pass", false);
+		require("#new_password, #confirm_password", false);
+		$("#single_notif").prop({"required": false, "disabled": false, "checked": single_notif});
 
 		if (password_enabled) {
-			require("#old_pass", true);
-			$("#pass_title").text("Disable Password Protection");
+			$("#settings section:first-of-type h3").text("Disable Password");
 			openPassOpts();
 		} else {
-			require("#old_pass", false);
+			require("#old_password", false);
 			closePassOpts();
 		}
 	}
@@ -132,78 +143,102 @@ function set_password_boxes(checked) {
 
 // Updates options DOM
 // disables animation if passed true, animates otherwise.
-function update_options_dom(doAnimation) {
-	var anim = doAnimation ? 0 : 500;
+function update_options_dom(noAnimation) {
+	var anim = noAnimation ? 0 : 500;
 
-	if ($("#asianness_check").prop('checked')) {
-		$("#colorization").slideDown(anim);
-		asianness_on = true;
+	if ($("#colorization").prop('checked')) {
+		// $("#asianness_wrapper, #hue_wrapper").slideDown(anim);
+		colorization_enabled = true;
 		asianness = $("#asianness").val();
 
-		hue_on = true;
+		hue_enabled = true;
 		hue = $("#hue").val();
 
-		$("#asianness_check").parent().removeClass('minimized');
+		$("#colorization_wrapper").removeClass('minimized');
 
-		$("#asianness_wrap").slideDown(anim);
+		$("#asianness_wrapper, #hue_wrapper").slideDown(anim);
 	} else {
-		$("#colorization").slideUp(anim);
-		asianness_on = false;
+		// $("#colorization").slideUp(anim);
+		colorization_enabled = false;
 		asianness = 0;
 
-		hue_on = false;
+		hue_enabled = false;
 		hue = 0;
 
-		$("#asianness_check").parent().addClass('minimized');
+		$("#colorization_wrapper").addClass('minimized');
 
-		$("#asianness_wrap").slideUp(anim);
+		$("#asianness_wrapper, #hue_wrapper").slideUp(anim);
 	}
 	
-	if ($("#refresh_check").prop('checked')) {
-		$("#refresh_check").parent().removeClass('minimized');
-		$("#refresh_opts").slideDown(anim);
+	if ($("#auto_refresh").prop('checked')) {
+		$("#auto_refresh_wrapper").removeClass('minimized');
+		$("#auto_refresh_wrapper .option, #auto_refresh_wrapper section .info")
+			.slideDown(anim);
 		r_int = $("#r_interval").val();
-		refresh_enabled = false;
-	} else {
-		$("#refresh_check").parent().addClass('minimized');
-		$("#refresh_opts").slideUp(anim);
 		refresh_enabled = true;
+	} else {
+		$("#auto_refresh_wrapper").addClass('minimized');
+		$("#auto_refresh_wrapper .option, #auto_refresh_wrapper section .info")
+			.slideUp(anim);
+		refresh_enabled = false;
 		r_int = 0;
 	}
 
-	badge_enabled = $("#badge_check").prop("checked");
-	single_notif = $("#single_notif_check").prop("checked");
+	if ($("#notifs_enabled").prop("checked")) {
+		$("#notifs_enabled_wrapper").removeClass("minimized");
+		$("#notifs_enabled_wrapper .option, #notifs_enabled_wrapper section .info")
+			.slideDown(anim);
+		notif_duration = $("#notif_duration").val();
+		single_notif = $("#single_notif").prop("checked");
+		notifs_enabled = true;
+	} else {
+		$("#notifs_enabled_wrapper").addClass("minimized");
+		$("#notifs_enabled_wrapper .option, #notifs_enabled_wrapper section .info")
+			.slideUp(anim);
+		notifs_enabled = false;
+	}
 
-	set_password_boxes($("#password_check").prop('checked'));
+	badge_enabled = $("#badge_count").prop("checked");
+
+	set_password_boxes($("#password_protection").prop('checked'));
 }
 
 // events and stuff
 $(function(){
-	// load
+	// load values from storage
 	asianness = localStorage.hasOwnProperty("asianness") ? parseFloat(localStorage["asianness"]) : DEFAULT_ASIANNESS;
 	r_interval = localStorage.hasOwnProperty("r_int") ? parseFloat(localStorage["r_int"]) : DEFAULT_R_INT;
 	hue = localStorage.hasOwnProperty("hue") ? parseFloat(localStorage["hue"]) : DEFAULT_HUE;
-	// Load checkbox states and update DOM
-	asianness_on = (localStorage.hasOwnProperty("asianness") ? (localStorage["asianness"] != 0) : true);
-	refresh_enabled = (localStorage.hasOwnProperty("r_int") ? (localStorage["r_int"] != 0) : true);
+	notif_duration = localStorage.hasOwnProperty("notif_duration") ? parseFloat(localStorage["notif_duration"]) : DEFAULT_NOTIF_DURATION;
+	
+	// Load toggles states from storage
+	colorization_enabled = (localStorage.hasOwnProperty("asianness") ? (parseFloat(localStorage["asianness"]) != 0) : true);
+	refresh_enabled = (localStorage.hasOwnProperty("r_int") ? (parseFloat(localStorage["r_int"]) != 0) : true);
+	notifs_enabled = localStorage.hasOwnProperty("notifs_enabled") && localStorage["notifs_enabled"] == "true";
 	single_notif = localStorage.hasOwnProperty("single_notif") && localStorage["single_notif"] == "true";
 	badge_enabled = localStorage.hasOwnProperty("badge_enabled") && localStorage["badge_enabled"] == "true";
 	password_enabled = localStorage.hasOwnProperty("password") && localStorage["password"] != "";
 	
-	// update spinbox values (use default values if previously disabled)
-	$("#asianness").val(asianness_on ? asianness : 4);
-	$("#slider").val(Math.log(asianness_on ? asianness : 4));
-	$("#r_interval").val(refresh_enabled ? r_interval : 60);
-	$("#hue, #hue_slider").val(hue);
-	// $("#the_password").val(localStorage["password"]);
-	
-	$("#asianness_check").prop('checked', asianness_on);
-	$("#refresh_check").prop('checked', refresh_enabled);
-	$("#single_notif_check").prop('checked', single_notif);
-	$("#badge_check").prop('checked', badge_enabled);
-	$("#password_check").prop('checked', password_enabled);
+	// Generate Options HTML
+	renderOptions(options_formdata, $("#settings")[0]);
 
-	$("#slider").parent().prev('.sliderIndicator')
+	// update toggles
+	$("#colorization").prop('checked', colorization_enabled);
+	$("#auto_refresh").prop('checked', refresh_enabled);
+	$("#notifs_enabled").prop('checked', notifs_enabled);
+	$("#single_notif").prop('checked', single_notif);
+	$("#badge_count").prop('checked', badge_enabled);
+	$("#password_protection").prop('checked', password_enabled);
+
+	// update spinbox values (use default values if previously disabled)
+	$("#asianness").val(colorization_enabled ? asianness.toString() : DEFAULT_ASIANNESS.toString());
+	$("#asianness_slider").val(Math.log(colorization_enabled ? asianness.toString() : DEFAULT_ASIANNESS.toString()));
+	$("#r_interval").val(refresh_enabled ? r_interval.toString() : DEFAULT_R_INT.toString());
+	$("#hue, #hue_slider").val(hue.toString());
+	$("#notif_duration").val(notifs_enabled ? notif_duration.toString() : "0");
+
+	// Initialize slider indicators
+	$("#asianness_slider").parent().prev('.sliderIndicator')
 		.text(asianness.toPrecision(3).toString())
 		.css('left', Math.round(Math.log(asianness)*(360-16)/2.5 + 40) + 'px');
 
@@ -217,34 +252,11 @@ $(function(){
 	getVersion(function(v) {
 		$("#version").text("version " + v);
 	});
-	
-	$("#asianness_check").change(function () {
-		update_options_dom(false);
-	
-		// force re-draw of table for asianness enable/disable changes
-		generate_color_table();
-	});
-	
-	$("#refresh_check").change(function () {
-		update_options_dom(false);
-	});
 
-	$("#single_notif_check").change(function () {
-		update_options_dom(false);
-	});
-
-	$("#badge_check").change(function () {
-		update_options_dom(false);
-	});
-
-	$("#password_check").change(function () {
-		set_password_boxes(this.checked);
-	});
-	
 	update_options_dom(true);
 	
 	// slider change events
-	$("#slider").change(function () {
+	$("#asianness_slider").change(function () {
 		asianness = Math.exp(parseFloat($(this).val()));
 		generate_color_table();
 		$("#asianness").val(asianness);
@@ -260,7 +272,7 @@ $(function(){
 	$("#asianness").change(function () {
 		asianness = $(this).val();
 		generate_color_table();
-		$("#slider").val(Math.log(asianness));
+		$("#asianness_slider").val(Math.log(asianness));
 	});
 	$("#hue").change(function () {
 		hue = parseInt($(this).val());
@@ -280,127 +292,15 @@ $(function(){
 		$(this).parent().prev('.sliderIndicator')
 			.removeClass('visible');
 	});
-	
-	// save
-	$("#save").click(function() {
-		// analytics
-		_gaq.push(['_trackEvent', 'Options', 'Save', 'Save Options', Math.abs(asianness)]);
-
-		// actually save
-		var new_asianness = parseFloat($("#asianness").val());
-		var new_r_int = parseFloat($("#r_interval").val());
-		var new_hue = parseInt($("#hue").val());
-		// var new_pass = $("#the_password").val();
-		var old_pass = $("#old_pass").val();
-		var new_pass = $("#new_pass").val();
-		var confirm_pass = $("#confirm_pass").val();
-		
-		validator = new Validator();
-		
-		validator.add(new_asianness, function (val) {
-			return !isNaN(val);
-		}, function (val) {
-			localStorage.setItem("asianness", $("#asianness_check").prop('checked') ? val.toString() : 0);
-		}, function (val) {
-			show_error($("#asianness"), "Asianness level must be a number!");
-		})
-		
-		.add(new_r_int, function (val) {
-			return !(isNaN(val) || (val < 0));
-		}, function (val) {
-			localStorage.setItem("r_int", $("#refresh_check").prop('checked') ? val.toString() : 0);
-		}, function (val) {
-			show_error($("#r_interval"), "Refresh interval must be a (positive) number!");
-		})
-
-		.add(new_hue, function (val) {
-			return !(isNaN(val) || (val < 0) || (val > 360));
-		}, function (val) {
-			localStorage.setItem("hue", val.toString());
-		}, function (val) {
-			show_error($("#hue"), "Hue must be between 0 and 360.");
-		});
-		
-		if ($("#old_pass").prop("required")) {
-			validator.add({op: old_pass, np: new_pass}, function (val) {
-				var val_hash = CryptoJS.SHA512(val.op).toString();
-				var stored_hash = localStorage["password"];
-
-				return (val.op.length > 0) ? val_hash == stored_hash : val.np.length == 0 && password_enabled;
-			}, function (val) {
-				// if (val.length > 0) console.log('correct old password');
-				// else console.log('no password entered');
-			}, function (val) {
-				show_error($("#old_pass"), "Incorrect password.");
-			});
-		}
-		if ($("#new_pass").prop("required")) {
-			validator.add({cp: confirm_pass, np: new_pass, op: old_pass}, function (val) {
-				return (val.np.length > 0) ? val.cp == val.np : true;
-			}, function (val) {
-				// if (val.np.length > 0) console.log("passwords match :D");
-				// else console.log("no new password entered");
-			}, function (val) {
-				show_error($("#confirm_pass"), "The passwords provided do not match.");
-			})
-
-			.add({np: new_pass, op: old_pass}, function (val) {
-				return (val.np.length > 0) ? val.np.length > 2 : val.op.length == 0 && password_enabled;
-			}, function (val) {}, function (val) {
-				show_error($("#new_pass"), "The new password must be at least 3 characters long.");
-			});
-		}
-
-		validator.validate();
-		
-		if (!validator.isValid) return false;
-
-		var A = CryptoJS.SHA512(old_pass).toString() == localStorage["password"];
-		var L = password_enabled ? true : false; //to clone boolean object?
-		var E = $("#password_check").prop("checked");
-		var M = new_pass == confirm_pass;
-
-		if (A && L && E && M) {
-			// update password
-			// console.log("updated password");
-			set_password_boxes(true);
-			localStorage.setItem("password", CryptoJS.SHA512(new_pass).toString());
-
-		} else if (A && L && !E) {
-			// disable password lock
-			// console.log("disabled password lock");
-			password_enabled = false;
-			set_password_boxes(false);
-			localStorage.removeItem("password");
-
-		} else if (!L && E && M) {
-			// enable password lock
-			// console.log("enabled password lock");
-			password_enabled = true;
-			set_password_boxes(true);
-			localStorage.setItem("password", CryptoJS.SHA512(new_pass).toString());
-
-		}
-
-		$("#old_pass, #new_pass, #confirm_pass").val("");
-
-		localStorage.setItem("badge_enabled", (badge_enabled ? "true" : "false"));
-		localStorage.setItem("single_notif", (single_notif ? "true" : "false"));
-		
-		$("#save_msg").addClass('visible');
-		window.setTimeout(function() {
-			$("#save_msg").removeClass('visible');
-		}, 500);
-	});
 });
 
 // analytics
-var _gaq = _gaq || [];
-_gaq.push(['_setAccount', 'UA-37395872-1']);
-_gaq.push(['_trackPageview']);
+// var _gaq = _gaq || [];
+// _gaq.push(['_setAccount', 'UA-37395872-1']);
+// _gaq.push(['_trackPageview']);
 
-(function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = 'https://ssl.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-})();
+// (function() {
+//   var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+//   ga.src = 'https://ssl.google-analytics.com/ga.js';
+//   var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+// })();

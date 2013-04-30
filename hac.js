@@ -50,9 +50,40 @@ function on_error_logging_in(jqXHR, textStatus, errorThrown) {
 	case "timeout":
 		show_login_error("Login timed out");
 		break;
+	default:
+		show_login_error("Failed to log in");
 	}
 
 	reset_login_form();
+}
+function toast(txt) {
+	var toast = document.createElement("div");
+	$(toast).addClass("toast").text(txt);
+	$("body").append(toast);
+	$(toast).addClass("animate");
+	window.setTimeout(function () {
+		$(toast).detach();
+	}, 5000);
+}
+function handle_load_error(jqXHR, textStatus, errorThrown) {
+	// console.log(textStatus, errorThrown);
+	switch (textStatus) {
+		case "timeout": error_msg = "Loading grades timed out"; break;
+		case "abort": error_msg = "Loading grades aborted"; break;
+		default: error_msg = "Loading grades failed";
+	}
+	$("body").removeClass("busy").addClass("offline");
+	toast(error_msg);
+}
+function handle_load_error_class(jqXHR, textStatus, errorThrown) {
+	// console.log(textStatus, errorThrown);
+	switch (textStatus) {
+		case "timeout": error_msg = "Loading class grades timed out"; break;
+		case "abort": error_msg = "Loading class grades aborted"; break;
+		default: error_msg = "Loading class grades failed";
+	}
+	$("body").removeClass("busy").addClass("offline");
+	toast(error_msg);
 }
 
 // log in to RRISD
@@ -64,7 +95,7 @@ function login_to_rrisd(uname, pass, studentid) {
 		studentid,
 		function (id) {
 			// save url
-			RRISD_HAC.get_gradesURL(id, function(url) {
+			RRISD_HAC.get_gradesURL(id, function (url) {
 				var captures = /id=([\w\d%]*)/.exec(url);
 				// if login failed
 				if (typeof captures == "undefined") {
@@ -78,12 +109,12 @@ function login_to_rrisd(uname, pass, studentid) {
 				localStorage.setItem("url", sID);
 				$("#direct_url").val(sID);
 				// load grades directly
-				RRISD_HAC.get_gradesHTML(sID, function(doc) {
+				RRISD_HAC.get_gradesHTML(sID, function (doc) {
 					processUpdatedGrades(doc);
 					hide_login_form();
 					reset_login_form();
-					$("body").removeClass("busy").removeClass("edited");
-				});
+					$("body").removeClass("busy offline edited");
+				}, handle_load_error);
 			});
 		},
 		on_error_logging_in);
@@ -107,7 +138,7 @@ function login_to_aisd(uname, pass, studentid) {
 					processUpdatedGrades(doc);
 					hide_login_form();
 					reset_login_form();
-					$("body").removeClass("busy").removeClass("edited");
+					$("body").removeClass("busy offline edited");
 				});
 		},
 		on_error_logging_in);
@@ -178,19 +209,19 @@ function update() {
 	// query the correct district
 	switch (localStorage["district"]) {
 	case "rrisd":
-		RRISD_HAC.get_gradesHTML(localStorage["url"], function(doc) {
+		RRISD_HAC.get_gradesHTML(localStorage["url"], function (doc) {
 			processUpdatedGrades(doc);
-			$("body").removeClass("busy").removeClass("edited");
-		});
+			$("body").removeClass("busy offline edited");
+		}, handle_load_error);
 		break;
 	case "aisd":
-		load_aisd_session(function() {
+		load_aisd_session(function () {
 			AISD_HAC.get_gradesHTML(
 				window.session_id,
 				localStorage["studentid"].decrypt().decrypt(),
-				function(doc) {
+				function (doc) {
 					processUpdatedGrades(doc);
-					$("body").removeClass("busy").removeClass("edited");
+					$("body").removeClass("busy offline edited");
 				});
 		});
 		break;
@@ -228,7 +259,7 @@ function processUpdatedClassGrades(data, doc) {
 	localStorage.setItem("class-" + data, JSON.stringify(cgrades_json));
 
 	// show grades
-	$("#classgrades").html(HAC_HTML.cjson_to_html(HAC_HTML.cgrades_to_json(doc)));
+	$("#classgrades").html(HAC_HTML.cjson_to_html(cgrades_json));
 }
 
 function logout() {
@@ -258,6 +289,9 @@ function loadClassGrades(data) {
 	var cg;
 	(cg = $("#classgrades")).data("data", data);
 
+	// hide old class grades if visible while loading
+	cg.html("");
+
 	// Remove grade change indicator
 	if (localStorage.hasOwnProperty("changed_grades")) {
 		var gradeChanges = JSON.parse(localStorage["changed_grades"]);
@@ -280,8 +314,8 @@ function loadClassGrades(data) {
 	case "rrisd":
 		RRISD_HAC.get_classGradeHTML(localStorage["url"], data, function(stuff) {
 			processUpdatedClassGrades(data, stuff);
-			$("body").removeClass("busy").removeClass("edited");
-		});
+			$("body").removeClass("busy offline edited");
+		}, handle_load_error_class);
 		break;
 	case "aisd":
 		load_aisd_session(function() {
@@ -291,7 +325,7 @@ function loadClassGrades(data) {
 				data,
 				function(stuff) {
 					processUpdatedClassGrades(data, stuff);
-					$("body").removeClass("busy").removeClass("edited");
+					$("body").removeClass("busy offline edited");
 				});
 		});
 		break;
@@ -300,7 +334,8 @@ function loadClassGrades(data) {
 
 // password protection
 function lock() {
-	$(document.body).addClass("locked").removeClass("logged_in");
+	// $(document.body).addClass("locked").removeClass("logged_in");
+	$(document.body).addClass("locked");
 }
 
 var shakeTimer;
@@ -309,7 +344,7 @@ function unlock(password) {
 	// $("#restricted_error").slideUp();
 
 	var hashedInput = CryptoJS.SHA512(password).toString();
-	if (hashedInput == localStorage["password"]) {
+	if (hashedInput === localStorage["password"]) {
 		$(document.body).removeClass("locked");
 		window.setTimeout(function () {
 			$("#restricted_access_wrapper").hide();
@@ -325,7 +360,7 @@ function unlock(password) {
 
 // throttle, used for scrolling
 function throttle(ms, callback) {
-	var timer, lastCall=0;
+	var timer, lastCall = 0;
 
 	return function() {
 		var now = new Date().getTime(),
@@ -377,7 +412,23 @@ function setChangedGradeIndicators() {
 }
 
 // init
-$(function(){
+$(function () {
+
+	// Setup AJAX (converters not used)
+	$.ajaxSetup({
+		timeout: 15000,
+		contents: {
+			gjson: /gjson/,
+			cjson: /cjson/
+		},
+		converters: {
+			"text gjson": HAC_HTML.html_to_jso,
+			"text cjson": HAC_HTML.cgrades_to_json,
+			"gjson html": HAC_HTML.json_to_html,
+			"cjson html": HAC_HTML.cjson_to_html
+		}
+	});
+
 	// backwards compatibility with 1.x: update district if not set
 	// (in 1.x, the only valid district was RRISD)
 	if (!localStorage.hasOwnProperty("district"))
@@ -408,6 +459,10 @@ $(function(){
 		return false;
 	});
 	$("#do_direct_access").click(update);
+	$("#cancel_refresh").click(function () {
+		$("body").removeClass("busy");
+		XHR_Queue.abortAll();
+	});
 	$("#do_options").click(function() { chrome.tabs.create({url: "options.html"}); });
 	$("#do_logout").click(logout);
 	$("#do_close").click(function() {
@@ -425,7 +480,7 @@ $(function(){
 
 	// fill in grades
 	if (localStorage.hasOwnProperty("grades") && localStorage["grades"] != "") {
-		$("#grades").append(HAC_HTML.json_to_html(JSON.parse(localStorage["grades"])));
+		displayGrades(JSON.parse(localStorage["grades"]));
 
 		setChangedGradeIndicators();
 	}
@@ -459,7 +514,7 @@ $(function(){
 		// $("#direct_url").val(localStorage['url']);
 		$("#lastupdated").html(Updater.get_update_text());
 		// bug: body won't scroll if the "logged_in" class is added immediately
-		window.setTimeout(function(){ $(document.body).addClass("logged_in"); }, 100);
+		window.setTimeout(function () { $(document.body).addClass("logged_in"); }, 100);
 	}
 
 	$("#logOutToReset").click(function () {
@@ -480,7 +535,7 @@ $(function(){
 	// lock if necessary
 	if (localStorage["password"] != "") {
 		lock();
-		$("#restricted_access").submit(function(e) {
+		$("#restricted_access").submit(function (e) {
 			e.preventDefault();
 			unlock($("#unlocker").val());
 			return false;
@@ -493,7 +548,7 @@ var _gaq = _gaq || [];
 _gaq.push(['_setAccount', 'UA-37395872-1']);
 _gaq.push(['_trackPageview']);
 
-(function() {
+(function () {
   var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
   ga.src = 'https://ssl.google-analytics.com/ga.js';
   var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);

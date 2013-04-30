@@ -1,13 +1,15 @@
 var DEFAULT_ASIANNESS = 4;
 var DEFAULT_R_INT = 60;
 var DEFAULT_HUE = 0;
+var DEFAULT_NOTIF_DURATION = 5;
 
 // parsing and creating DOMs
 var HAC_HTML =
 {
-	html_to_jso: function(html) {
-		myObj = [];
-		rows = $(".DataTable:first tr.DataRow, .DataTable:first tr.DataRowAlt", html);
+	html_to_jso: function (html) {
+		var myObj = [];
+		var context = $.parseHTML(html);
+		rows = $(".DataTable:first tr.DataRow, .DataTable:first tr.DataRowAlt", context);
 
 		// hard-coded offsets
 		var titleOffset, gradesOffset;
@@ -21,7 +23,7 @@ var HAC_HTML =
 		for (var r = 0; r < rows.length; r++) {
 			var title, grades, cells, grade;
 			cells = $(rows).eq(r).children("td");
-			title = $(cells).eq(titleOffset).html();
+			title = cells.eq(titleOffset).html();
 			grades = [];
 			urls = [];
 
@@ -52,7 +54,7 @@ var HAC_HTML =
 		return myObj;
 	},
 
-	json_to_html: function(json) {
+	json_to_html: function (json) {
 		var root = document.createElement("table");
 
 		// header row
@@ -72,20 +74,18 @@ var HAC_HTML =
 
 			// title cell
 			var title = document.createElement("td");
-			title.textContent = json[r].title;
-			$(title).addClass("classTitle");
+			$(title).addClass("classTitle").html(json[r].title);
 			$(row).append(title);
 
 			// each grade cell
 			for (var c = 0; c < 10; c++) {
 				var cell = document.createElement("td");
 				if (json[r].urls[c] == "")
-					cell.textContent = json[r].grades[c];
+					$(cell).text(json[r].grades[c]);
 				else {
 					// create a link
 					var innerCell = document.createElement("a");
-					innerCell.textContent = json[r].grades[c];
-					$(innerCell).attr("href", "#").data("data", json[r].urls[c])
+					$(innerCell).text(json[r].grades[c]).attr("href", "#").data("data", json[r].urls[c])
 						.click(function() { loadClassGrades($(this).data("data")); });
 
 					$(cell).append(innerCell);
@@ -96,13 +96,14 @@ var HAC_HTML =
 					classes += " exam";
 
 					// allow edit
-					$(cell).data("orig", $(cell).text())
+					var cellText = $(cell).text();
+					$(cell).data("orig", cellText)
 					.attr("title", "Original grade: " +
-						(isNaN($(cell).text()) && ($(cell).text() != "EX")
-							&& ($(cell).text() != "Exc") || ($(cell).text() == "")
-							? "none" : $(cell).text()))
+						(isNaN(cellText) && (cellText != "EX")
+							&& (cellText != "Exc") || (cellText == "")
+							? "none" : cellText))
 					.data("editing", "0")
-					.click(function() {
+					.click(function () {
 						if ($(this).data("editing") == "0") {
 							var editor = document.createElement("input");
 							var kphandler = function(e) {
@@ -111,7 +112,7 @@ var HAC_HTML =
 							};
 
 							$(editor).attr("size", "2").val(this.innerText).keypress(kphandler)
-								.blur(function() {HAC_HTML._finalize_exam_grade_edit(this);})
+								.blur(function () {HAC_HTML._finalize_exam_grade_edit(this);})
 								.addClass("GradeEditor");
 							$(this).html("").append(editor).data("editing", "1").tipsy("show")
 								.children().focus().select();
@@ -139,69 +140,86 @@ var HAC_HTML =
 		return superRoot;
 	},
 
-	cgrades_to_json: function(html) {
-			var myObj = {
-				"title": $("h3.ClassName", html).text(),
-				"currAvg": /Current Average: (\d*)/.exec($("p.CurrentAverage", html).text())[1],
-				"cats": []
-			};
+	cgrades_to_json: function (html) {
+		var context = $.parseHTML(html);
+		var myObj = {
+			"title": $("h3.ClassName", context).text(),
+			"currAvg": /Current Average: (\d*)/.exec($("p.CurrentAverage", context).text())[1],
+			"cats": []
+		};
 
-			var categoryPattern = /^(.*) - (\d*)%$/;
+		var categoryPattern = /^(.*) - (\d*)%$/;
+		var isPercentWeight = true;
 
-			var categories = $(".CategoryName", html);
-			var gradeTables = $("table.DataTable", html);
-			gradeTables.splice(0, 1);
+		var categories = $(".CategoryName", context);
+		var gradeTables = $("table.DataTable", context);
+		gradeTables.splice(0, 1);
 
-			// in caes of array length mismatch, ignore unmatched array elements
-			var len = Math.min(categories.length, gradeTables.length);
+		// in caes of array length mismatch, ignore unmatched array elements
+		var len = Math.min(categories.length, gradeTables.length);
 
-			// for each grade category
-			for (var i = 0; i < len; i++) {
-				var captures = categoryPattern.exec(categories[i].innerText);
+		// for each grade category
+		for (var i = 0; i < len; i++) {
+			var captures = categoryPattern.exec(categories[i].innerText);
+			
+			// Failed to capture any categories
+			// Could be a Grisham student or an error...
+			if (captures == null) {
+				// console.log("switching to IB-MYP grading (grade counts n times toward average)");
+				var categoryPattern2 = /^(.*) - Each assignment counts (\d+)/;
+				isPercentWeight = false;
+				captures = categoryPattern2.exec(categories[i].innerText);
 
-				// category name
-				myObj.cats[i] = {"title": captures[1], "percent": parseInt(captures[2])};
-
-				// grades
-				myObj.cats[i].grades = [];
-				var gradeList = $(gradeTables[i]).find("tr.DataRow, tr.DataRowAlt");
-				for (var j = 0; j < gradeList.length; j++) {
-					// get data
-					var title         = $(gradeList[j]).children(".AssignmentName").text();
-					var dueDateElem   = $(gradeList[j]).children(".DateDue");
-					var dueDate       = dueDateElem.text();
-					var noteElem      = $(gradeList[j]).children(".AssignmentNote");
-					var note          = noteElem.text();
-					var ptsEarnedElem = $(gradeList[j]).children(".AssignmentGrade");
-					var ptsEarned     = parseInt(ptsEarnedElem.text());
-					var ptsPossElem   = $(gradeList[j]).children(".AssignmentPointsPossible");
-					if (ptsPossElem.length == 0)
-						ptsPoss = 100;
-					else
-						ptsPoss = parseInt(ptsPossElem.text());
-
-					myObj.cats[i].grades[j] = {
-						"title": title,
-						"dueDate": dueDate,
-						"note": note,
-						"ptsEarned": ptsEarned,
-						"ptsPoss": ptsPoss
-					};
+				if (captures == null) {
+					console.log("unable to capture any categories, exiting...");
+					return;
 				}
+			}
+			myObj.cats[i] = {
+				"title": captures[1],
+				"is_percent_weight": isPercentWeight,
+				"weight": parseInt(captures[2]) / (isPercentWeight ? 100 : 1),
+				"grades": []
+			};
+			// grades
+			var gradeList = $(gradeTables[i]).find("tr.DataRow, tr.DataRowAlt");
+			for (var j = 0; j < gradeList.length; j++) {
+				// get data
+				var title         = $(gradeList[j]).children(".AssignmentName").text();
+				var dueDateElem   = $(gradeList[j]).children(".DateDue");
+				var dueDate       = dueDateElem.text();
+				var noteElem      = $(gradeList[j]).children(".AssignmentNote");
+				var note          = noteElem.text();
+				var ptsEarnedElem = $(gradeList[j]).children(".AssignmentGrade");
+				var ptsEarned     = parseInt(ptsEarnedElem.text());
+				var ptsPossElem   = $(gradeList[j]).children(".AssignmentPointsPossible");
+				if (ptsPossElem.length == 0)
+					ptsPoss = 100;
+				else
+					ptsPoss = parseInt(ptsPossElem.text());
 
-				// category average
-				myObj.cats[i].average = parseInt(
-					$(gradeTables[i]).find("tr").last().children("td")[3].innerText);
-
-				// 100 point scale?
-				myObj.cats[i].is100Pt = (myObj.cats[i].grades.length == 0 ? true :
-					myObj.cats[i].grades[0].ptsPoss == 100);
+				myObj.cats[i].grades[j] = {
+					"title": title,
+					"dueDate": dueDate,
+					"note": note,
+					"ptsEarned": ptsEarned,
+					"ptsPoss": ptsPoss
+				};
 			}
 
-			return myObj;
+			// category average
+			myObj.cats[i].average = parseInt(
+				$(gradeTables[i]).find("tr").last().children("td")[3].innerText);
+
+			// 100 point scale?
+			myObj.cats[i].is100Pt = (myObj.cats[i].grades.length == 0 ? true :
+				myObj.cats[i].grades[0].ptsPoss == 100);
+		}
+
+		return myObj;
 	},
 
-	cjson_to_html: function(json) {
+	cjson_to_html: function (json) {
 		var root = document.createDocumentFragment();
 
 		var title = document.createElement("h3");
@@ -223,7 +241,22 @@ var HAC_HTML =
 			var total = 0; // for non-100-point scales
 
 			var catHeader = document.createElement("span");
-			$(catHeader).addClass("CategoryName").text(json.cats[i].title + " - " + json.cats[i].percent + "%");
+			var categoryWeighting, n;
+			if (json.cats[i].is_percent_weight) {
+				categoryWeighting = json.cats[i].weight + "%";
+			} else {
+				n = json.cats[i].weight;
+				switch (n) {
+					// case 0: numberOfTimes = "doesn't count"; break;
+					// case 1: numberOfTimes = "counts once"; break;
+					// case 2: numberOfTimes = "counts twice"; break;
+					// default: numberOfTimes = "counts " + n + " times";
+					case 1: numberOfTimes = "1 time"; break;
+					default: numberOfTimes = n + " times";
+				}
+				categoryWeighting = "Assignments count " + numberOfTimes;
+			}
+			$(catHeader).addClass("CategoryName").text(json.cats[i].title + " - " + categoryWeighting);
 			$(root).append(catHeader);
 			$(root).append(document.createElement("br"));
 
@@ -274,12 +307,16 @@ var HAC_HTML =
 				$(ptsEarned).addClass("AssignmentGrade")
 					.text(ptsIsNaN ? "" : pts).data("editing", "0")
 					.css('background', ptsIsNaN ? "#FFF" : HAC_HTML.colorize(pts * 100 / json.cats[i].grades[j].ptsPoss))
-					.data("orig", ptsIsNaN ? "" : pts)
+					.data({
+						"orig": ptsIsNaN ? "" : pts,
+						"weight": json.cats[i].weight,
+						"is_percent_weight": json.cats[i].is_percent_weight
+					})
 					.attr("title", "Original grade: " + (ptsIsNaN ? "none" : pts))
 					.click(function() {
 						if ($(this).data("editing") == "0") {
 							var editor = document.createElement("input");
-							var kphandler = function(e) {
+							var kphandler = function (e) {
 								if ((e.keyCode ? e.keyCode : e.which) == 13)
 									HAC_HTML._finalize_grade_edit(this);
 							};
@@ -337,7 +374,7 @@ var HAC_HTML =
 		return root;
 	},
 
-	_finalize_grade_edit: function(el) {
+	_finalize_grade_edit: function (el) {
 		var ptsPoss, ptsPossElem, grade, gradeText;
 
 		// hide tipsy
@@ -375,19 +412,19 @@ var HAC_HTML =
 		}
 
 		// re-render grade cell
-		var cell = $(el).parent();
-		cell.html(gradeText).data("editing", "0")
+		var $cell = $(el).parent();
+		$cell.html(gradeText).data("editing", "0")
 			.css("background-color", HAC_HTML.colorize(grade));
 
 		// recalculate category average
 		var earned = 0, poss = 0, earnedCell, possCell, rows;
-		rows = cell.parent().parent().find(".DataRow, .DataRowAlt");
+		rows = $cell.parent().parent().find(".DataRow, .DataRowAlt");
 		for (var i = 0; i < rows.length; i++) {
-			var grade = rows[i];
-			if (!(isNaN((earnedCell = $(grade).children(".AssignmentGrade")).text())
+			var assignmentRow = rows[i];
+			if (!(isNaN((earnedCell = $(assignmentRow).children(".AssignmentGrade")).text())
 				|| earnedCell.text() == "") && earnedCell.next().text().indexOf("Dropped") == -1) {
 				earned += parseFloat(earnedCell.text());
-				if ((possCell = $(grade).children(".AssignmentPointsPossible")).length == 0)
+				if ((possCell = $(assignmentRow).children(".AssignmentPointsPossible")).length == 0)
 					poss += 100;
 				else
 					poss += parseFloat(possCell.text());
@@ -397,7 +434,7 @@ var HAC_HTML =
 		var categoryAverage = isNaN(avg) ? "" : Math.round(avg * 100) / 100;
 
 		// show category average
-		$(cell).parent().siblings(".CategoryAverage").text(categoryAverage)
+		$cell.parent().siblings(".CategoryAverage").text(categoryAverage)
 			.css("background-color", HAC_HTML.colorize(categoryAverage));
 
 		// sum up the 6 weeks subject average
@@ -405,13 +442,16 @@ var HAC_HTML =
 		rows = $("#classgrades").find(".DataTable");
 		for (var i = 0; i < rows.length; i++) {
 			if ($(rows[i]).find(".CategoryAverage").text() != "") {
-				var weight = parseInt($(rows[i]).prev().prev().text().match(/(\d*)%$/)[1]);
+				// var weight = parseInt($(rows[i]).prev().prev().text().match(/(\d*)%$/)[1]);
+				var weight = $(rows[i]).find(".AssignmentGrade").data("weight");
+				var isPercentWeight = $(rows[i]).find(".AssignmentGrade").data("is_percent_weight");
+				// console.log($(rows[i]).find(".AssignmentGrade")[0], weight, isPercentWeight);
 				categoryAverage = parseFloat($(rows[i]).find(".CategoryAverage").text());
-				subjectTotal += categoryAverage * weight / 100;
+				subjectTotal += categoryAverage * weight;
 				weightTotal += weight;
 
 				// special case: extra credit
-				if (weight == 0 && $(rows[i]).find(".AssignmentPointsPossible").length != 0) {
+				if (isPercentWeight && weight == 0 && $(rows[i]).find(".AssignmentPointsPossible").length != 0) {
 					// add up scores individually
 					var bonuses = $(rows[i]).find(".AssignmentGrade");
 					for (var j = 0; j < bonuses.length; j++)
@@ -420,7 +460,7 @@ var HAC_HTML =
 				}
 			}
 		}
-		subjectTotal *= 100 / weightTotal;
+		subjectTotal *= 1 / weightTotal;
 		subjectTotal += bonus;
 		subjectTotal = Math.max(subjectTotal, 0);
 
@@ -433,7 +473,7 @@ var HAC_HTML =
 		var changedGradeCell = $(".grade a").filter(function(){
 				return $(this).data("data") == $("#classgrades").data("data");
 			})
-			.text(Math.round(subjectTotal)).css("color", "#24f")
+			.text(Math.round(subjectTotal).toString()).css("color", "#24f")
 			.parent().css({"background-color": sixWeeksColor,
 				"box-shadow": sixWeeksColor + " 0px 0px 4px"});
 
@@ -444,7 +484,7 @@ var HAC_HTML =
 		_gaq.push(['_trackEvent', 'Class Grades', 'Edit', 'Edit Grades', grade]);
 	},
 
-	_finalize_exam_grade_edit: function(el) {
+	_finalize_exam_grade_edit: function (el) {
 		// hide tipsy
 		$(el).parent().tipsy("hide");
 
@@ -466,19 +506,19 @@ var HAC_HTML =
 		}
 
 		// re-render grade cell
-		var cell = $(el).parent(), color = HAC_HTML.colorize(grade);
-		cell.html(gradeText).data("editing", "0")
+		var $cell = $(el).parent(), color = HAC_HTML.colorize(grade);
+		$cell.html(gradeText).data("editing", "0")
 			.css({"background-color": color,
 				"box-shadow": "0px 0px 4px " + color});
 
 		// semester averages
-		HAC_HTML._recalculate_subject_averages($(cell));
+		HAC_HTML._recalculate_subject_averages($cell);
 
 		// analytics
 		_gaq.push(['_trackEvent', 'Grades', 'Edit', 'Edit Exam Grades', grade]);
 	},
 
-	_recalculate_subject_averages: function(changedGradeCell) {
+	_recalculate_subject_averages: function (changedGradeCell) {
 		// add up subject averages
 		var sixWeeksCells, examCell, semAvgCell, subject = changedGradeCell.parent().children();
 		if (changedGradeCell.index() < 5) {
@@ -605,20 +645,24 @@ var HAC_HTML =
 			}
 		}
 
-		if (localStorage["single_notif"] == "true") {
-			// Call notification once for all updates
-			if (gradesToNotify.length > 0) 
-				HAC_HTML._notify2(
-					"Grades Changed", 
-					"Your grade changed in " + gradesToNotify.length + " course" + (gradesToNotify.length > 1 ? "s" : "")
-				);
-			if (typeof on_notify === "function") on_notify.call();
-		} else {
-			// Call notification for each grade update
-			for (var n = gradesToNotify.length-1; n >=0; n--) {
-				notif = HAC_HTML.makeUpdateText(gradesToNotify[n]);
-				HAC_HTML._notify2(notif.title, notif.text);
+		if (localStorage.hasOwnProperty("notifs_enabled") && localStorage["notifs_enabled"]) {
+			if (localStorage.hasOwnProperty("single_notif") && localStorage["single_notif"] === "true"
+				|| localStorage.hasOwnProperty("password") && localStorage["password"] === ""
+				|| !localStorage.hasOwnProperty("password")) {
+				// Call notification once for all updates
+				if (gradesToNotify.length > 0) 
+					HAC_HTML._notify2(
+						"Grades Changed", 
+						"Your grade changed in " + gradesToNotify.length + " course" + (gradesToNotify.length > 1 ? "s" : "")
+					);
 				if (typeof on_notify === "function") on_notify.call();
+			} else {
+				// Call notification for each grade update
+				for (var n = gradesToNotify.length-1; n >=0; n--) {
+					notif = HAC_HTML.makeUpdateText(gradesToNotify[n]);
+					HAC_HTML._notify2(notif.title, notif.text);
+					if (typeof on_notify === "function") on_notify.call();
+				}
 			}
 		}
 		// Set grade change indicators
@@ -666,7 +710,20 @@ var HAC_HTML =
 	},
 
 	_notify2: function (titleText, updateText) {
-		webkitNotifications.createNotification("assets/icon-full.png", titleText, updateText).show();
+		var notif = webkitNotifications.createNotification("assets/icon-full.png", titleText, updateText).show();
+
+		if (localStorage.hasOwnProperty("notif_duration")) {
+			var duration = parseInt(localStorage["notif_duration"]);
+			if (duration > 0 && duration <= 60) {
+				window.setTimeout(function () {
+					notif.cancel();
+				}, duration * 1000);
+			}
+		} else {
+			window.setTimeout(function () {
+				notif.cancel();
+			}, DEFAULT_NOTIF_DURATION * 1000);
+		}
 	},
 
 	_notify: function(className, label, oldgrade, newgrade) {

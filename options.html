@@ -1,84 +1,34 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>QuickHAC settings</title>
+		<title>QuickHAC Settings</title>
 		<link rel="stylesheet" href="options.css">
-		<script type="text/javascript" src="lib/jq.js"></script>
+		<script type="text/javascript" src="lib/jquery-2.0.0.min.js"></script>
 		<script type="text/javascript" src="lib/sha512.js"></script>
 		<script type="text/javascript" src="hac_dom.js"></script>
+		<script type="text/javascript" src="options_create.js"></script>
+		<script type="text/javascript" src="options_formdata.js"></script>
 		<script type="text/javascript" src="options.js"></script>
 	</head>
 	<body>
 		<div id="container">
-			<img src="assets/logo.svg" width="600">
+			<img src="assets/logo.svg" width="600" />
 			<p id="version" style="font-size:12px;text-align:right;margin-top:-4px;color:#555"></p>
-			<div id="settings">
-				<img src="assets/heaf.png" id="heaf">
-				<h2>QuickHAC Settings</h2>				
-
-				<p class="toggler">
-					<label for="asianness_check">Enable Grade Colorization</label>
-					<input type="checkbox" id="asianness_check" name="asianness_check" />
-				</p>
-				<div id="colorization" class="togglebox">
-					<p class="toggleFeature">Asianness level: <input type="number" id="asianness" name="asianness" min="0"></p>
-
-					<p class="toggleFeature">Hue: <input type="number" id="hue" name="hue" min="0" max="360" step="30"></p>
-					<p class="info">Enter 0 to return to default</p>
-				</div>
-
-				<p class="toggler">
-					<label for="refresh_check">Enable Automatic Refresh</label>
-					<input type="checkbox" id="refresh_check" name="refresh_check" />
-				</p>
-				<div class="togglebox" id="refresh_opts">
-					<p class="toggleFeature">Refresh interval (mins): <input type="number" id="r_interval" name="r_interval" min="0"></p>
-				</div>
-
-				<p class="toggler minimized">
-					<label for="single_notif_check">Consolidate Update Notifications</label>
-					<input type="checkbox" id="single_notif_check" name="single_notif_check" />
-				</p>
-				<div class="togglebox">
-					<p class="info">Notify once for all grade updates, instead of once for each individual update.</p>
-				</div>
-
-				<p class="toggler minimized">
-					<label for="badge_check">Enable Badge Count</label>
-					<input type="checkbox" id="badge_check" name="badge_check" />
-				</p>
-				<div class="togglebox">
-					<p class="info">Enables the badge on the icon which displays the number of unviewed grade changes.</p>
-				</div>
-
-				<p class="toggler">
-					<label for="password_check">Enable Password Protection</label>
-					<input type="checkbox" id="password_check" name="password_check" />
-				</p>
-				<div class="togglebox" id="pass_opts">
-					<!-- <p class="toggleFeature"><button id="change_password">Change password&hellip;</button><input type="hidden" id="the_password" name="the_password" /></p> -->
-					<h3 id="pass_title">Change Password</h3>
-					<p class="toggleFeature"><label for="old_pass">Old Password:</label> <input type="password" id="old_pass" name="old_pass" /></p>
-					<p class="toggleFeature"><label for="new_pass">New Password:</label> <input type="password" id="new_pass" name="new_pass" /></p>
-					<p class="toggleFeature"><label for="confirm_pass">Confirm Password:</label> <input type="password" id="confirm_pass" name="confirm_pass" /></p>
-					<!-- <p class="toggleFeature" id="" -->
-					<h3>Reset Password</h3>
-					<p class="info">To reset your password, you must log in again with your HAC username and password. Please note that this will reset all your settings as well.</p>
-				</div>
-
+			<div id="settings_wrapper">
+				<h2>QuickHAC Settings</h2>
+				<a href="http://knowyourmeme.com/memes/high-expectations-asian-father" id="heaf" target="_blank"></a>
+				<div id="settings"></div>
 				<p id="save_btn_container"><span class="info" id="save_msg">Saved!</span> <button id="save" class="orange_button">Save Options</button></p>
-				
 			</div>
 			<div id="asianness_wrap">
 				<h3>Grade gradient (Asianness) scale:</h3>
-				<p style="text-align:justify">Grades in qHAC are colored in according to their grade. The amount of color indicates how bad the grade is. This allows for you to be able to pick out bad grades at a glance and quickly figure out what you need to improve. You can control the threshold for the colorization of grades by adjusting the Asianness level. The default, 4, gives you light yellow for the 90s, light orange for the 80s, orange for the 70s, dark orange for the 60s, and crimson red for anything below. You can adjust the threshold up and down according to how much you care about your grades or how colorful you want your qHAC to be.</p>
-				<p class="info">Asianness level:</p>
+				<p style="text-align:justify">Grades in QuickHAC are colored in according to the severity of their score. More or darker color indicates a lower grade. This allows for you to be able to pick out poor grades at a glance and quickly figure out what you need to improve. You can control the threshold for the colorization of grades by adjusting the Asianness level. The default, 4, gives you light yellow for the 90s, light orange for the 80s, orange for the 70s, dark orange for the 60s, and crimson red for anything below. You can adjust the threshold up and down according to how much you care about your grades or how colorful you want your QuickHAC to be.</p>
 				<div class="sliderIndicatorWrapper">
 					<div class="sliderIndicator"></div>
-					<p id="slider_wrapper">1 <input type="range" min="0" max="2.5" step="0.1" id="slider" /> 12.2</p>
+					<p id="asianness_slider_wrapper">1 <input type="range" min="0" max="2.5" step="0.1" id="asianness_slider" /> 12.2</p>
 				</div>
 				<h3>Hue</h3>
-				<p style="text-align:justify">You can also change the colors that your grades show up as. The scale goes from red all the way back to red, going through every possible hue in the color spectrum.</p>
+				<p style="text-align:justify">You can also change the colors that your grades show up as. The scale goes from red to yellow to green to blue to violet and all the way back to red, going through every possible hue in the visible color spectrum.</p>
 				<div class="sliderIndicatorWrapper">
 					<div class="sliderIndicator"></div>
 					<p id="hue_slider_wrapper">0 <input type="range" min="0" max="360" step="1" id="hue_slider"> 360</p>

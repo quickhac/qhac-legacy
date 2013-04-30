@@ -4,7 +4,7 @@
 		<title></title>
 		<link type="text/css" rel="stylesheet" href="hac.css" />
 		<link type="text/css" rel="stylesheet" href="lib/tipsy.css" />
-		<script type="text/javascript" src="lib/jq.js"></script>
+		<script type="text/javascript" src="lib/jquery-2.0.0.min.js"></script>
 		<script type="text/javascript" src="lib/jquery.tipsy.js"></script>
 		<script type="text/javascript" src="lib/moment.js"></script>
 		<script type="text/javascript" src="lib/base64.js"></script>
@@ -52,10 +52,12 @@
 			<canvas id="logo" height="36" width="121"></canvas>
 			<span id="update_wrapper">Updated <span id="lastupdated"></span></span>
 			<span id="edited_notice">Edited</span>
+			<span id="offline_notice">Offline</span>
 			<span id="action_buttons">
 				<!-- <img class="loading" src="assets/loading.png" /> -->
 				<span class="spinner"></span>
 				<button id="do_direct_access">Refresh</button>
+				<button id="cancel_refresh">Cancel</button>
 				<button id="do_options">Options</button>
 				<button id="do_logout">Logout</button>
 				<button id="do_close">&times;</button>

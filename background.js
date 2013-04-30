@@ -28,8 +28,10 @@ function process_update(doc) {
 	Updater.set_updated();
 
 	// reset interval if changed
-	var new_r_int = localStorage["r_int"];
-	if (typeof new_r_int == "undefined") new_r_int = 60;
+	var new_r_int = 60;
+	if (localStorage.hasOwnProperty("r_int") && localStorage["r_int"] !== "") {
+		new_r_int = parseInt(localStorage["r_int"]);
+	}
 	if (cached_refresh_interval != new_r_int) {
 		window.clearInterval(theInterval);
 		theInterval = window.setInterval(silent_update, new_r_int * 60000);
@@ -38,7 +40,7 @@ function process_update(doc) {
 
 function silent_update() {
 	// should this even continue?
-	if (localStorage["r_int"] == 0) {
+	if (parseInt(localStorage["r_int"]) == 0) {
 		window.clearInterval(theInterval);
 		return;
 	}
@@ -56,7 +58,7 @@ function silent_update() {
 // refresh every once in a while
 $(function() {
 	// get interval
-	var r_int = localStorage["r_int"];
+	var r_int = parseInt(localStorage["r_int"]);
 	if (typeof r_int == "undefined") r_int = 60;
 	else if (r_int == 0) return;
 
