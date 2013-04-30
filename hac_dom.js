@@ -7,8 +7,9 @@ var DEFAULT_NOTIF_DURATION = 5;
 var HAC_HTML =
 {
 	html_to_jso: function (html) {
-		myObj = [];
-		rows = $(".DataTable:first tr.DataRow, .DataTable:first tr.DataRowAlt", html);
+		var myObj = [];
+		var context = $.parseHTML(html);
+		rows = $(".DataTable:first tr.DataRow, .DataTable:first tr.DataRowAlt", context);
 
 		// hard-coded offsets
 		var titleOffset, gradesOffset;
@@ -140,17 +141,18 @@ var HAC_HTML =
 	},
 
 	cgrades_to_json: function (html) {
+		var context = $.parseHTML(html);
 		var myObj = {
-			"title": $("h3.ClassName", html).text(),
-			"currAvg": /Current Average: (\d*)/.exec($("p.CurrentAverage", html).text())[1],
+			"title": $("h3.ClassName", context).text(),
+			"currAvg": /Current Average: (\d*)/.exec($("p.CurrentAverage", context).text())[1],
 			"cats": []
 		};
 
 		var categoryPattern = /^(.*) - (\d*)%$/;
 		var isPercentWeight = true;
 
-		var categories = $(".CategoryName", html);
-		var gradeTables = $("table.DataTable", html);
+		var categories = $(".CategoryName", context);
+		var gradeTables = $("table.DataTable", context);
 		gradeTables.splice(0, 1);
 
 		// in caes of array length mismatch, ignore unmatched array elements
@@ -163,7 +165,7 @@ var HAC_HTML =
 			// Failed to capture any categories
 			// Could be a Grisham student or an error...
 			if (captures == null) {
-				console.log("switching to IB-MYP grading (grade counts n times toward average)");
+				// console.log("switching to IB-MYP grading (grade counts n times toward average)");
 				var categoryPattern2 = /^(.*) - Each assignment counts (\d+)/;
 				isPercentWeight = false;
 				captures = categoryPattern2.exec(categories[i].innerText);
@@ -443,7 +445,7 @@ var HAC_HTML =
 				// var weight = parseInt($(rows[i]).prev().prev().text().match(/(\d*)%$/)[1]);
 				var weight = $(rows[i]).find(".AssignmentGrade").data("weight");
 				var isPercentWeight = $(rows[i]).find(".AssignmentGrade").data("is_percent_weight");
-				console.log($(rows[i]).find(".AssignmentGrade")[0], weight, isPercentWeight);
+				// console.log($(rows[i]).find(".AssignmentGrade")[0], weight, isPercentWeight);
 				categoryAverage = parseFloat($(rows[i]).find(".CategoryAverage").text());
 				subjectTotal += categoryAverage * weight;
 				weightTotal += weight;

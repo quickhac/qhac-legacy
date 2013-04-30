@@ -334,7 +334,8 @@ function loadClassGrades(data) {
 
 // password protection
 function lock() {
-	$(document.body).addClass("locked").removeClass("logged_in");
+	// $(document.body).addClass("locked").removeClass("logged_in");
+	$(document.body).addClass("locked");
 }
 
 var shakeTimer;
@@ -343,7 +344,7 @@ function unlock(password) {
 	// $("#restricted_error").slideUp();
 
 	var hashedInput = CryptoJS.SHA512(password).toString();
-	if (hashedInput == localStorage["password"]) {
+	if (hashedInput === localStorage["password"]) {
 		$(document.body).removeClass("locked");
 		window.setTimeout(function () {
 			$("#restricted_access_wrapper").hide();
@@ -359,7 +360,7 @@ function unlock(password) {
 
 // throttle, used for scrolling
 function throttle(ms, callback) {
-	var timer, lastCall=0;
+	var timer, lastCall = 0;
 
 	return function() {
 		var now = new Date().getTime(),
@@ -411,9 +412,9 @@ function setChangedGradeIndicators() {
 }
 
 // init
-$(function(){
+$(function () {
 
-	// Setup AJAX
+	// Setup AJAX (converters not used)
 	$.ajaxSetup({
 		timeout: 15000,
 		contents: {
@@ -513,7 +514,7 @@ $(function(){
 		// $("#direct_url").val(localStorage['url']);
 		$("#lastupdated").html(Updater.get_update_text());
 		// bug: body won't scroll if the "logged_in" class is added immediately
-		window.setTimeout(function(){ $(document.body).addClass("logged_in"); }, 100);
+		window.setTimeout(function () { $(document.body).addClass("logged_in"); }, 100);
 	}
 
 	$("#logOutToReset").click(function () {
@@ -534,7 +535,7 @@ $(function(){
 	// lock if necessary
 	if (localStorage["password"] != "") {
 		lock();
-		$("#restricted_access").submit(function(e) {
+		$("#restricted_access").submit(function (e) {
 			e.preventDefault();
 			unlock($("#unlocker").val());
 			return false;
@@ -547,7 +548,7 @@ var _gaq = _gaq || [];
 _gaq.push(['_setAccount', 'UA-37395872-1']);
 _gaq.push(['_trackPageview']);
 
-(function() {
+(function () {
   var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
   ga.src = 'https://ssl.google-analytics.com/ga.js';
   var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);

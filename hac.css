@@ -14,6 +14,7 @@ body {
 
 body.logged_in {
 	width: 600px;
+	min-height: 260px;
 	/*margin: 6px;*/
 	margin: 4px;
 	box-sizing: border-box;
@@ -173,7 +174,7 @@ body.locked #restricted_access_wrapper {
 	transition: transform, 1s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.5s linear;
 }
 #restricted_access.reset #unlock_wrapper {
-	-webkit-filter: blur(3px);
+	/*-webkit-filter: blur(3px);*/
 
 	-webkit-transition: -webkit-filter 1s linear;
 }

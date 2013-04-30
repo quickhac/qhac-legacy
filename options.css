@@ -187,7 +187,13 @@ input[type="number"] {
 }
 #heaf {
 	float: right;
-	margin-right: -200px;
+	height: 192px;
+	width: 150px;
+	margin-right: -175px;
+	border-radius: 50%;
+	background-image: url('assets/heaf.png');
+	background-repeat: no-repeat;
+	background-position: -20px 0; 
 	-webkit-filter: drop-shadow(0 0 15px black);
 }
 
