@@ -18,6 +18,8 @@ function silent_update() {
 			localStorage.setItem("badge", text.toString(10));
 
 			chrome.browserAction.setBadgeText({"text": text.toString(10)});
+
+			_gaq.push['_trackEvent', 'Grades', 'Background Update', 'Automatically check updates in the background'];
 		});
 
 		// store
@@ -49,3 +51,14 @@ $(function() {
 	// update once
 	silent_update();
 });
+
+// analytics
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-37395872-1']);
+_gaq.push(['_trackPageview']);
+
+(function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = 'https://ssl.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
