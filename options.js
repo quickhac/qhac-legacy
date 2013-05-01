@@ -191,9 +191,9 @@ $(function(){
 	password_enabled = localStorage.hasOwnProperty("password") && localStorage["password"] != "";
 	
 	// update spinbox values (use default values if previously disabled)
-	$("#asianness").val(asianness_on ? asianness : 4);
-	$("#slider").val(Math.log(asianness_on ? asianness : 4));
-	$("#r_interval").val(refresh_enabled ? r_interval : 60);
+	$("#asianness").val(asianness_on ? asianness : DEFAULT_ASIANNESS);
+	$("#slider").val(Math.log(asianness_on ? asianness : DEFAULT_ASIANNESS));
+	$("#r_interval").val(refresh_enabled ? r_interval : DEFAULT_R_INT);
 	$("#hue, #hue_slider").val(hue);
 	// $("#the_password").val(localStorage["password"]);
 	
