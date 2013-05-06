@@ -649,7 +649,7 @@ var HAC_HTML =
 		
 		fromText = is_new ? "" : "from " + oldgrade.toString(10);
 		
-		if (is_new) text = "is now";
+		if (is_new) text = "is now " + newgrade.toString(10);
 		else if (newgrade > oldgrade) text = "rose " + fromText + " to " + newgrade.toString(10);
 		else if (newgrade < oldgrade) text = "fell " + fromText + " to " + newgrade.toString(10);
 		else if (newgrade == oldgrade) text = "is still " + newgrade.toString(10);
