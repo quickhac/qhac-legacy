@@ -243,7 +243,7 @@ var HAC_HTML =
 			var catHeader = document.createElement("span");
 			var categoryWeighting, n;
 			if (json.cats[i].is_percent_weight) {
-				categoryWeighting = json.cats[i].weight + "%";
+				categoryWeighting = (100 * json.cats[i].weight) + "%";
 			} else {
 				n = json.cats[i].weight;
 				switch (n) {
