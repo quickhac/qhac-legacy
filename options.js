@@ -203,6 +203,22 @@ function update_options_dom(noAnimation) {
 	set_password_boxes($("#password_protection").prop('checked'));
 }
 
+function setSliderIndicator(id, val) {
+	var $el = $(id).parent().prev('.sliderIndicator');
+	if (id == "#asianness_slider") {
+		$el.addClass('visible')
+			.text(val.toPrecision(3).toString())
+			.css('left', Math.round(Math.log(val)*(360-16)/2.5 + 40) + 'px');
+	} else if (id == "#hue_slider") {
+		$el.addClass('visible')
+			.text(Math.floor(val).toString())
+			.css('left', Math.round(val*(360-15)/360 + 40) + 'px');
+	}
+	window.setTimeout(function () {
+		$el.removeClass('visible');
+	}, 500);
+}
+
 // events and stuff
 $(function(){
 	// load values from storage
@@ -238,13 +254,8 @@ $(function(){
 	$("#notif_duration").val(notifs_enabled ? notif_duration.toString() : "0");
 
 	// Initialize slider indicators
-	$("#asianness_slider").parent().prev('.sliderIndicator')
-		.text(asianness.toPrecision(3).toString())
-		.css('left', Math.round(Math.log(asianness)*(360-16)/2.5 + 40) + 'px');
-
-	$("#hue_slider").parent().prev('.sliderIndicator')
-		.text(Math.floor(hue).toString())
-		.css('left', Math.round(hue*(360-15)/360 + 40) + 'px');
+	setSliderIndicator("#asianness_slider", asianness);
+	setSliderIndicator("#hue_slider", hue);
 
 	
 	generate_color_table();
@@ -260,34 +271,28 @@ $(function(){
 		asianness = Math.exp(parseFloat($(this).val()));
 		generate_color_table();
 		$("#asianness").val(asianness);
-
-		$(this).parent().prev('.sliderIndicator')
-			.addClass('visible')
-			.text(asianness.toPrecision(3).toString())
-			.css('left', Math.round(Math.log(asianness)*(360-16)/2.5 + 40) + 'px');
+		setSliderIndicator("#asianness_slider", asianness);
 	}).mouseup(function () {
 		$(this).parent().prev('.sliderIndicator')
 			.removeClass('visible');
 	});
 	$("#asianness").change(function () {
-		asianness = $(this).val();
+		asianness = parseFloat($(this).val());
 		generate_color_table();
 		$("#asianness_slider").val(Math.log(asianness));
+		setSliderIndicator("#asianness_slider", asianness);
 	});
 	$("#hue").change(function () {
 		hue = parseInt($(this).val());
 		generate_color_table();
 		$("#hue_slider").val(hue);
+		setSliderIndicator("#hue_slider", hue);
 	});
 	$("#hue_slider").change(function () {
 		hue = parseInt($(this).val());
 		generate_color_table();
 		$("#hue").val(hue);
-
-		$(this).parent().prev('.sliderIndicator')
-			.addClass('visible')
-			.text(Math.floor(hue).toString())
-			.css('left', Math.round(hue*(360-15)/360 + 40) + 'px');
+		setSliderIndicator("#hue_slider", hue);
 	}).mouseup(function () {
 		$(this).parent().prev('.sliderIndicator')
 			.removeClass('visible');

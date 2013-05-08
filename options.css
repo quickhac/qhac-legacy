@@ -344,5 +344,5 @@ h2 + p {
 .sliderIndicator.visible, .sliderIndicatorWrapper:hover .sliderIndicator {
 	opacity: 1;
 
-	-webkit-transition: opacity 0s ease-out 0s;
+	-webkit-transition: none;
 }
