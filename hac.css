@@ -12,6 +12,15 @@ body {
 	cursor: default;
 }
 
+body.noanimation * {
+	-webkit-transition: none !important;
+	transition: none !important;
+	-webkit-animation: none !important;
+	animation: none !important;
+	-webkit-filter: none !important;
+	filter: none !important;
+}
+
 body.logged_in {
 	width: 600px;
 	min-height: 210px;
@@ -230,25 +239,29 @@ body.locked #restricted_access {
 	-webkit-backface-visibility: hidden;
 	backface-visibility: hidden;
 
-	-webkit-filter: blur(0px);
-	filter: blur(0px);
-
 	-webkit-transform: translateY(-100%);
 	transform: translateY(-100%);
 
 	-webkit-transition: -webkit-transform, 1s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.5s linear;
 	transition: transform, 1s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.5s linear;
 }
-#restricted_access.reset #unlock_wrapper {
-	/*-webkit-filter: blur(3px);*/
+#unlock_wrapper {
+	-webkit-filter: blur(0px);
+	filter: blur(0px);
 
-	-webkit-transition: -webkit-filter 1s linear;
+	/* Prevents flicker on transition */
+	-webkit-backface-visibility: hidden;
+	backface-visibility: hidden;
+
+	-webkit-transition: -webkit-filter 1s cubic-bezier(0.19, 1, 0.22, 1);
+	/*transition: filter 1s linear;*/
+}
+#restricted_access.reset #unlock_wrapper {
+	-webkit-filter: blur(3px);
+	filter: blur(3px);
 }
 #restricted_access.reset #resetInfo {
 	opacity: 1;
-
-	-webkit-filter: blur(2px);
-	filter: blur(2px);
 
 	-webkit-transform: translateY(0);
 	transform: translateY(0);
