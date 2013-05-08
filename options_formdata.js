@@ -194,7 +194,22 @@ var options_formdata = {
 			info: "Enables the badge on the icon which displays the number of unviewed grade changes.",
 			attributes: {},
 			on_change: function (el) {
-				update_options_dom(false);
+				// update_options_dom(false);
+				badge_enabled = $("#badge_count").prop("checked");
+			},
+			options: [],
+			sections: []
+		},
+		{
+			title: "Animations",
+			id: "animations",
+			type: "toggle",
+			default_value: true,
+			info: "Enables animations",
+			attributes: {},
+			on_change: function (el) {
+				// update_options_dom(false);
+				animations_enabled = $("#animations").prop("checked");
 			},
 			options: [],
 			sections: []
@@ -392,6 +407,7 @@ var options_formdata = {
 		localStorage.setItem("notifs_enabled", notifs_enabled ? "true" : "false");
 		localStorage.setItem("single_notif", single_notif ? "true" : "false");
 		localStorage.setItem("badge_enabled", badge_enabled ? "true" : "false");
+		localStorage.setItem("animations", animations_enabled ? "on" : "off");
 
 		// Deal with password crap
 

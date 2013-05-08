@@ -75,6 +75,27 @@ function toast(txt, duration) {
 		$(toast).detach();
 	}, duration * 1000 + 2510);
 }
+
+var error_id = 0;
+
+function show_error($input, message) {
+	console.error(message);
+
+	// Hide old error messages
+	$input.parent().children(".error_msg").detach();
+	
+	$el = $(document.createElement("div"));
+	$el.addClass("error_msg")
+		.text(message)
+		.appendTo($input.parent())
+		.addClass("animate");
+	window.setTimeout(function () {
+		$el.detach();
+	}, 4000);
+	$input.focus();
+	error_id++;
+}
+
 function handle_load_error(jqXHR, textStatus, errorThrown) {
 	// console.log(textStatus, errorThrown);
 	switch (textStatus) {
@@ -351,20 +372,25 @@ function lock() {
 var shakeTimer;
 function unlock(password) {
 	if (typeof shakeTimer !== "undefined") window.clearTimeout(shakeTimer);
-	// $("#restricted_error").slideUp();
 
 	var hashedInput = CryptoJS.SHA512(password).toString();
 	if (hashedInput === localStorage["password"]) {
+		$("#unlocker")[0].setCustomValidity("");
 		$(document.body).removeClass("locked");
 		window.setTimeout(function () {
 			$("#restricted_access_wrapper").hide();
 		}, 1000);
 	} else {
-		// $("#restricted_error").text("Incorrect password.").slideDown();
-		$("#restricted_access").addClass("shake");
-		shakeTimer = window.setTimeout(function () {
-			$("#restricted_access").removeClass("shake");
-		}, 1000);
+		if (!localStorage.hasOwnProperty("animations") || localStorage["animations"] != "on") {
+			// $("#unlocker")[0].setCustomValidity("Incorrect Password");
+			show_error($("#unlocker"), "Incorrect Password");
+		} else {
+			$("#restricted_access").addClass("shake");
+			shakeTimer = window.setTimeout(function () {
+				$("#restricted_access").removeClass("shake");
+			}, 1000);
+		}
+		$("#unlocker").select();
 	}
 }
 
@@ -443,6 +469,10 @@ $(function () {
 	// (in 1.x, the only valid district was RRISD)
 	if (!localStorage.hasOwnProperty("district"))
 		localStorage.setItem("district", "rrisd");
+
+	// Set animations
+	if (!localStorage.hasOwnProperty("animations") || localStorage["animations"] != "on")
+		$("body").addClass("noanimations");
 
 	// asianness
 	if (localStorage.hasOwnProperty("asianness")) {

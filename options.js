@@ -1,4 +1,4 @@
-var asianness, r_interval, hue, colorization_enabled, refresh_enabled, hue_enabled, password_enabled, badge_enabled, notifs_enabled, single_notif;
+var asianness, r_interval, hue, colorization_enabled, refresh_enabled, hue_enabled, password_enabled, badge_enabled, notifs_enabled, single_notif, animations_enabled;
 
 function generate_color_table() {
 	var table = document.createElement("table");
@@ -197,10 +197,6 @@ function update_options_dom(noAnimation) {
 			.slideUp(anim);
 		notifs_enabled = false;
 	}
-
-	badge_enabled = $("#badge_count").prop("checked");
-
-	set_password_boxes($("#password_protection").prop('checked'));
 }
 
 function setSliderIndicator(id, val) {
@@ -227,16 +223,48 @@ $(function(){
 	hue = localStorage.hasOwnProperty("hue") ? parseFloat(localStorage["hue"]) : DEFAULT_HUE;
 	notif_duration = localStorage.hasOwnProperty("notif_duration") ? parseFloat(localStorage["notif_duration"]) : DEFAULT_NOTIF_DURATION;
 	
+	// Generate Options HTML
+	renderOptions(options_formdata, $("#settings")[0]);
+	
 	// Load toggles states from storage
 	colorization_enabled = (localStorage.hasOwnProperty("asianness") ? (parseFloat(localStorage["asianness"]) != 0) : true);
 	refresh_enabled = (localStorage.hasOwnProperty("r_int") ? (parseFloat(localStorage["r_int"]) != 0) : true);
-	notifs_enabled = localStorage.hasOwnProperty("notifs_enabled") && localStorage["notifs_enabled"] == "true";
-	single_notif = localStorage.hasOwnProperty("single_notif") && localStorage["single_notif"] == "true";
-	badge_enabled = localStorage.hasOwnProperty("badge_enabled") && localStorage["badge_enabled"] == "true";
-	password_enabled = localStorage.hasOwnProperty("password") && localStorage["password"] != "";
-	
-	// Generate Options HTML
-	renderOptions(options_formdata, $("#settings")[0]);
+
+	if (!localStorage.hasOwnProperty("notifs_enabled")) {
+		var enabled = $("#notifs_enabled").prop("checked");
+		notifs_enabled = enabled;
+		localStorage.setItem("notifs_enabled", enabled ? "true" : "false");
+	} else {
+		notifs_enabled = localStorage["notifs_enabled"] == "true";
+	}
+	if (!localStorage.hasOwnProperty("single_notif")) {
+		var enabled = $("#single_notif").prop("checked");
+		single_notif = enabled;
+		localStorage.setItem("single_notif", enabled ? "true" : "false");
+	} else {
+		single_notif = localStorage["single_notif"] == "true";
+	}
+	if (!localStorage.hasOwnProperty("badge_enabled")) {
+		var enabled = $("#badge_count").prop("checked");
+		badge_enabled = enabled;
+		localStorage.setItem("badge_enabled", enabled ? "true" : "false");
+	} else {
+		badge_enabled = localStorage["badge_enabled"] == "true";
+	}
+	if (!localStorage.hasOwnProperty("animations")) {
+		var enabled = $("#animations").prop("checked");
+		animations_enabled = enabled;
+		localStorage.setItem("animations", enabled ? "on" : "off");
+	} else {
+		animations_enabled = localStorage["animations"] == "on";
+	}
+	if (!localStorage.hasOwnProperty("password")) {
+		var enabled = $("#password_protection").prop("checked");
+		password_enabled = enabled;
+		localStorage.setItem("password_enabled", enabled ? "true" : "false");
+	} else {
+		password_enabled = localStorage["password"] != "";
+	}
 
 	// update toggles
 	$("#colorization").prop('checked', colorization_enabled);
@@ -245,6 +273,7 @@ $(function(){
 	$("#single_notif").prop('checked', single_notif);
 	$("#badge_count").prop('checked', badge_enabled);
 	$("#password_protection").prop('checked', password_enabled);
+	$("#animations").prop('checked', animations_enabled);
 
 	// update spinbox values (use default values if previously disabled)
 	$("#asianness").val(colorization_enabled ? asianness.toString() : DEFAULT_ASIANNESS.toString());

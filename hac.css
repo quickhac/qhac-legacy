@@ -55,19 +55,61 @@ body.logged_in {
 	-webkit-transition: opacity 1.5s linear;
 	transition: opacity 1.5s linear;
 }
-.toast.animate {
-	opacity: 0;
 
-	-webkit-animation-name: fadeInOut;
-	-webkit-animation-duration: 5s;
-	-webkit-animation-timing-function: linear;
+.error_msg {
+	text-align: left;
+	background-color: rgba(0,0,0,0.8);
+	border-radius: 4px;
+	color: #CCCCCC;
+	font-size: 12px;
+	padding: 4px 8px;
+	box-shadow: 0 2px 16px rgba(0,0,0,0.5);
+	opacity: 1;
+	position: absolute;
+	box-sizing: border-box;
+	width: 180px;
+	left: 0px;
+	top: -26px;
+	cursor: default;
+	-webkit-user-select: none;
+	z-index: 9999;
+}
+.error_msg::after {
+	content: '';
+	display: block;
+	position: absolute;
+	width: 0;
+	height: 0;
+	border-top: 6px solid rgba(0,0,0,0.8);
+	border-left: 6px solid transparent;
+	border-right: 6px solid transparent;
+	bottom: -6px;
+	left: 6px;
 }
 
-@-webkit-keyframes fadeInOut {
-	0% { opacity: 0; }
-	10% { opacity: 1; }
-	70% { opacity: 1; }
-	100% { opacity: 0; }
+@-webkit-keyframes fadeinoutup {
+	0% {
+		-webkit-transform: translateY(25px);
+		opacity: 0;
+	}
+	20% {
+		-webkit-transform: translateY(0px);
+		opacity: 1;
+	}
+	80% {
+		-webkit-transform: translateY(0px);
+		opacity: 1;
+	}
+	100% {
+		-webkit-transform: translateY(-25px);
+		opacity: 0;
+	}
+}
+
+.error_msg.animate {
+	-webkit-animation-name: fadeinoutup;
+	-webkit-animation-duration: 4s;
+	-webkit-animation-timing-function: ease-out;
 }
 
 @-webkit-keyframes shake {
@@ -336,15 +378,20 @@ a:hover {
 	text-align: center;
 }
 
-#login, #password, #studentid, #unlocker {
+.textInput {
+	position: relative;
+}
+
+.textInput input {
 	border: none;
 	outline-offset: 0 !important;
 	width: 185px;
-	padding: 2px 5px 2px 5px;
+	padding: 2px 5px;
 	font-size: 20px;
+	display: block;
 }
 
-#district {
+select {
 	width: 100%;
 	margin-bottom: 8px;
 }

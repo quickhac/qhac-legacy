@@ -18,12 +18,9 @@
 		<form id="login_form">
 			<img id="logo_login" src="assets/logo.svg" width="195" /><br>
 			<div id="error_msg" style="display: none;"></div>
-			<input id="login" name="login" placeholder="username" required /><br>
-			<div class="sep"></div>
-			<input type="password" id="password" name="password" placeholder="password" required /><br>
-			<div class="sep"></div>
-			<input id="studentid" name="studentid" placeholder="student id" pattern="[0-9]{6,7}" required /><br>
-			<div class="sep"></div>
+			<div class="textInput"><input id="login" name="login" placeholder="username" required /><div class="sep"></div></div>
+			<div class="textInput"><input type="password" id="password" name="password" placeholder="password" required /><div class="sep"></div></div>
+			<div class="textInput"><input id="studentid" name="studentid" placeholder="student id" pattern="[0-9]{6,7}" required /><div class="sep"></div></div>
 			<select id="district" name="district">
 				<option value="rrisd">Round Rock ISD</option>
 				<option value="aisd">Austin ISD</option>
@@ -36,9 +33,8 @@
 			<form id="restricted_access">
 				<div id="unlock_wrapper">
 					<img id="logo_restricted" src="assets/logo.svg" width="195" /><br>
-					<div id="restricted_error" style="display:none;"></div>
-					<input type="password" id="unlocker" name="unlocker" placeholder="password" required />
-					<div class="sep"></div>
+					<div id="restricted_error" class="error_msg" style="display:none;"></div>
+					<div class="textInput"><input type="password" id="unlocker" name="unlocker" placeholder="password" required /><div class="sep"></div></div>
 					<input type="submit" id="do_unlock" value="Unlock" />
 					<a href="#" id="resetLink">Forgot Password?</a>
 				</div>
