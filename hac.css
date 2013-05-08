@@ -12,7 +12,7 @@ body {
 	cursor: default;
 }
 
-body.noanimation * {
+body.noanimations * {
 	-webkit-transition: none !important;
 	transition: none !important;
 	-webkit-animation: none !important;
@@ -42,11 +42,22 @@ body.logged_in {
 	box-sizing: border-box;
 	margin-left: -100px;
 	bottom: 10%;
-	z-index: 9002;
-	opacity: 0;
+	z-index: 9010;
+	opacity: 1;
 	text-align: center;
+
+	-webkit-transition: opacity 0.5s linear;
+	transition: opacity 0.5s linear;
+}
+.toast.out {
+	opacity: 0;
+
+	-webkit-transition: opacity 1.5s linear;
+	transition: opacity 1.5s linear;
 }
 .toast.animate {
+	opacity: 0;
+
 	-webkit-animation-name: fadeInOut;
 	-webkit-animation-duration: 5s;
 	-webkit-animation-timing-function: linear;

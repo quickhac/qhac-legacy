@@ -56,14 +56,24 @@ function on_error_logging_in(jqXHR, textStatus, errorThrown) {
 
 	reset_login_form();
 }
-function toast(txt) {
+function toast(txt, duration) {
+	var invalid_duration = typeof duration == "undefined" || duration < 0;
+	duration = invalid_duration ? 5 : duration;
 	var toast = document.createElement("div");
 	$(toast).addClass("toast").text(txt);
+	if (!$("body").hasClass("nonimations"))
+		$(toast).addClass("out");
+		window.setTimeout(function () {
+			$(toast).removeClass("out");
+		}, 10);
+		window.setTimeout(function () {
+			$(toast).addClass("out");
+		}, duration * 1000 + 510);
 	$("body").append(toast);
-	$(toast).addClass("animate");
+
 	window.setTimeout(function () {
 		$(toast).detach();
-	}, 5000);
+	}, duration * 1000 + 2510);
 }
 function handle_load_error(jqXHR, textStatus, errorThrown) {
 	// console.log(textStatus, errorThrown);
