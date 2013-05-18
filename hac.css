@@ -545,3 +545,10 @@ body.locked #grades {
 	width: 100%;
 }
 
+.AssignmentCreator .AssignmentName {
+	background: #f8f8f8;
+}
+
+.NewAssignment .AssignmentName {
+	background: #def;
+}

@@ -153,6 +153,21 @@ var AISD_HAC = {
 		});
 	},
 
+	// loads an AISD session into memory
+	load_session: function (callback) {
+		if (window.session_id != undefined)
+			callback();
+		else
+			AISD_HAC.get_session(
+				localStorage["login"].decrypt().decrypt(),
+				localStorage["aisd_password"].decrypt().decrypt(),
+				localStorage["studentid"].decrypt().decrypt(),
+				function (id) {
+					window.session_id = id;
+					callback();
+				});
+	},
+
 	get_gradesHTML: function (id, studentid, callback) {
 		$.post(AISD_HAC.host + "api/aisd/gradesHTML",
 			{ sessionid: id.rot13(), studentid: studentid.rot13() },

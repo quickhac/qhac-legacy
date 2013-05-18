@@ -49,7 +49,15 @@ function silent_update() {
 		RRISD_HAC.get_gradesHTML(localStorage["url"], process_update);
 		break;
 	case "aisd":
-		// TODO
+		// clear session id if it might be expired
+		if (localStorage["r_int"] > 5) window.session_id = undefined;
+		AISD_HAC.load_session(function() {
+			AISD_HAC.get_gradesHTML(
+				window.session_id,
+				localStorage["studentid"].decrypt().decrypt(),
+				process_update);
+		});
+		break;
 	}
 }
 

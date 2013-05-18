@@ -113,21 +113,6 @@ function login_to_aisd(uname, pass, studentid) {
 		on_error_logging_in);
 }
 
-// loads an AISD session into memory
-function load_aisd_session(callback) {
-	if (window.session_id != undefined)
-		callback();
-	else
-		AISD_HAC.get_session(
-			localStorage["login"].decrypt().decrypt(),
-			localStorage["aisd_password"].decrypt().decrypt(),
-			localStorage["studentid"].decrypt().decrypt(),
-			function (id) {
-				window.session_id = id;
-				callback();
-			});
-}
-
 // login
 function login(uname, pass, studentid, district) {
 	$("body").addClass("busy");
@@ -163,6 +148,11 @@ function showCachedGrades() {
 	}
 }
 
+// check if a response from HAC contains grade data
+function isValidGradeData(doc) {
+	return $(".DataTable", doc).length != 0;
+}
+
 function update() {
 	$("body").addClass("busy");
 
@@ -179,16 +169,18 @@ function update() {
 	switch (localStorage["district"]) {
 	case "rrisd":
 		RRISD_HAC.get_gradesHTML(localStorage["url"], function(doc) {
+			if (!isValidGradeData(doc)) return;
 			processUpdatedGrades(doc);
 			$("body").removeClass("busy").removeClass("edited");
 		});
 		break;
 	case "aisd":
-		load_aisd_session(function() {
+		AISD_HAC.load_session(function() {
 			AISD_HAC.get_gradesHTML(
 				window.session_id,
 				localStorage["studentid"].decrypt().decrypt(),
 				function(doc) {
+			if (!isValidGradeData(doc)) return;
 					processUpdatedGrades(doc);
 					$("body").removeClass("busy").removeClass("edited");
 				});
@@ -279,17 +271,19 @@ function loadClassGrades(data) {
 	switch (localStorage["district"]) {
 	case "rrisd":
 		RRISD_HAC.get_classGradeHTML(localStorage["url"], data, function(stuff) {
+			if (!isValidGradeData(stuff)) return;
 			processUpdatedClassGrades(data, stuff);
 			$("body").removeClass("busy").removeClass("edited");
 		});
 		break;
 	case "aisd":
-		load_aisd_session(function() {
+		AISD_HAC.load_session(function() {
 			AISD_HAC.get_classGradeHTML(
 				window.session_id,
 				localStorage["studentid"].decrypt().decrypt(),
 				data,
 				function(stuff) {
+					if (!isValidGradeData(stuff)) return;
 					processUpdatedClassGrades(data, stuff);
 					$("body").removeClass("busy").removeClass("edited");
 				});

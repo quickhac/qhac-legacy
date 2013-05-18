@@ -314,6 +314,80 @@ var HAC_HTML =
 					}
 			}
 
+			var addAssignmentRow = document.createElement("tr");
+			var removeIfEmptyRow = function (el) {
+				if (el.find(".AssignmentGrade").text() == "")
+					el.remove();
+			};
+			var createGradeEditor = function () {
+				return $(document.createElement("input"))
+					.attr("size", 5)
+					.keypress(function (e) {
+						if ((e.keyCode ? e.keyCode : e.which) == 13) {
+								var row = $(this).parent().parent();
+								HAC_HTML._finalize_grade_edit(this);
+								removeIfEmptyRow(row);
+							}
+						})
+					.blur(function () {
+						var row = $(this).parent().parent();
+						HAC_HTML._finalize_grade_edit(this);
+						removeIfEmptyRow(row);
+						})
+					.addClass("GradeEditor");
+			};
+
+			// the next 60 or so lines are one jQuery daisy chain :O
+			$(addAssignmentRow).addClass("DataRow AssignmentCreator")
+			.append(
+				$(document.createElement("td")).addClass("AssignmentName")
+					.text("+ New Assignment")
+					.click(function () { // handler to create new assignment
+						$(this).parent()
+							.before(
+								$(document.createElement("tr"))
+									.addClass("DataRow NewAssignment")
+									.append(
+										$(document.createElement("td")).addClass("AssignmentName")
+											.text("New Assignment"))
+									.append(
+										$(document.createElement("td")).addClass("DateDue")
+											.text(""))
+									.append(
+										$(document.createElement("td")).addClass("AssignmentGrade")
+											.data("editing", "1")
+											.data("orig", "")
+											.attr("title", "User-created assignment")
+											.append(createGradeEditor())
+											.click(function () { // the new assignment should act like any other
+												if ($(this).data("editing") == "0") {
+														var editor = createGradeEditor().val(this.innerText);
+														$(this).html("").append(editor).data("editing", "1")
+															.tipsy("show").children().focus().select();
+													}
+											})
+											.tipsy({gravity: 'e', trigger: 'manual', fade: true, opacity: 1}))
+									.append(
+										$(document.createElement("td")).text(""))
+									.append(
+										$(this).parent().parent().siblings().eq(0).children(0).children().length == 5 ?
+										$(document.createElement("td")).text("") : // if the category is ont out of 100 points,
+										document.createDocumentFragment()          // we must add another empty data cell
+										))
+							.prev().find(".GradeEditor").focus().select();
+					}))
+			.append(
+				$(document.createElement("td")).text(""))
+			.append(
+				$(document.createElement("td")).text(""))
+			.append(
+				$(document.createElement("td")).text(""))
+			.append(
+				json.cats[i].is100Pt ?
+					document.createDocumentFragment() :
+					$(document.createElement("td")).text(""))
+			.appendTo(catTableBody);
+
 			var avgLabel = document.createElement("td");
 			$(avgLabel).attr('colspan', 2).css('fontWeight', 'bold').html("Average");
 			$(catTableBody).append(avgLabel);
