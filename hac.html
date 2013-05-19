@@ -15,18 +15,20 @@
 		<script type="text/javascript" src="hac.js"></script>
 	</head>
 	<body>
-		<form id="login_form">
-			<img id="logo_login" src="assets/logo.svg" width="195" /><br>
-			<div id="error_msg" style="display: none;"></div>
-			<div class="textInput"><input id="login" name="login" placeholder="username" required /><div class="sep"></div></div>
-			<div class="textInput"><input type="password" id="password" name="password" placeholder="password" required /><div class="sep"></div></div>
-			<div class="textInput"><input id="studentid" name="studentid" placeholder="student id" pattern="[0-9]{6,7}" required /><div class="sep"></div></div>
-			<select id="district" name="district">
-				<option value="rrisd">Round Rock ISD</option>
-				<option value="aisd">Austin ISD</option>
-			</select>
-			<input type="submit" id="do_login" value="Login" />
-		</form>
+		<div id="login_wrapper">
+			<form id="login_form">
+				<img id="logo_login" src="assets/logo.svg" width="195" /><br>
+				<div id="error_msg" style="display: none;"></div>
+				<div class="textInput"><input id="login" name="login" placeholder="username" required /><div class="sep"></div></div>
+				<div class="textInput"><input type="password" id="password" name="password" placeholder="password" required /><div class="sep"></div></div>
+				<div class="textInput"><input id="studentid" name="studentid" placeholder="student id" pattern="[0-9]{6,7}" required /><div class="sep"></div></div>
+				<select id="district" name="district">
+					<option value="rrisd">Round Rock ISD</option>
+					<option value="aisd">Austin ISD</option>
+				</select>
+				<input type="submit" id="do_login" value="Login" />
+			</form>
+		</div>
 		<div id="restricted_access_wrapper">
 			<div id="locked_bg_top"></div>
 			<div id="locked_bg_bottom"></div>
@@ -44,24 +46,26 @@
 				</div>
 			</form>
 		</div>
-		<div id="direct_access_form">
-			<span id="access_code_wrapper">Access code: <input id="direct_url" readonly="true"></span>
-			<!-- <img src="assets/logo.svg" id="logo" height="36" /> -->
-			<canvas id="logo" height="36" width="121"></canvas>
-			<span id="update_wrapper">Updated <span id="lastupdated"></span></span>
-			<span id="edited_notice">Edited</span>
-			<span id="offline_notice">Offline</span>
-			<span id="action_buttons">
-				<!-- <img class="loading" src="assets/loading.png" /> -->
-				<span class="spinner"></span>
-				<button id="do_direct_access">Refresh</button>
-				<button id="cancel_refresh">Cancel</button>
-				<button id="do_options">Options</button>
-				<button id="do_logout">Logout</button>
-				<button id="do_close">&times;</button>
-			</span>
+		<div id="main_view">
+			<div id="direct_access_form">
+				<span id="access_code_wrapper">Access code: <input id="direct_url" readonly="true"></span>
+				<!-- <img src="assets/logo.svg" id="logo" height="36" /> -->
+				<canvas id="logo" height="36" width="121"></canvas>
+				<span id="update_wrapper">Updated <span id="lastupdated"></span></span>
+				<span id="edited_notice">Edited</span>
+				<span id="offline_notice">Offline</span>
+				<span id="action_buttons">
+					<!-- <img class="loading" src="assets/loading.png" /> -->
+					<span class="spinner"></span>
+					<button id="do_direct_access">Refresh</button>
+					<button id="cancel_refresh">Cancel</button>
+					<button id="do_options">Options</button>
+					<button id="do_logout">Logout</button>
+					<button id="do_close">&times;</button>
+				</span>
+			</div>
+			<div id="grades"></div>
+			<div id="classgrades"></div>
 		</div>
-		<div id="grades"></div>
-		<div id="classgrades"></div>
 	</body>
 </html>

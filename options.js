@@ -197,6 +197,7 @@ function update_options_dom(noAnimation) {
 			.slideUp(anim);
 		notifs_enabled = false;
 	}
+	set_password_boxes($("#password_protection").prop("checked"));
 }
 
 function setSliderIndicator(id, val) {

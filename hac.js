@@ -34,26 +34,34 @@ function show_login_error(text) {
 
 // hide the login form and show the grades
 function hide_login_form() {
-	$("#direct_access_form").show();
-	$("#login_form").hide();
+	// $("#direct_access_form").show();
+	// $("#login_form").hide();
 	$("#password").val("");
 	$(document.body).addClass("logged_in");
+
+	window.setTimeout(function () {
+		$("#login_wrapper").hide();
+	}, 500);
 }
 
 // handles any error thrown while logging in
 function on_error_logging_in(jqXHR, textStatus, errorThrown) {
 	console.log(textStatus, errorThrown);
+
+	var error_msg;
 	switch (textStatus) {
 	case "error":
-		show_login_error("Unable to log in");
+		error_msg = "Unable to log in";
 		break;
 	case "timeout":
-		show_login_error("Login timed out");
+		error_msg = "Login timed out";
 		break;
 	default:
-		show_login_error("Failed to log in");
+		error_msg = "Failed to log in";
 	}
 
+	toast(error_msg);
+	// show_login_error(error_msg);
 	reset_login_form();
 }
 function toast(txt, duration) {
@@ -367,6 +375,8 @@ function loadClassGrades(data) {
 function lock() {
 	// $(document.body).addClass("locked").removeClass("logged_in");
 	$(document.body).addClass("locked");
+	$("#unlocker").focus();
+	$("#restricted_access_wrapper").removeClass("hide");
 }
 
 var shakeTimer;
@@ -378,7 +388,7 @@ function unlock(password) {
 		$("#unlocker")[0].setCustomValidity("");
 		$(document.body).removeClass("locked");
 		window.setTimeout(function () {
-			$("#restricted_access_wrapper").hide();
+			$("#restricted_access_wrapper").addClass("hide");
 		}, 1000);
 	} else {
 		if (!localStorage.hasOwnProperty("animations") || localStorage["animations"] != "on") {
@@ -471,7 +481,10 @@ $(function () {
 		localStorage.setItem("district", "rrisd");
 
 	// Set animations
-	if (!localStorage.hasOwnProperty("animations") || localStorage["animations"] != "on")
+	if (!localStorage.hasOwnProperty("animations")) {
+		localStorage.setItem("animations", "on");
+	}
+	if (localStorage["animations"] != "on")
 		$("body").addClass("noanimations");
 
 	// asianness
@@ -533,12 +546,14 @@ $(function () {
 				shadowMax = false;
 			}
 			else if (pos < 32) {
-				$("#direct_access_form").css("box-shadow", "0px 0px " +
-					Math.round(pos / 4) + "px #888");
+				$("#direct_access_form").css("box-shadow",
+					"0px " + Math.round(pos / 4) + "px " +
+					Math.round(pos / 4) + "px -" +
+					Math.round(pos / 4) + "px rgba(0,0,0,0.5)");
 				shadowMax = false;
 			}
 			else if (!shadowMax) {
-				$("#direct_access_form").css("box-shadow", "0px 0px 8px #888");
+				$("#direct_access_form").css("box-shadow", "0px 8px 8px -8px rgba(0,0,0,0.5)");
 				shadowMax = true;
 			}
 
@@ -548,9 +563,13 @@ $(function () {
 
 	// login or direct access?
 	if (typeof localStorage["url"] == "undefined" && typeof localStorage["aisd_password"] == "undefined")
-		$("#direct_access_form").hide();
+		// not logged in
+		// $("#direct_access_form").addClass("hide");
+		$("#login_form").removeClass("hide");
 	else {
-		$("#login_form").hide();
+		// logged in
+		$("#login_form").addClass("hide");
+		// $("#direct_access_form").removeClass("hide");
 		// $("#direct_url").val(localStorage['url']);
 		$("#lastupdated").html(Updater.get_update_text());
 		// bug: body won't scroll if the "logged_in" class is added immediately
@@ -560,7 +579,7 @@ $(function () {
 	$("#logOutToReset").click(function () {
 		logout();
 		$("#resetInfo").removeClass("visible");
-		$("#restricted_access_wrapper").hide();
+		// $("#restricted_access_wrapper").hide();
 	});
 	$("#cancelReset").click(function () {
 		$("#restricted_access").removeClass("reset");
@@ -570,17 +589,22 @@ $(function () {
 	});
 
 	// password protection
-	if (!localStorage.hasOwnProperty("password"))
+	if (!localStorage.hasOwnProperty("password")) {
 		localStorage["password"] = ""; // set default if not set
-	// lock if necessary
-	if (localStorage["password"] != "") {
+	} else if (localStorage["password"] != "") {
+		// Lock if necessary
 		lock();
+		$("#unlocker").focus();
 		$("#restricted_access").submit(function (e) {
 			e.preventDefault();
 			unlock($("#unlocker").val());
 			return false;
 		});
+	} else {
+		$("#restricted_access_wrapper").addClass("hide");
 	}
+
+	$("html").css("height", $("#main_view").outerHeight() + "px");
 });
 
 // analytics
