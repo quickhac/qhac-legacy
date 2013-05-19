@@ -26,4 +26,4 @@ To add the source code to Chrome:
 
 ## Copyright ##
 
-Created by Yash Aggarwal, Max Ciotti, and Xuming Zeng.
+Created by Yash Aggarwal, Max Ciotti, Tristan Seifert and Xuming Zeng.

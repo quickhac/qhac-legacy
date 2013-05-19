@@ -1,5 +1,13 @@
 # Changelog
 
+### 1.2.9
+
+* Add tracking of background updates
+
+### 1.2.8
+
+* Fix CPU and network hog
+
 ### 1.2.7
 
 * Add developer credit to Tristan Seifert (oops!)

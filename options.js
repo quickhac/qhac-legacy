@@ -226,6 +226,13 @@ $(function(){
 	
 	// Generate Options HTML
 	renderOptions(options_formdata, $("#settings")[0]);
+	// Leftover from merge conflict:
+	// // update spinbox values (use default values if previously disabled)
+	// $("#asianness").val(asianness_on ? asianness : DEFAULT_ASIANNESS);
+	// $("#slider").val(Math.log(asianness_on ? asianness : DEFAULT_ASIANNESS));
+	// $("#r_interval").val(refresh_enabled ? r_interval : DEFAULT_R_INT);
+	// $("#hue, #hue_slider").val(hue);
+	// // $("#the_password").val(localStorage["password"]);
 	
 	// Load toggles states from storage
 	colorization_enabled = (localStorage.hasOwnProperty("asianness") ? (parseFloat(localStorage["asianness"]) != 0) : true);

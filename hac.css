@@ -846,23 +846,23 @@ body.logged_in #grades {
 }
 
 .AssignmentName {
-	width: 10%;
+	width: 40%;
 }
 
 .DateDue {
-	width: 2%;
+	width: 13%;
 }
 
 .AssignmentGrade {
-	width: 2%;
+	width: 13%;
 }
 
 .AssignmentPointsPossible {
-	width: 2%;
+	width: 13%;
 }
 
 .AssignmentNote {
-	width: 6%;
+	width: 20%;
 }
 
 .AssignmentGrade:hover {
@@ -878,3 +878,19 @@ body.logged_in #grades {
 	width: 100%;
 }
 
+.AssignmentCreator .AssignmentName {
+	background: #f8f8f8;
+	color: #666;
+	border-top-left-radius: 4px;
+	border-bottom-left-radius: 4px;
+	cursor: pointer;
+}
+
+.AssignmentCreator .AssignmentName:hover {
+	background: #f4f4f4;
+	text-decoration: underline;
+}
+
+.NewAssignment .AssignmentName {
+	background: #def;
+}
