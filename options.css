@@ -101,6 +101,9 @@ body {
 .titlebar + .info:empty + .option {
 	padding-top: 12px;
 }
+.option input[type="text"], .option input[type="password"] {
+	width: 140px;
+}
 .option .info {
 	/*margin-top: -16px;*/
 	/*margin-bottom: 16px;*/
