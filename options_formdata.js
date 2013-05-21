@@ -89,7 +89,7 @@ var options_formdata = {
 			id: "auto_refresh",
 			type: "toggle",
 			default_value: true,
-			info: "",
+			info: "Automatically check your grades periodically.",
 			attributes: {},
 			on_change: function (el) {
 				update_options_dom(false);
@@ -137,7 +137,7 @@ var options_formdata = {
 			id: "notifs_enabled",
 			type: "toggle",
 			default_value: true,
-			info: "Enables a notification in the corner of the screen when grades change.",
+			info: "Show a small popup on the corner of the screen when a grade changes.",
 			attributes: {},
 			on_change: function (el) {
 				update_options_dom(false);
@@ -191,7 +191,7 @@ var options_formdata = {
 			id: "badge_count",
 			type: "toggle",
 			default_value: true,
-			info: "Enables the badge on the icon which displays the number of unviewed grade changes.",
+			info: "Show the number of unviewed changed grades on the icon.",
 			attributes: {},
 			on_change: function (el) {
 				// update_options_dom(false);
@@ -205,7 +205,7 @@ var options_formdata = {
 			id: "animations",
 			type: "toggle",
 			default_value: true,
-			info: "Enables animations",
+			info: "Make qHAC fun to use.",
 			attributes: {},
 			on_change: function (el) {
 				// update_options_dom(false);
@@ -219,7 +219,7 @@ var options_formdata = {
 			id: "password_protection",
 			type: "toggle",
 			default_value: true,
-			info: "Protect your grades from prying eyes with a password upon opening QuickHAC.",
+			info: "Protect your grades from prying eyes.",
 			attributes: {},
 			on_change: function (el) {
 				set_password_boxes(document.getElementById("password_protection").checked);

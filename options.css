@@ -197,7 +197,7 @@ input[type="number"] {
 	background-image: url('assets/heaf.png');
 	background-repeat: no-repeat;
 	background-position: -20px 0; 
-	-webkit-filter: drop-shadow(0 0 15px black);
+	-webkit-filter: drop-shadow(4px 4px 15px #888);
 }
 
 
