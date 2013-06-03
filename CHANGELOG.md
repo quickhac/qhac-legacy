@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.0.1
+
+* Merge in ability to save grade adat from 1.2.10
+
 ### 2.0.0
 
 * Add ability to add new assignments
@@ -20,6 +24,10 @@
 * Add support for Austin ISD users
 * Enhance support for Grisham MS
 * Migrate to jQuery 2.0
+
+### 1.2.10
+
+* Add ability to save all grade data
 
 ### 1.2.9
 

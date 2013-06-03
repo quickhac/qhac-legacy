@@ -334,6 +334,12 @@ $(function(){
 		$(this).parent().prev('.sliderIndicator')
 			.removeClass('visible');
 	});
+
+	// save data
+	$("#localstorage_data").text(Base64.encode(JSON.stringify(localStorage)))
+		.click(function() {
+			$(this).select();
+		});
 });
 
 // analytics
