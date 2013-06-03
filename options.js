@@ -197,6 +197,12 @@ $(function(){
 			$("#save_msg").removeClass('visible');
 		}, 500);
 	});
+
+	// save data
+	$("#localstorage_data").text(Base64.encode(JSON.stringify(localStorage)))
+		.click(function() {
+			$(this).select();
+		});
 });
 
 // analytics

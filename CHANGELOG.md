@@ -1,5 +1,9 @@
 # Changelog
 
+### 1.2.10
+
+* Add ability to save all grade data
+
 ### 1.2.9
 
 * Add tracking of background updates
