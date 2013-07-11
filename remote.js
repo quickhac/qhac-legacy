@@ -37,6 +37,7 @@ Queuer = (function () {
 	 * Adds an XHR to the queue
 	 * @param {XMLHttpRequest} xhr - the request to add
 	 * @returns the Queuer
+	 * @namespace Queuer
 	 */
 	Queuer.prototype.addRequest = function (xhr) {
 		this.queue.push(xhr);
@@ -46,6 +47,7 @@ Queuer = (function () {
 	/**
 	 * Aborts all of the XHRs in the queue
 	 * @returns the Queuer
+	 * @namespace Queuer
 	 */
 	Queuer.prototype.abortAll = function () {
 		while (this.queue.length) {
@@ -58,6 +60,7 @@ Queuer = (function () {
 	return Queuer;
 })();
 
+/** @type Queuer */
 var XHR_Queue = new Queuer();
 
 /**
