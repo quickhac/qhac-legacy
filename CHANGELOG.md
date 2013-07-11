@@ -1,8 +1,12 @@
 # Changelog
 
+### 2.0.2
+
+* Add JSDoc documentation
+
 ### 2.0.1
 
-* Merge in ability to save grade adat from 1.2.10
+* Merge in ability to save grade data from 1.2.10
 
 ### 2.0.0
 
