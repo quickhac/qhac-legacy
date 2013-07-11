@@ -1,6 +1,20 @@
-var asianness, asianness_on, hue, shadowMax = false;
+/** @type {number} */
+var asianness,
 
-// Get the size of an object
+/** @type {boolean} */
+asianness_on,
+
+/** @type {number} */
+hue,
+
+/** @type {boolean} */
+shadowMax = false;
+
+/**
+ * Gets the number of properties of an object
+ * @param {Object} obj - the object to get the size of
+ * @returns {number} the number of properties of the object
+ */
 Object.size = function (obj) {
     var size = 0, key;
     for (key in obj) {
@@ -9,9 +23,11 @@ Object.size = function (obj) {
     return size;
 };
 
-// handlers
+/***================***
+ *** LOGIN HANDLERS ***
+ ***================***/
 
-// disable input to the login form, showing that a login is in progress
+/** Disables input to the login form and shows that a login is in progress */
 function disable_login_form() {
 	$("#error_msg").slideUp(250, function () {
 		$("#error_msg").text("");
@@ -20,22 +36,24 @@ function disable_login_form() {
 	$("#do_login").val("Logging in...");
 }
 
-// reset the login form to its original state
+/** Resets the login form to its original enabled state */
 function reset_login_form() {
 	$("body").removeClass("busy");
 	$("#login_form input").attr("disabled", false);
 	$("#do_login").val("Login");
 }
 
-// show that an error occurred during the login process
+/**
+ * Shows that an error occurred during the login process
+ * @param {string} text - the text to display
+ * @deprecated use {@link toast} instead
+ */
 function show_login_error(text) {
 	$("#error_msg").text(text).slideDown();
 }
 
-// hide the login form and show the grades
+/** Hides the login form and show the grades */
 function hide_login_form() {
-	// $("#direct_access_form").show();
-	// $("#login_form").hide();
 	$("#password").val("");
 	$(document.body).addClass("logged_in");
 
@@ -44,7 +62,13 @@ function hide_login_form() {
 	}, 500);
 }
 
-// handles any error thrown while logging in
+/**
+ * Handles any error thrown while logging in by displaying an error message
+ * to the user and showing the login form
+ * @param {XMLHttpRequest} jqXHR - the request that threw the error
+ * @param {string} textStatus - the type of error thrown
+ * @param {string} errorThrown - a description of the error
+ */
 function on_error_logging_in(jqXHR, textStatus, errorThrown) {
 	console.log(textStatus, errorThrown);
 
@@ -61,9 +85,17 @@ function on_error_logging_in(jqXHR, textStatus, errorThrown) {
 	}
 
 	toast(error_msg);
-	// show_login_error(error_msg);
+	
 	reset_login_form();
 }
+
+/**
+ * Displays a small message near the bottom of the window, inspired by Android
+ * Toast
+ * @param {string} txt - the message to display
+ * @param {number} [duration=5] - the length of time in seconds to display the
+ * message for
+ */
 function toast(txt, duration) {
 	var invalid_duration = typeof duration == "undefined" || duration < 0;
 	duration = invalid_duration ? 5 : duration;
@@ -86,6 +118,11 @@ function toast(txt, duration) {
 
 var error_id = 0;
 
+/**
+ * Displays an error on the restricted access form (password protection)
+ * @param {jQuery} $input - the element that sent the request to show an error
+ * @param {string} message - the message to display
+ */
 function show_error($input, message) {
 	console.error(message);
 
@@ -104,6 +141,12 @@ function show_error($input, message) {
 	error_id++;
 }
 
+/**
+ * Handles any error that occurs when loading grades fails
+ * @param {XMLHttpRequest} jqXHR - the request that caused the error
+ * @param {string} textStatus - the type of error thrown
+ * @param {string} errorThrown - a description of the error
+ */
 function handle_load_error(jqXHR, textStatus, errorThrown) {
 	// console.log(textStatus, errorThrown);
 	switch (textStatus) {
@@ -114,6 +157,13 @@ function handle_load_error(jqXHR, textStatus, errorThrown) {
 	$("body").removeClass("busy").addClass("offline");
 	toast(error_msg);
 }
+
+/**
+ * Handles any error that occurs when loading class grades fails
+ * @param {XMLHttpRequest} jqXHR - the request that caused the error
+ * @param {string} textStatus - the type of error thrown
+ * @param {string} errorThrown - a description of the error
+ */
 function handle_load_error_class(jqXHR, textStatus, errorThrown) {
 	// console.log(textStatus, errorThrown);
 	switch (textStatus) {
@@ -125,7 +175,12 @@ function handle_load_error_class(jqXHR, textStatus, errorThrown) {
 	toast(error_msg);
 }
 
-// log in to RRISD
+/**
+ * Logs into Round Rock ISD with the given credentials
+ * @param {string} uname - username
+ * @param {string} pass - password
+ * @param {string} studentid - 6-digit district-assigned student ID
+ */
 function login_to_rrisd(uname, pass, studentid) {
 	// get a session ID
 	RRISD_HAC.get_session(
@@ -159,7 +214,12 @@ function login_to_rrisd(uname, pass, studentid) {
 		on_error_logging_in);
 }
 
-// log in to AISD
+/**
+ * Logs into Austin ISD with the given credentials
+ * @param {string} uname - username
+ * @param {string} pass - password
+ * @param {string} studentid - 7-digit district-assigned student ID
+ */
 function login_to_aisd(uname, pass, studentid) {
 	// get a session ID
 	AISD_HAC.get_session(
@@ -183,7 +243,13 @@ function login_to_aisd(uname, pass, studentid) {
 		on_error_logging_in);
 }
 
-// login
+/**
+ * Saves credentials to localStorage and logs in
+ * @param {string} uname - username
+ * @param {string} pass - password
+ * @param {string} studentid - district-assigned student ID
+ * @param {string} district - district name
+ */
 function login(uname, pass, studentid, district) {
 	$("body").addClass("busy");
 
@@ -209,6 +275,7 @@ function login(uname, pass, studentid, district) {
 	}
 }
 
+/** Retrieves the cached grades from localStorage and displays them */
 function showCachedGrades() {
 	if (localStorage.hasOwnProperty("grades")) {
 		$("#grades").html("").append(HAC_HTML.json_to_html(
@@ -218,11 +285,16 @@ function showCachedGrades() {
 	}
 }
 
-// check if a response from HAC contains grade data
+/**
+ * Checks if a response from HAC contains grade data
+ * @param {string} the HTML document to parse and check
+ * @returns {boolean} true if the document is valid
+ */
 function isValidGradeData(doc) {
 	return $(".DataTable", $.parseHTML(doc)).length != 0;
 }
 
+/** Reverts user edits and tries to update the grades from the server */
 function update() {
 	$("body").addClass("busy");
 
@@ -238,32 +310,37 @@ function update() {
 	// query the correct district
 	switch (localStorage["district"]) {
 	case "rrisd":
-		RRISD_HAC.get_gradesHTML(localStorage["url"], function (doc) {
-			if (!isValidGradeData(doc)) return;
-			processUpdatedGrades(doc);
-			$("body").removeClass("busy offline edited");
-		}, handle_load_error);
+		RRISD_HAC.get_gradesHTML(
+			localStorage["url"], processUpdatedGrades, handle_load_error);
 		break;
 	case "aisd":
 		AISD_HAC.load_session(function() {
 			AISD_HAC.get_gradesHTML(
 				window.session_id,
 				localStorage["studentid"].decrypt().decrypt(),
-				function (doc) {
-					if (!isValidGradeData(doc)) return;
-					processUpdatedGrades(doc);
-					$("body").removeClass("busy offline edited");
-				});
+				processUpdatedGrades)
 		});
 		break;
 	}
 }
 
+/**
+ * Displays a set of grades from JSON on-screen
+ * @param {JSON} grades_json - the grades to display
+ */
 function displayGrades(grades_json) {
 	$("#grades").html("").append(HAC_HTML.json_to_html(grades_json));
 }
 
+/**
+ * Saves a response from a HAC server for marking period grades and displays it
+ * to the user
+ * @param {string} doc - the HTML response of the server
+ * @returns {boolean} true if the operation was successful
+ */
 function processUpdatedGrades(doc) {
+	if (!isValidGradeData(doc)) return false;
+
 	var doc_json = HAC_HTML.html_to_jso(doc);
 	// output
 	displayGrades(doc_json);
@@ -277,13 +354,23 @@ function processUpdatedGrades(doc) {
 	localStorage.setItem("grades", JSON.stringify(doc_json));
 	Updater.set_updated();
 	$("#lastupdated").html(Updater.get_update_text());
-	// class
-	$("body").addClass("logged_in");
+	// classes
+	$("body").addClass("logged_in").removeClass("busy offline edited");
+
+	return true;
 }
 
+/**
+ * Saves a response from a HAC server for class grades and displays it to the user
+ * @param {string} data - the unique class and marking period identifier
+ * @param {string} doc - the HTML response of the server
+ * @returns {boolean} true if the operation was successful
+ */
 function processUpdatedClassGrades(data, doc) {
 	// process marking period-level grades first
-	processUpdatedGrades(doc);
+	if (!processUpdatedGrades(doc))
+		// if processUpdatedGrades returns false, cancel the operation; it failed
+		return false;
 
 	// store
 	var cgrades_json = HAC_HTML.cgrades_to_json(doc);
@@ -291,8 +378,13 @@ function processUpdatedClassGrades(data, doc) {
 
 	// show grades
 	$("#classgrades").html(HAC_HTML.cjson_to_html(cgrades_json));
+
+	return true;
 }
 
+/**
+ * Logs out, deletes all user data, and shows the login from
+ */
 function logout() {
 	// analytics
 	_gaq.push(['_trackEvent', 'Account', 'Logout']);
@@ -310,6 +402,11 @@ function logout() {
 	localStorage.clear();
 }
 
+/**
+ * Loads class grades for a given class and marking period
+ * @param {string} data - the unique class and marking period identifier, which
+ * corresponds to the ID the HAC server assigns
+ */
 function loadClassGrades(data) {
 	$("body").addClass("busy");
 
@@ -343,11 +440,10 @@ function loadClassGrades(data) {
 	// load
 	switch (localStorage["district"]) {
 	case "rrisd":
-		RRISD_HAC.get_classGradeHTML(localStorage["url"], data, function(stuff) {
-			if (!isValidGradeData(stuff)) return;
-			processUpdatedClassGrades(data, stuff);
-			$("body").removeClass("busy offline edited");
-		}, handle_load_error_class);
+		RRISD_HAC.get_classGradeHTML(
+			localStorage["url"], data,
+			function(stuff) { processUpdatedClassGrades(data, stuff); },
+			handle_load_error_class);
 		break;
 	case "aisd":
 		AISD_HAC.load_session(function() {
@@ -355,17 +451,13 @@ function loadClassGrades(data) {
 				window.session_id,
 				localStorage["studentid"].decrypt().decrypt(),
 				data,
-				function(stuff) {
-					if (!isValidGradeData(stuff)) return;
-					processUpdatedClassGrades(data, stuff);
-					$("body").removeClass("busy offline edited");
-				});
+				function(stuff) { processUpdatedClassGrades(data, stuff); });
 		});
 		break;
 	}
 }
 
-// password protection
+/** Restricts access to the grades by displaying a form over them */
 function lock() {
 	// $(document.body).addClass("locked").removeClass("logged_in");
 	$(document.body).addClass("locked");
@@ -374,6 +466,12 @@ function lock() {
 }
 
 var shakeTimer;
+
+/**
+ * Tests the password given through the restricted access form and grants access
+ * if it is correct
+ * @param {string} password - the password that the user entered
+ */
 function unlock(password) {
 	if (typeof shakeTimer !== "undefined") window.clearTimeout(shakeTimer);
 
@@ -398,7 +496,12 @@ function unlock(password) {
 	}
 }
 
-// throttle, used for scrolling
+/**
+ * Throttles calls to a callback to fire at a given minimum interval. Used for
+ * setting the shadow blur while scrolling.
+ * @param {number} ms - the number of milliseconds to wait between each function call
+ * @param {function} callback - the function to call
+ */
 function throttle(ms, callback) {
 	var timer, lastCall = 0;
 
@@ -412,6 +515,12 @@ function throttle(ms, callback) {
 	};
 }
 
+/**
+ * Changes given grades in the grades JSON stored in localStorage to the given
+ * values for testing purposes
+ * @param {Array.<Array.<number, number, string>>}} gradesToFake - an array
+ * of grades to change
+ */
 function imposter(gradesToFake) {
 	// for development testing
 	// gradesToFake = [[
@@ -429,6 +538,7 @@ function imposter(gradesToFake) {
 	return fakeGrades;
 }
 
+/** Displays changed grade indicators for all grades that have recently changed */
 function setChangedGradeIndicators() {
 	var n = 0;
 	if (localStorage.hasOwnProperty("changed_grades")) {
@@ -558,13 +668,10 @@ $(function () {
 	// login or direct access?
 	if (typeof localStorage["url"] == "undefined" && typeof localStorage["aisd_password"] == "undefined")
 		// not logged in
-		// $("#direct_access_form").addClass("hide");
 		$("#login_form").removeClass("hide");
 	else {
 		// logged in
 		$("#login_form").addClass("hide");
-		// $("#direct_access_form").removeClass("hide");
-		// $("#direct_url").val(localStorage['url']);
 		$("#lastupdated").html(Updater.get_update_text());
 		// bug: body won't scroll if the "logged_in" class is added immediately
 		window.setTimeout(function () { $(document.body).addClass("logged_in"); }, 100);
@@ -573,7 +680,6 @@ $(function () {
 	$("#logOutToReset").click(function () {
 		logout();
 		$("#resetInfo").removeClass("visible");
-		// $("#restricted_access_wrapper").hide();
 	});
 	$("#cancelReset").click(function () {
 		$("#restricted_access").removeClass("reset");

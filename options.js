@@ -1,5 +1,40 @@
-var asianness, r_interval, hue, colorization_enabled, refresh_enabled, hue_enabled, password_enabled, badge_enabled, notifs_enabled, single_notif, animations_enabled;
+/** @type number */
+var asianness,
 
+/** @type number */
+r_interval,
+
+/** @type number */
+hue,
+
+/** @type boolean */
+colorization_enabled,
+
+/** @type boolean */
+refresh_enabled,
+
+/** @type boolean */
+hue_enabled,
+
+/** @type boolean */
+password_enabled,
+
+/** @type boolean */
+badge_enabled,
+
+/** @type boolean */
+notifs_enabled,
+
+/** @type boolean */
+single_notif,
+
+/** @type boolean */
+animations_enabled;
+
+/**
+ * Generates and displays a table with numbers labeled 1 to 100 showing the
+ * background colors correspodnig with those numbers.
+ */
 function generate_color_table() {
 	var table = document.createElement("table");
 	$(table).attr("cellpadding", "8px").attr("cellspacing", "0px").css("width", "100%");
@@ -19,6 +54,10 @@ function generate_color_table() {
 }
 
 // version number: http://goo.gl/QTj3c
+/**
+ * Gets a version number
+ * @param {function} callabck - a function to call when the version number is found
+ */
 function getVersion(callback) {
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.open('GET', 'manifest.json');
@@ -33,6 +72,11 @@ function getVersion(callback) {
 
 var error_id = 0;
 
+/**
+ * Shows an error after an input element
+ * @param {jQuery} $input - the input element to show an error for
+ * @param {string} message - a description of the error
+ */
 function show_error($input, message) {
 	console.error(message);
 
@@ -51,48 +95,11 @@ function show_error($input, message) {
 	error_id++;
 }
 
-// Validator_old = function (valid, invalid) {
-// 	this.inputs = [];
-// 	this.conditions = [];
-// 	this.successes = [];
-// 	this.errors = [];
-// 	this.valid = valid || function () {};
-// 	this.invalid = invalid || function () {};
-// 	this.isValid = false;
-	
-// 	return this;
-// };
-// Validator_old.prototype.add = function (vals, condition, success, error) {
-// 	this.inputs.push(vals);
-// 	this.conditions.push(condition);
-// 	this.successes.push(success);
-// 	this.errors.push(error);
-// 	return this;
-// };
-// Validator_old.prototype.validate = function () {
-// 	var all_valid = true;
-// 	var vals;
-	
-// 	for (var i = this.conditions.length - 1; i >= 0; i--) {
-// 		vals = this.inputs[i];
-// 		if (this.conditions[i].call(window, vals)) {
-// 			this.successes[i].call(window, vals);
-// 		} else {
-// 			all_valid = all_valid && false;
-// 			this.errors[i].call(window, vals);
-// 		}
-// 	}
-	
-// 	if (all_valid) {
-// 		this.valid.call(window);
-// 		this.isValid = true;
-// 	} else {
-// 		this.invalid.call(window);
-// 		this.isValid = false;
-// 	}
-// 	return this;
-// };
-
+/**
+ * Shows and hides the password boxes for setting the password according
+ * to the application state
+ * @param {boolean} checked - the state of the "Password Protection" option
+ */
 function set_password_boxes(checked) {
 	function require(ids, isRequired) {
 		$(ids).prop("required", isRequired).prop("disabled", !isRequired);
@@ -141,13 +148,14 @@ function set_password_boxes(checked) {
 	}
 }
 
-// Updates options DOM
-// disables animation if passed true, animates otherwise.
+/**
+ * Updates options DOM, showing and hiding elements as necessary
+ * @param {boolean} noAnimation - disables animation if passed true, animates otherwise.
+ */
 function update_options_dom(noAnimation) {
 	var anim = noAnimation ? 0 : 500;
 
 	if ($("#colorization").prop('checked')) {
-		// $("#asianness_wrapper, #hue_wrapper").slideDown(anim);
 		colorization_enabled = true;
 		asianness = $("#asianness").val();
 
@@ -158,7 +166,6 @@ function update_options_dom(noAnimation) {
 
 		$("#asianness_wrapper, #hue_wrapper").slideDown(anim);
 	} else {
-		// $("#colorization").slideUp(anim);
 		colorization_enabled = false;
 		asianness = 0;
 
@@ -200,6 +207,11 @@ function update_options_dom(noAnimation) {
 	set_password_boxes($("#password_protection").prop("checked"));
 }
 
+/**
+ * Sets the slider indicator to a given value
+ * @param {Element} id - the element to set the indicator of
+ * @param {string} val - the numeric value that the slider is currently set to
+ */
 function setSliderIndicator(id, val) {
 	var $el = $(id).parent().prev('.sliderIndicator');
 	if (id == "#asianness_slider") {
@@ -226,13 +238,6 @@ $(function(){
 	
 	// Generate Options HTML
 	renderOptions(options_formdata, $("#settings")[0]);
-	// Leftover from merge conflict:
-	// // update spinbox values (use default values if previously disabled)
-	// $("#asianness").val(asianness_on ? asianness : DEFAULT_ASIANNESS);
-	// $("#slider").val(Math.log(asianness_on ? asianness : DEFAULT_ASIANNESS));
-	// $("#r_interval").val(refresh_enabled ? r_interval : DEFAULT_R_INT);
-	// $("#hue, #hue_slider").val(hue);
-	// // $("#the_password").val(localStorage["password"]);
 	
 	// Load toggles states from storage
 	colorization_enabled = (localStorage.hasOwnProperty("asianness") ? (parseFloat(localStorage["asianness"]) != 0) : true);
@@ -342,13 +347,13 @@ $(function(){
 		});
 });
 
-// analytics
-// var _gaq = _gaq || [];
-// _gaq.push(['_setAccount', 'UA-37395872-1']);
-// _gaq.push(['_trackPageview']);
+analytics
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-37395872-1']);
+_gaq.push(['_trackPageview']);
 
-// (function() {
-//   var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-//   ga.src = 'https://ssl.google-analytics.com/ga.js';
-//   var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-// })();
+(function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = 'https://ssl.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();

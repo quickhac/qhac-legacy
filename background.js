@@ -1,7 +1,10 @@
-// the main updating function
-var theInterval, cached_refresh_interval;
+/** @type {Interval} */
+var theInterval,
 
-// Get the size of an object
+/** @type {number} */
+cached_refresh_interval;
+
+/** Gets the size of an object */
 Object.size = function (obj) {
     var size = 0, key;
     for (key in obj) {
@@ -10,6 +13,10 @@ Object.size = function (obj) {
     return size;
 };
 
+/**
+ * Processes an update from the server, displaying notifications if necessary
+ * @param {string} doc - the HTML element to process
+ */
 function process_update(doc) {
 	var count = 0;
 	// compare
@@ -38,6 +45,7 @@ function process_update(doc) {
 	}
 }
 
+/** Checks the server for updated grades */
 function silent_update() {
 	// should this even continue?
 	if (parseInt(localStorage["r_int"]) == 0) {

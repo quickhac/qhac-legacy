@@ -1,15 +1,42 @@
+/**
+ * @type {number}
+ * @const
+ */
 var DEFAULT_ASIANNESS = 4;
+
+/**
+ * @type {number}
+ * @const
+ */
 var DEFAULT_R_INT = 60;
+
+/**
+ * @type {number}
+ * @const
+ */
 var DEFAULT_HUE = 0;
+
+/**
+ * @type {number}
+ * @const
+ */
 var DEFAULT_NOTIF_DURATION = 5;
 
-// parsing and creating DOMs
+/**
+ * Converts different kind of grade lists between HTML documents, JSON objects,
+ * and DOMs
+ * @namespace
+ */
 var HAC_HTML =
 {
+	/**
+	 * Converts a server response for marking period grades into JSON
+	 * @param {string} html - the HTML document to parse
+	 */
 	html_to_jso: function (html) {
 		var myObj = [];
 		var context = $.parseHTML(html);
-		rows = $(".DataTable:first tr.DataRow, .DataTable:first tr.DataRowAlt", context);
+		$rows = $(".DataTable:first tr.DataRow, .DataTable:first tr.DataRowAlt", context);
 
 		// hard-coded offsets
 		var titleOffset, gradesOffset;
@@ -20,16 +47,16 @@ var HAC_HTML =
 		}
 
 		// each row
-		for (var r = 0; r < rows.length; r++) {
-			var title, grades, cells, grade;
-			cells = $(rows).eq(r).children("td");
-			title = cells.eq(titleOffset).html();
+		for (var r = 0; r < $rows.length; r++) {
+			var title, grades, $cells, grade;
+			$cells = $rows.eq(r).children("td");
+			title = $cells.eq(titleOffset).html();
 			grades = [];
 			urls = [];
 
 			// each cell
 			for (var i = 0; i < 10; i++) {
-				grade = cells.eq(i + gradesOffset).html();
+				grade = $cells.eq(i + gradesOffset).html();
 				if (grade.indexOf("<") != -1) {
 					if (grade.indexOf("<a href") != -1)
 						urls[i] = /\?data=([\w\d%]*)"/g.exec(grade)[1];
@@ -54,6 +81,10 @@ var HAC_HTML =
 		return myObj;
 	},
 
+	/*
+	 * Converts marking period grades JSON to a DOM node
+	 * @param {JSON} json - the JSON to parse
+	 */
 	json_to_html: function (json) {
 		var root = document.createElement("table");
 
@@ -91,16 +122,17 @@ var HAC_HTML =
 					$(cell).append(innerCell);
 				}
 
+				// add classes
 				var classes = "grade";
 				if ((c == 3) || (c == 8)) {
 					classes += " exam";
 
-					// allow edit
+					// allow edit of exam grades directly
 					var cellText = $(cell).text();
 					$(cell).data("orig", cellText)
 					.attr("title", "Original grade: " +
 						(isNaN(cellText) && (cellText != "EX")
-							&& (cellText != "Exc") || (cellText == "")
+							&& (cellText != "Exc") && (cellText != "NA") || (cellText == "")
 							? "none" : cellText))
 					.data("editing", "0")
 					.click(function () {
@@ -140,6 +172,10 @@ var HAC_HTML =
 		return superRoot;
 	},
 
+	/*
+	 * Converts a server response for class grades into JSON
+	 * @param {string} html - the HTML document to parse
+	 */
 	cgrades_to_json: function (html) {
 		var context = $.parseHTML(html);
 		var myObj = {
@@ -219,13 +255,14 @@ var HAC_HTML =
 		return myObj;
 	},
 
+	/*
+	 * Converts a class grades JSON to a DOM element
+	 * @param {JSON} json - the JSON to parse
+	 */
 	cjson_to_html: function (json) {
 		var root = document.createDocumentFragment();
 
 		var title = document.createElement("h3");
-		// var loadingGif = document.createElement("img");
-		// $(loadingGif).attr("src", "assets/loading.png").addClass("loading").css("margin-left", "8px");
-		// $(title).addClass("ClassName").html(json.title).append(loadingGif);
 		var spinner = document.createElement("div");
 		$(spinner).addClass("spinner").css("margin-left", "8px");
 		$(title).addClass("ClassName").html(json.title).append(spinner);
@@ -240,11 +277,14 @@ var HAC_HTML =
 			var percentiles = []; // for the category
 			var total = 0; // for non-100-point scales
 
+			// create the category header
+
 			var catHeader = document.createElement("span");
 			var categoryWeighting, n;
 			if (json.cats[i].is_percent_weight) {
 				categoryWeighting = (100 * json.cats[i].weight) + "%";
 			} else {
+				// IB-MVP grading (Grisham)
 				n = json.cats[i].weight;
 				switch (n) {
 					// case 0: numberOfTimes = "doesn't count"; break;
@@ -259,6 +299,8 @@ var HAC_HTML =
 			$(catHeader).addClass("CategoryName").text(json.cats[i].title + " - " + categoryWeighting);
 			$(root).append(catHeader);
 			$(root).append(document.createElement("br"));
+
+			// create the category table
 
 			var catTable = document.createElement("table");
 
@@ -287,6 +329,8 @@ var HAC_HTML =
 
 			var catTableBody = document.createElement("tbody");
 			$(catTable).addClass("DataTable").append(catTableBody);
+
+			// each grade
 			for (var j = 0; j < json.cats[i].grades.length; j++) {
 				var gradeRow = document.createElement("tr");
 				$(gradeRow).addClass("DataRow");
@@ -313,6 +357,7 @@ var HAC_HTML =
 						"is_percent_weight": json.cats[i].is_percent_weight
 					})
 					.attr("title", "Original grade: " + (ptsIsNaN ? "none" : pts))
+					// allow editing
 					.click(function() {
 						if ($(this).data("editing") == "0") {
 							var editor = document.createElement("input");
@@ -330,6 +375,7 @@ var HAC_HTML =
 					.tipsy({gravity: 'e', trigger: 'manual', fade: true, opacity: 1});
 				$(gradeRow).append(ptsEarned);
 
+				// non-100pt scales
 				if (!json.cats[i].is100Pt) {
 					var ptsPoss = document.createElement("td");
 					$(ptsPoss).addClass("AssignmentPointsPossible").text(json.cats[i].grades[j].ptsPoss);
@@ -342,6 +388,7 @@ var HAC_HTML =
 
 				$(catTableBody).append(gradeRow);
 
+				// calculate category average
 				if (!ptsIsNaN && json.cats[i].grades[j].note.indexOf("Dropped") == -1)
 					if (json.cats[i].is100Pt)
 						percentiles.push(json.cats[i].grades[j].ptsEarned / json.cats[i].grades[j].ptsPoss);
@@ -351,6 +398,7 @@ var HAC_HTML =
 					}
 			}
 
+			// add a row that allows user to add and edit a new assignment
 			var addAssignmentRow = document.createElement("tr");
 			var removeIfEmptyRow = function (el) {
 				if (el.find(".AssignmentGrade").text() == "")
@@ -376,7 +424,7 @@ var HAC_HTML =
 
 			// the next 60 or so lines are one jQuery daisy chain :O
 			$(addAssignmentRow).addClass("DataRow AssignmentCreator")
-			.append(
+			.append( // cell 0
 				$(document.createElement("td")).addClass("AssignmentName")
 					.text("+ New Assignment")
 					.click(function () { // handler to create new assignment
@@ -408,22 +456,24 @@ var HAC_HTML =
 										$(document.createElement("td")).text(""))
 									.append(
 										$(this).parent().parent().siblings().eq(0).children(0).children().length == 5 ?
-										$(document.createElement("td")).text("") : // if the category is ont out of 100 points,
+										$(document.createElement("td")).text("") : // if the category is not out of 100 points,
 										document.createDocumentFragment()          // we must add another empty data cell
 										))
 							.prev().find(".GradeEditor").focus().select();
 					}))
-			.append(
+			.append( // cell 1
 				$(document.createElement("td")).text(""))
-			.append(
+			.append( // cell 2
 				$(document.createElement("td")).text(""))
-			.append(
+			.append( // cell 3
 				$(document.createElement("td")).text(""))
-			.append(
+			.append( // cell 4
 				json.cats[i].is100Pt ?
 					document.createDocumentFragment() :
 					$(document.createElement("td")).text(""))
 			.appendTo(catTableBody);
+
+			// calculate and display category average
 
 			var avgLabel = document.createElement("td");
 			$(avgLabel).attr('colspan', 2).css('fontWeight', 'bold').html("Average");
@@ -448,6 +498,11 @@ var HAC_HTML =
 		return root;
 	},
 
+	/**
+	 * Performs all the actions necessary after a grade editor changes the value
+	 * of a grade
+	 * @param {Element} el - the element that fired this event
+	 */
 	_finalize_grade_edit: function (el) {
 		var ptsPoss, ptsPossElem, grade, gradeText;
 
@@ -558,13 +613,18 @@ var HAC_HTML =
 		_gaq.push(['_trackEvent', 'Class Grades', 'Edit', 'Edit Grades', grade]);
 	},
 
+	/**
+	 * Performs all of the actions necessary after an exam grade editor changes
+	 * a grade
+	 * @param {Element} el - the element that fired this event
+	 */
 	_finalize_exam_grade_edit: function (el) {
 		// hide tipsy
 		$(el).parent().tipsy("hide");
 
 		// calculate grade
 		var grade = $(el).val(), gradeText;
-		if (grade.indexOf("EX") >= 0 || grade.indexOf("Exc") >= 0 || grade == "")
+		if (grade.match(/\w+/) != null || grade == "")
 			gradeText = grade;
 		else if (isNaN(grade)) gradeText = "";
 		else if (grade > 100)  { gradeText = "100"; grade = 100; }
@@ -592,6 +652,9 @@ var HAC_HTML =
 		_gaq.push(['_trackEvent', 'Grades', 'Edit', 'Edit Exam Grades', grade]);
 	},
 
+	/**
+	 * Calculates and displays the semester averages based on marking period averaegs
+	 */
 	_recalculate_subject_averages: function (changedGradeCell) {
 		// add up subject averages
 		var sixWeeksCells, examCell, semAvgCell, subject = changedGradeCell.parent().children();
@@ -633,6 +696,12 @@ var HAC_HTML =
 			$(document.body).addClass("edited");
 	},
 
+	/**
+	 * Calculates the background color corresponding with a specific grade based
+	 * on the grade, Asianness level, and hue
+	 * @param {number} grade - the grade to colorize
+	 * @returns {string} the color that corresponds with the grade given
+	 */
 	colorize: function (grade) {
 		// color is only for numerical grades
 		if ( typeof grade != "number" || isNaN(parseInt(grade)) || grade == null) return "#FFF";
@@ -691,6 +760,13 @@ var HAC_HTML =
     	return "rgb(" + parseInt(r * 255) + "," + parseInt(g * 255) + "," + parseInt(b * 255) + ")";
 	},
 
+	/**
+	 * Compares two marking period grade JSONs and notifies the user of any
+	 * changes if notifications are enabled
+	 * @param {JSON} oldgrade - the old list of grades
+	 * @param {JSON} newgrade - the new list of grades
+	 * @param {function} on_notify - a function to call if grades have been changed
+	 */
 	compare_grades: function (oldgrade, newgrade, on_notify) {
 		var labels = [
 			"Cycle 1", "Cycle 2", "Cycle 3", "Exam 1", "Semester 1",
@@ -699,6 +775,7 @@ var HAC_HTML =
 		var gradesToNotify = [], notif;
 		var changedGrades = localStorage.hasOwnProperty("changed_grades") ? JSON.parse(localStorage["changed_grades"]) : {};
 		
+		// compare the grades
 		for (var r = 0, l = Math.min(oldgrade.length, newgrade.length); r < l; r++) {
 			// If class is not the same as before, skip row
 			if (oldgrade[r].title != newgrade[r].title) continue;
@@ -719,6 +796,7 @@ var HAC_HTML =
 			}
 		}
 
+		// display notification(s)
 		if (localStorage.hasOwnProperty("notifs_enabled") && localStorage["notifs_enabled"]) {
 			if (localStorage.hasOwnProperty("single_notif") && localStorage["single_notif"] === "true"
 				|| localStorage.hasOwnProperty("password") && localStorage["password"] === ""
@@ -756,6 +834,12 @@ var HAC_HTML =
 		localStorage.setItem("changed_grades", JSON.stringify(changedGrades));
 	},
 
+	/**
+	 * Creates the text needed to display a notification about a grade change
+	 * @param {{title: string, label: string, oldgrade: number, newgrade: number}}
+	 *     gradeData - information about the grade that was changed
+	 * @returns {string} update text for the grade change
+	 */
 	makeUpdateText: function (gradeData) {
 		var text, is_new, fromText,
 			className = gradeData.title,
@@ -783,6 +867,11 @@ var HAC_HTML =
 		};
 	},
 
+	/**
+	 * Creates and displays a WebKit notification
+	 * @param {string} titleText - notification title text
+	 * @param {string} updateText - notification body text
+	 */
 	_notify2: function (titleText, updateText) {
 		var notif = webkitNotifications.createNotification("assets/icon-full.png", titleText, updateText).show();
 
@@ -800,6 +889,15 @@ var HAC_HTML =
 		}
 	},
 
+	/**
+	 * Creates and displays a WebKit notification based on grade data
+	 * @param {string} className - the name of the class that the changed grade
+	 * is in
+	 * @param {string} label - the marking period that the changed grade is in
+	 * @param {number} oldgrade - the old grade
+	 * @param {number} newgrade - the new grade
+	 * @deprecated use {@link HAC_HTML._notify2} instead
+	 */
 	_notify: function(className, label, oldgrade, newgrade) {
 		var text;
 		if ((typeof oldgrade == "undefined") || (oldgrade == "") || (isNaN(oldgrade))) text = "is now";
