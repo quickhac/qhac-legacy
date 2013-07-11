@@ -159,7 +159,7 @@ var options_formdata = {
 					title: "Auto-Hide Duration (sec)",
 					id: "notif_duration",
 					type: "number",
-					info: "<strong>Windows only</strong>. Set to 0 to disable auto-hide. If you are on OS X, see system notification settings.",
+					info: "<strong>Windows/Linux only</strong>. Set to 0 to disable auto-hide. If you are on OS X, see system notification settings.",
 					default_value: "5",
 					attributes: {
 						"min": "0",
