@@ -59,6 +59,7 @@ function hide_login_form() {
 
 	window.setTimeout(function () {
 		$("#login_wrapper").hide();
+		$("#restricted_access_wrapper").addClass("hide");
 	}, 500);
 }
 

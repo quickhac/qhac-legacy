@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.0.3
+
+* Fix user interactivity disabled on logging in
+
 ### 2.0.2
 
 * Add JSDoc documentation
