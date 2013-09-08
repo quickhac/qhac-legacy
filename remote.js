@@ -108,24 +108,11 @@ var Ad = {
 		var wrapper = document.createElement("div");
 		$(wrapper).attr("id", "ad_wrapper");
 
-		// survey
-		if (localStorage["ad_3"] != "no")
-			return Ad.generate_ad_inner(
-				"We value your feedback! Take our survey &raquo;",
-				"https://docs.google.com/forms/d/1VcjEbLuRL1AwNE7sXmJ003uM0KJ8bpW_Ev31nII_s1A/viewform",
-				"3");
-
 		// workaround for scrolling
 		if ((window.navigator.appVersion.indexOf("OS X 10") != -1) && (localStorage["ad_2"] != "no"))
 			return Ad.generate_ad_inner(
 				"Using OS X? Scrolling might not work. Here's a fix. &raquo;",
 				"http://hacaccess.herokuapp.com/qhac/ml-fix", "2");
-
-		// edit grade banner
-		if (localStorage["ad_1"] != "no")
-			return Ad.generate_ad_inner(
-				"New in 1.2: Edit grades locally. Click on any assignment grade to get started!",
-				"", "1");
 
 		return document.createDocumentFragment();
 	},
