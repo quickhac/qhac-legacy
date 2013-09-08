@@ -76,7 +76,7 @@ $(function() {
 	// get interval
 	var r_int = parseInt(localStorage["r_int"]);
 	if (typeof r_int == "undefined") r_int = 60;
-	else if (r_int == 0) return;
+	else if (r_int == 0 || isNaN(r_int)) return;
 
 	cached_refresh_interval = r_int;
 

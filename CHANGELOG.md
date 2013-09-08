@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.0.4
+
+* Fix logged out qHAC being CPU/network hog
+
 ### 2.0.3
 
 * Fix user interactivity disabled on logging in
