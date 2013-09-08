@@ -1,4 +1,31 @@
-/**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: hac_dom.js</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Source: hac_dom.js</h1>
+    
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>/**
  * @type {number}
  * @const
  */
@@ -47,7 +74,7 @@ var HAC_HTML =
 		}
 
 		// each row
-		for (var r = 0; r < $rows.length; r++) {
+		for (var r = 0; r &lt; $rows.length; r++) {
 			var title, grades, $cells, grade;
 			$cells = $rows.eq(r).children("td");
 			title = $cells.eq(titleOffset).html();
@@ -55,12 +82,12 @@ var HAC_HTML =
 			urls = [];
 
 			// each cell
-			for (var i = 0; i < 10; i++) {
+			for (var i = 0; i &lt; 10; i++) {
 				grade = $cells.eq(i + gradesOffset).html();
-				if (grade.indexOf("<") != -1) {
-					if (grade.indexOf("<a href") != -1)
+				if (grade.indexOf("&lt;") != -1) {
+					if (grade.indexOf("&lt;a href") != -1)
 						urls[i] = /\?data=([\w\d%]*)"/g.exec(grade)[1];
-					grade = />([\w\d]*)</g.exec(grade)[1];
+					grade = />([\w\d]*)&lt;/g.exec(grade)[1];
 				} else {
 					if (grade = "&nbsp;") {
 						grade = "";
@@ -100,7 +127,7 @@ var HAC_HTML =
 		$(root).append(header);
 
 		// each row
-		for (var r = 0; r < json.length; r++) {
+		for (var r = 0; r &lt; json.length; r++) {
 			var row = document.createElement("tr");
 
 			// title cell
@@ -109,7 +136,7 @@ var HAC_HTML =
 			$(row).append(title);
 
 			// each grade cell
-			for (var c = 0; c < 10; c++) {
+			for (var c = 0; c &lt; 10; c++) {
 				var cell = document.createElement("td");
 				if (json[r].urls[c] == "")
 					$(cell).text(json[r].grades[c]);
@@ -195,7 +222,7 @@ var HAC_HTML =
 		var len = Math.min(categories.length, gradeTables.length);
 
 		// for each grade category
-		for (var i = 0; i < len; i++) {
+		for (var i = 0; i &lt; len; i++) {
 			var captures = categoryPattern.exec(categories[i].innerText);
 			
 			// Failed to capture any categories
@@ -219,7 +246,7 @@ var HAC_HTML =
 			};
 			// grades
 			var gradeList = $(gradeTables[i]).find("tr.DataRow, tr.DataRowAlt");
-			for (var j = 0; j < gradeList.length; j++) {
+			for (var j = 0; j &lt; gradeList.length; j++) {
 				// get data
 				var title         = $(gradeList[j]).children(".AssignmentName").text();
 				var dueDateElem   = $(gradeList[j]).children(".DateDue");
@@ -273,7 +300,7 @@ var HAC_HTML =
 			.css('background', HAC_HTML.colorize(parseInt(json.currAvg)));
 		$(root).append(currAvg);
 
-		for (var i = 0; i < json.cats.length; i++) {
+		for (var i = 0; i &lt; json.cats.length; i++) {
 			var percentiles = []; // for the category
 			var total = 0; // for non-100-point scales
 
@@ -312,7 +339,7 @@ var HAC_HTML =
 
 			var headerCells = [];
 			var numHeaders = 4 + (json.cats[i].is100Pt ? 0 : 1);
-			for (var j = 0; j < numHeaders; j++)
+			for (var j = 0; j &lt; numHeaders; j++)
 				headerCells[j] = document.createElement("th");
 
 			headerCells[0].innerHTML = "Assignment";
@@ -331,7 +358,7 @@ var HAC_HTML =
 			$(catTable).addClass("DataTable").append(catTableBody);
 
 			// each grade
-			for (var j = 0; j < json.cats[i].grades.length; j++) {
+			for (var j = 0; j &lt; json.cats[i].grades.length; j++) {
 				var gradeRow = document.createElement("tr");
 				$(gradeRow).addClass("DataRow");
 
@@ -548,7 +575,7 @@ var HAC_HTML =
 		// recalculate category average
 		var earned = 0, poss = 0, earnedCell, possCell, rows;
 		rows = $cell.parent().parent().find(".DataRow, .DataRowAlt");
-		for (var i = 0; i < rows.length; i++) {
+		for (var i = 0; i &lt; rows.length; i++) {
 			var assignmentRow = rows[i];
 			if (!(isNaN((earnedCell = $(assignmentRow).children(".AssignmentGrade")).text())
 				|| earnedCell.text() == "") && earnedCell.next().text().indexOf("Dropped") == -1) {
@@ -569,7 +596,7 @@ var HAC_HTML =
 		// sum up the 6 weeks subject average
 		var subjectTotal = 0, weightTotal = 0, bonus = 0;
 		rows = $("#classgrades").find(".DataTable");
-		for (var i = 0; i < rows.length; i++) {
+		for (var i = 0; i &lt; rows.length; i++) {
 			if ($(rows[i]).find(".CategoryAverage").text() != "") {
 				// var weight = parseInt($(rows[i]).prev().prev().text().match(/(\d*)%$/)[1]);
 				var weight = $(rows[i]).find(".AssignmentGrade").data("weight");
@@ -583,7 +610,7 @@ var HAC_HTML =
 				if (isPercentWeight && weight == 0 && $(rows[i]).find(".AssignmentPointsPossible").length != 0) {
 					// add up scores individually
 					var bonuses = $(rows[i]).find(".AssignmentGrade");
-					for (var j = 0; j < bonuses.length; j++)
+					for (var j = 0; j &lt; bonuses.length; j++)
 						if (!isNaN(bonuses[j].innerText))
 							bonus += parseFloat(bonuses[j].innerText);
 				}
@@ -628,7 +655,7 @@ var HAC_HTML =
 			gradeText = grade;
 		else if (isNaN(grade)) gradeText = "";
 		else if (grade > 100)  { gradeText = "100"; grade = 100; }
-		else if (grade < 0)    gradeText = "0";
+		else if (grade &lt; 0)    gradeText = "0";
 		else                   gradeText = Math.round(grade);
 
 		// show/hide edited notice
@@ -658,7 +685,7 @@ var HAC_HTML =
 	_recalculate_subject_averages: function (changedGradeCell) {
 		// add up subject averages
 		var sixWeeksCells, examCell, semAvgCell, subject = changedGradeCell.parent().children();
-		if (changedGradeCell.index() < 5) {
+		if (changedGradeCell.index() &lt; 5) {
 			sixWeeksCells = [subject[1], subject[2], subject[3]];
 			examCell = subject[4];
 			semAvgCell = subject[5];
@@ -668,7 +695,7 @@ var HAC_HTML =
 			semAvgCell = subject[10];
 		}
 		var semAvg = 0, weightTotal = 0, weightPerSixWeeks = 85 / 300;
-		for (var i = 0; i < sixWeeksCells.length; i++) {
+		for (var i = 0; i &lt; sixWeeksCells.length; i++) {
 			cell = sixWeeksCells[i];
 			if (cell.innerHTML != "") {
 				semAvg += parseInt($(cell).children().text()) * weightPerSixWeeks;
@@ -713,7 +740,7 @@ var HAC_HTML =
 		var h, s, v, r, g, b;
 
 		// determine color. ***MAGIC DO NOT TOUCH UNDER ANY CIRCUMSTANCES***
-		if (grade < 0) {
+		if (grade &lt; 0) {
 			h = 0;
 			s = 1;
 			v = 0.86944;
@@ -732,7 +759,7 @@ var HAC_HTML =
 		// apply hue transformation
 		h += hue/360;
 		h %= 1;
-		if (h < 0) h += 1;
+		if (h &lt; 0) h += 1;
 
 		// extra credit gets a special color
 		if (grade > 100) {
@@ -776,11 +803,11 @@ var HAC_HTML =
 		var changedGrades = localStorage.hasOwnProperty("changed_grades") ? JSON.parse(localStorage["changed_grades"]) : {};
 		
 		// compare the grades
-		for (var r = 0, l = Math.min(oldgrade.length, newgrade.length); r < l; r++) {
+		for (var r = 0, l = Math.min(oldgrade.length, newgrade.length); r &lt; l; r++) {
 			// If class is not the same as before, skip row
 			if (oldgrade[r].title != newgrade[r].title) continue;
 			// Collect all new grades to be notified
-			for (var c = 0; c < 10; c++) {
+			for (var c = 0; c &lt; 10; c++) {
 				// skip semester averages
 				if ((c != 4) && (c != 9))
 					// notify if changed
@@ -821,7 +848,7 @@ var HAC_HTML =
 		for (var n = gradesToNotify.length-1; n >=0; n--) {
 			var dir;
 			if (gradesToNotify[n].newgrade > gradesToNotify[n].oldgrade) dir = "up";
-			else if (gradesToNotify[n].newgrade < gradesToNotify[n].oldgrade) dir = "down";
+			else if (gradesToNotify[n].newgrade &lt; gradesToNotify[n].oldgrade) dir = "down";
 			else dir = "same";
 
 			var uid = gradesToNotify[n].uid;
@@ -853,7 +880,7 @@ var HAC_HTML =
 		
 		if (is_new) text = "is now " + newgrade.toString(10);
 		else if (newgrade > oldgrade) text = "rose " + fromText + " to " + newgrade.toString(10);
-		else if (newgrade < oldgrade) text = "fell " + fromText + " to " + newgrade.toString(10);
+		else if (newgrade &lt; oldgrade) text = "fell " + fromText + " to " + newgrade.toString(10);
 		else if (newgrade == oldgrade) text = "is still " + newgrade.toString(10);
 		else {
 			text = "???";
@@ -877,7 +904,7 @@ var HAC_HTML =
 
 		if (localStorage.hasOwnProperty("notif_duration")) {
 			var duration = parseInt(localStorage["notif_duration"]);
-			if (duration > 0 && duration <= 60) {
+			if (duration > 0 && duration &lt;= 60) {
 				window.setTimeout(function () {
 					notif.cancel();
 				}, duration * 1000);
@@ -911,4 +938,26 @@ var HAC_HTML =
 
 		notif.show();
 	}
-};
+};</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Namespaces</h3><ul><li><a href="HAC_HTML.html">HAC_HTML</a></li><li><a href="Queuer.html">Queuer</a></li><li><a href="RRISD_HAC.html">RRISD_HAC</a></li><li><a href="Updater.html">Updater</a></li></ul><h3>Global</h3><ul><li><a href="global.html#Ad">Ad</a></li><li><a href="global.html#AISD_HAC">AISD_HAC</a></li><li><a href="global.html#animations_enabled">animations_enabled</a></li><li><a href="global.html#asianness">asianness</a></li><li><a href="global.html#asianness_on">asianness_on</a></li><li><a href="global.html#badge_enabled">badge_enabled</a></li><li><a href="global.html#cached_refresh_interval">cached_refresh_interval</a></li><li><a href="global.html#colorization_enabled">colorization_enabled</a></li><li><a href="global.html#DEFAULT_ASIANNESS">DEFAULT_ASIANNESS</a></li><li><a href="global.html#default_error_handler">default_error_handler</a></li><li><a href="global.html#DEFAULT_HUE">DEFAULT_HUE</a></li><li><a href="global.html#DEFAULT_NOTIF_DURATION">DEFAULT_NOTIF_DURATION</a></li><li><a href="global.html#DEFAULT_R_INT">DEFAULT_R_INT</a></li><li><a href="global.html#disable_login_form">disable_login_form</a></li><li><a href="global.html#displayGrades">displayGrades</a></li><li><a href="global.html#generate_color_table">generate_color_table</a></li><li><a href="global.html#getVersion">getVersion</a></li><li><a href="global.html#handle_load_error">handle_load_error</a></li><li><a href="global.html#handle_load_error_class">handle_load_error_class</a></li><li><a href="global.html#hide_login_form">hide_login_form</a></li><li><a href="global.html#hue">hue</a></li><li><a href="global.html#hue_enabled">hue_enabled</a></li><li><a href="global.html#imposter">imposter</a></li><li><a href="global.html#isValidGradeData">isValidGradeData</a></li><li><a href="global.html#loadClassGrades">loadClassGrades</a></li><li><a href="global.html#lock">lock</a></li><li><a href="global.html#login">login</a></li><li><a href="global.html#login_to_aisd">login_to_aisd</a></li><li><a href="global.html#login_to_rrisd">login_to_rrisd</a></li><li><a href="global.html#logout">logout</a></li><li><a href="global.html#notifs_enabled">notifs_enabled</a></li><li><a href="global.html#on_error_logging_in">on_error_logging_in</a></li><li><a href="global.html#password_enabled">password_enabled</a></li><li><a href="global.html#process_update">process_update</a></li><li><a href="global.html#processUpdatedClassGrades">processUpdatedClassGrades</a></li><li><a href="global.html#processUpdatedGrades">processUpdatedGrades</a></li><li><a href="global.html#r_interval">r_interval</a></li><li><a href="global.html#refresh_enabled">refresh_enabled</a></li><li><a href="global.html#reset_login_form">reset_login_form</a></li><li><a href="global.html#set_password_boxes">set_password_boxes</a></li><li><a href="global.html#setChangedGradeIndicators">setChangedGradeIndicators</a></li><li><a href="global.html#setSliderIndicator">setSliderIndicator</a></li><li><a href="global.html#shadowMax">shadowMax</a></li><li><a href="global.html#show_error">show_error</a></li><li><a href="global.html#show_login_error">show_login_error</a></li><li><a href="global.html#showCachedGrades">showCachedGrades</a></li><li><a href="global.html#silent_update">silent_update</a></li><li><a href="global.html#single_notif">single_notif</a></li><li><a href="global.html#theInterval">theInterval</a></li><li><a href="global.html#throttle">throttle</a></li><li><a href="global.html#toast">toast</a></li><li><a href="global.html#unlock">unlock</a></li><li><a href="global.html#update">update</a></li><li><a href="global.html#update_options_dom">update_options_dom</a></li><li><a href="global.html#XHR_Queue">XHR_Queue</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Thu Jul 11 2013 10:35:10 GMT-0500 (CDT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

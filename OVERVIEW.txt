@@ -1,0 +1,103 @@
+=========================
+## remote.js           ##
+=========================
+
+String::rot13()
+String::b64enc()
+String::b64dec()
+String::encrypt()
+String::decrypt()
+Updater:
+	#setUpdated()
+	#get_update_text()
+Ad:
+	#generate_ad()
+	#generate_ad_inner(string text, string URL, string ID)
+RRISD_HAC:
+	#get_session(string login, string password, string studentID, function callback, function on_error)
+	#get_gradesURL(string studentID, function callback)
+	#get_gradesHTML(string studentID, function callback)
+	#get_gradesHTML_direct(string URL, function callback)
+	#get_classGradeHTML(string studentID, string uniqueURL, function callback)
+AISD_HAC:
+	host
+	#get_session(string login, string password, string studentID, function callback, function on_error)
+	#get_gradesHTML(string studentID, function callback)
+	#get_classGradeHTML(string studentID, string uniqueURL, function callback)
+
+=========================
+## hac_dom.js          ##
+=========================
+
+HAC_HTML:
+	#html_to_jso(string gradesHTML)
+	#json_to_html(object grades)
+	#cgrades_to_json(string classHTML)
+	#cjson_to_html(object classGrades)
+	#_finalize_grade_edit(element gradeCell)
+	#_finalize_exam_grade_edit(element examGradeCell)
+	#_recalculate_subject_averages($element changedGradeCell)
+	#colorize(object grade)
+	#compare_grades(object gradeData_old, object gradeData_new, function callback)
+	#makeUpdateText(object gradeData)
+	#_notify2(string titleText, string updateText)
+	#_notify(string className, string label, int grade_old, int grade_new)
+
+=========================
+## hac.js              ##
+=========================
+
+Object#size(object anObject)
+#disable_login_form()
+#reset_login_form()
+#show_login_error(string text)
+#hide_login_form()
+#on_error_logging_in(jqXHR, string textStatus, string errorThrown)
+#login_to_rrisd(string username, string password, string studentID)
+#login_to_aisd(string username, string password, string studentID)
+#load_aisd_session(function callback)
+#login(string username, string password, string studentID, string district)
+#showCachedGrades()
+#update()
+#displayGrades(object grades)
+#processUpdatedGrades(string gradesHTML)
+#processUpdatedClassGrades(string uniqueDataURL, string classHTMLDoc)
+#logout()
+#loadClassGrades(string uniqueDataURL)
+#lock()
+#unlock(string password)
+#throttle(int ms, function callback)
+#imposter(array gradesToFake)
+#setChangedGradeIndicators()
+
+=========================
+## options.js          ##
+=========================
+
+#generate_color_table()
+#getVersion(function callback)
+#show_error($input, message)
+Validator(function valid, function invalid):
+	#add(val, function condition, function success, function error)
+	#validate()
+#set_password_boxes(bool passwordLock_checked)
+#update_options_dom(int doAnimation)
+
+=========================
+## background.js       ##
+=========================
+
+#process_update(string gradesHTML)
+#silent_update()
+
+=========================
+## logo_canvas.js      ##
+=========================
+
+#isOnePointZero(float n)
+#isPercentage(float n)
+#bound01(float n, float max)
+#pad2(string character)
+#hslToRgb(int hue, float saturation, float luminosity)
+#rgbToHex(int r, int g, int b, bool allow3Char)
+#paintLogo(element canvas, int hue, int height)
