@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.0.5
+
+* Fix automatic updating not working unless user changed options
+
 ### 2.0.4
 
 * Fix logged out qHAC being CPU/network hog

@@ -72,11 +72,12 @@ function silent_update() {
 }
 
 // refresh every once in a while
-$(function() {
+function create_interval(cancel_update_now) {
 	// get interval
-	var r_int = parseInt(localStorage["r_int"]);
-	if (typeof r_int == "undefined") r_int = 60;
+	var r_int = localStorage["r_int"];
+	if (typeof r_int === "undefined") r_int = 60;
 	else if (r_int == 0 || isNaN(r_int)) return;
+	else r_int = parseInt(r_int);
 
 	cached_refresh_interval = r_int;
 
@@ -84,8 +85,16 @@ $(function() {
 	theInterval = window.setInterval(silent_update, r_int * 60000);
 
 	// update once
-	silent_update();
-});
+	if (!cancel_update_now) silent_update();
+
+	return theInterval;
+}
+
+function clear_interval() {
+	window.clearInterval(theInterval);
+}
+
+$(create_interval);
 
 // analytics
 var _gaq = _gaq || [];

@@ -208,6 +208,7 @@ function login_to_rrisd(uname, pass, studentid) {
 					processUpdatedGrades(doc);
 					hide_login_form();
 					reset_login_form();
+					chrome.extension.getBackgroundPage().create_interval(true);
 					$("body").removeClass("busy offline edited");
 				}, handle_load_error);
 			});
@@ -238,6 +239,7 @@ function login_to_aisd(uname, pass, studentid) {
 					processUpdatedGrades(doc);
 					hide_login_form();
 					reset_login_form();
+					chrome.extension.getBackgroundPage().create_interval(true);
 					$("body").removeClass("busy offline edited");
 				});
 		},
@@ -401,6 +403,9 @@ function logout() {
 
 	// clear cache
 	localStorage.clear();
+
+	// clear interval
+	chrome.extension.getBackgroundPage().clear_interval();
 }
 
 /**
