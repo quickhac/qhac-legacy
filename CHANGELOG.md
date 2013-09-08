@@ -1,5 +1,46 @@
 # Changelog
 
+### 2.0.5
+
+* Fix automatic updating not working unless user changed options
+
+### 2.0.4
+
+* Fix logged out qHAC being CPU/network hog
+
+### 2.0.3
+
+* Fix user interactivity disabled on logging in
+
+### 2.0.2
+
+* Add JSDoc documentation
+
+### 2.0.1
+
+* Merge in ability to save grade data from 1.2.10
+
+### 2.0.0
+
+* Add ability to add new assignments
+* Add new indicator for Offline Mode
+* Add small indicators to show which grades have changed
+* Change 'busy' spinner sprite
+* Cache class grades for offline use and pre-loading to increse responsiveness
+* Adjust and even out the column widths of assignment grades for readability
+* Add color schemes
+* Add special color for extra credit
+* Render logo in canvas
+* Other minor visual updates
+* Handle invalid responses from HAC gracefully
+* Only load one AJAX request at a time
+* Completely rewrite options page
+* Add option to show consolidated grade change notifications
+* Add password protection (with cool animations! :D)
+* Add support for Austin ISD users
+* Enhance support for Grisham MS
+* Migrate to jQuery 2.0
+
 ### 1.2.10
 
 * Add ability to save all grade data

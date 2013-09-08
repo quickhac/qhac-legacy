@@ -1,4 +1,31 @@
-/** @type {number} */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: hac.js</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Source: hac.js</h1>
+    
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>/** @type {number} */
 var asianness,
 
 /** @type {boolean} */
@@ -59,7 +86,6 @@ function hide_login_form() {
 
 	window.setTimeout(function () {
 		$("#login_wrapper").hide();
-		$("#restricted_access_wrapper").addClass("hide");
 	}, 500);
 }
 
@@ -98,7 +124,7 @@ function on_error_logging_in(jqXHR, textStatus, errorThrown) {
  * message for
  */
 function toast(txt, duration) {
-	var invalid_duration = typeof duration == "undefined" || duration < 0;
+	var invalid_duration = typeof duration == "undefined" || duration &lt; 0;
 	duration = invalid_duration ? 5 : duration;
 	var toast = document.createElement("div");
 	$(toast).addClass("toast").text(txt);
@@ -208,7 +234,6 @@ function login_to_rrisd(uname, pass, studentid) {
 					processUpdatedGrades(doc);
 					hide_login_form();
 					reset_login_form();
-					chrome.extension.getBackgroundPage().create_interval(true);
 					$("body").removeClass("busy offline edited");
 				}, handle_load_error);
 			});
@@ -239,7 +264,6 @@ function login_to_aisd(uname, pass, studentid) {
 					processUpdatedGrades(doc);
 					hide_login_form();
 					reset_login_form();
-					chrome.extension.getBackgroundPage().create_interval(true);
 					$("body").removeClass("busy offline edited");
 				});
 		},
@@ -403,9 +427,6 @@ function logout() {
 
 	// clear cache
 	localStorage.clear();
-
-	// clear interval
-	chrome.extension.getBackgroundPage().clear_interval();
 }
 
 /**
@@ -524,7 +545,7 @@ function throttle(ms, callback) {
 /**
  * Changes given grades in the grades JSON stored in localStorage to the given
  * values for testing purposes
- * @param {Array.<Array.<number, number, string>>}} gradesToFake - an array
+ * @param {Array.&lt;Array.&lt;number, number, string>>}} gradesToFake - an array
  * of grades to change
  */
 function imposter(gradesToFake) {
@@ -655,7 +676,7 @@ $(function () {
 				$("#direct_access_form").css("box-shadow", "none");
 				shadowMax = false;
 			}
-			else if (pos < 32) {
+			else if (pos &lt; 32) {
 				$("#direct_access_form").css("box-shadow",
 					"0px " + Math.round(pos / 4) + "px " +
 					Math.round(pos / 4) + "px -" +
@@ -722,4 +743,26 @@ _gaq.push(['_trackPageview']);
   var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
   ga.src = 'https://ssl.google-analytics.com/ga.js';
   var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-})();
+})();</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Namespaces</h3><ul><li><a href="HAC_HTML.html">HAC_HTML</a></li><li><a href="Queuer.html">Queuer</a></li><li><a href="RRISD_HAC.html">RRISD_HAC</a></li><li><a href="Updater.html">Updater</a></li></ul><h3>Global</h3><ul><li><a href="global.html#Ad">Ad</a></li><li><a href="global.html#AISD_HAC">AISD_HAC</a></li><li><a href="global.html#animations_enabled">animations_enabled</a></li><li><a href="global.html#asianness">asianness</a></li><li><a href="global.html#asianness_on">asianness_on</a></li><li><a href="global.html#badge_enabled">badge_enabled</a></li><li><a href="global.html#cached_refresh_interval">cached_refresh_interval</a></li><li><a href="global.html#colorization_enabled">colorization_enabled</a></li><li><a href="global.html#DEFAULT_ASIANNESS">DEFAULT_ASIANNESS</a></li><li><a href="global.html#default_error_handler">default_error_handler</a></li><li><a href="global.html#DEFAULT_HUE">DEFAULT_HUE</a></li><li><a href="global.html#DEFAULT_NOTIF_DURATION">DEFAULT_NOTIF_DURATION</a></li><li><a href="global.html#DEFAULT_R_INT">DEFAULT_R_INT</a></li><li><a href="global.html#disable_login_form">disable_login_form</a></li><li><a href="global.html#displayGrades">displayGrades</a></li><li><a href="global.html#generate_color_table">generate_color_table</a></li><li><a href="global.html#getVersion">getVersion</a></li><li><a href="global.html#handle_load_error">handle_load_error</a></li><li><a href="global.html#handle_load_error_class">handle_load_error_class</a></li><li><a href="global.html#hide_login_form">hide_login_form</a></li><li><a href="global.html#hue">hue</a></li><li><a href="global.html#hue_enabled">hue_enabled</a></li><li><a href="global.html#imposter">imposter</a></li><li><a href="global.html#isValidGradeData">isValidGradeData</a></li><li><a href="global.html#loadClassGrades">loadClassGrades</a></li><li><a href="global.html#lock">lock</a></li><li><a href="global.html#login">login</a></li><li><a href="global.html#login_to_aisd">login_to_aisd</a></li><li><a href="global.html#login_to_rrisd">login_to_rrisd</a></li><li><a href="global.html#logout">logout</a></li><li><a href="global.html#notifs_enabled">notifs_enabled</a></li><li><a href="global.html#on_error_logging_in">on_error_logging_in</a></li><li><a href="global.html#password_enabled">password_enabled</a></li><li><a href="global.html#process_update">process_update</a></li><li><a href="global.html#processUpdatedClassGrades">processUpdatedClassGrades</a></li><li><a href="global.html#processUpdatedGrades">processUpdatedGrades</a></li><li><a href="global.html#r_interval">r_interval</a></li><li><a href="global.html#refresh_enabled">refresh_enabled</a></li><li><a href="global.html#reset_login_form">reset_login_form</a></li><li><a href="global.html#set_password_boxes">set_password_boxes</a></li><li><a href="global.html#setChangedGradeIndicators">setChangedGradeIndicators</a></li><li><a href="global.html#setSliderIndicator">setSliderIndicator</a></li><li><a href="global.html#shadowMax">shadowMax</a></li><li><a href="global.html#show_error">show_error</a></li><li><a href="global.html#show_login_error">show_login_error</a></li><li><a href="global.html#showCachedGrades">showCachedGrades</a></li><li><a href="global.html#silent_update">silent_update</a></li><li><a href="global.html#single_notif">single_notif</a></li><li><a href="global.html#theInterval">theInterval</a></li><li><a href="global.html#throttle">throttle</a></li><li><a href="global.html#toast">toast</a></li><li><a href="global.html#unlock">unlock</a></li><li><a href="global.html#update">update</a></li><li><a href="global.html#update_options_dom">update_options_dom</a></li><li><a href="global.html#XHR_Queue">XHR_Queue</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Thu Jul 11 2013 10:35:10 GMT-0500 (CDT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
