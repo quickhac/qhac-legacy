@@ -1,5 +1,10 @@
 # Changelog
 
+### 2.0.6
+
+* Fetch ads from server instead of hardcoding them
+* Fix NaN when adding grade to empty category
+
 ### 2.0.5
 
 * Fix automatic updating not working unless user changed options

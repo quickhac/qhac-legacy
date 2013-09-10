@@ -1,6 +1,6 @@
 {
   "name": "QuickHAC",
-  "version": "2.0.5",
+  "version": "2.0.6",
   "manifest_version": 2,
   "description": "Quickly and efficiently check your grades.",
   "browser_action": {
@@ -14,7 +14,6 @@
   "permissions": [
     "https://hacaccess.herokuapp.com/",
     "https://*.roundrockisd.org/",
-    "http://localhost:3000/",
     "notifications"
   ],
   "icons": {
@@ -25,6 +24,5 @@
   },
   "web_accessible_resources": ["assets/icon-full.png"],
   "options_page": "options.html",
-  "content_security_policy": "script-src 'self' 'unsafe-eval' https://ssl.google-analytics.com; object-src 'self'",
-  "update_url": "https://hacaccess.herokuapp.com/public/update.xml"
+  "content_security_policy": "script-src 'self' 'unsafe-eval' https://ssl.google-analytics.com; object-src 'self'"
 }
