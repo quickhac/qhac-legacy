@@ -99,22 +99,30 @@ var Updater = {
  * Generates useful links for the user
  */
 var Ad = {
+	host: "https://hacaccess.herokuapp.com",
 
 	/**
 	 * Creates the most relevant link
 	 * @returns {Element} a link to append to the marking period grades table
 	 */
 	generate_ad: function () {
-		var wrapper = document.createElement("div");
-		$(wrapper).attr("id", "ad_wrapper");
+		// update from server if necessary
+		var curr_time = +new Date;
+		var get_time = parseInt(localStorage["ad_updatetime"]);
+		if (isNaN(get_time) || (curr_time - get_time > 24 * 60 * 60 * 1000))
+			Ad.fetch_ad();
 
-		// workaround for scrolling
-		if ((window.navigator.appVersion.indexOf("OS X 10") != -1) && (localStorage["ad_2"] != "no"))
-			return Ad.generate_ad_inner(
-				"Using OS X? Scrolling might not work. Here's a fix. &raquo;",
-				"http://hacaccess.herokuapp.com/qhac/ml-fix", "2");
-
-		return document.createDocumentFragment();
+		// create the ad
+		var ad = localStorage["ad_" + localStorage["ad"]];
+		if (ad == "no") return document.createDocumentFragment();
+		else {
+			try {
+				ad_json = JSON.parse(ad);
+			} catch (e) {
+				return document.createDocumentFragment();
+			}
+			return Ad.generate_ad_inner(ad_json.text, ad_json.url, ad_json.id);
+		}
 	},
 
 	/**
@@ -159,6 +167,18 @@ var Ad = {
 		wrapper.appendChild(hideAd);
 
 		return wrapper;
+	},
+
+	/**
+	 * Fetches ad content from the qHAC server and caches it
+	 */
+	fetch_ad: function() {
+		$.get(Ad.host + "/api/ad/latest", function(data) {
+			var ad = JSON.parse(data);
+			localStorage["ad"] = ad.id;
+			localStorage["ad_" + ad.id] = data;
+			localStorage["ad_updatetime"] = +new Date;
+		});
 	}
 };
 
