@@ -328,7 +328,12 @@ var HAC_HTML =
 			$(catTableHeaderRow).append(headerCells);
 
 			var catTableBody = document.createElement("tbody");
-			$(catTable).addClass("DataTable").append(catTableBody);
+			$(catTable).addClass("DataTable").append(catTableBody)
+				// add weight
+				.data({
+						"weight": json.cats[i].weight,
+						"is_percent_weight": json.cats[i].is_percent_weight
+				});
 
 			// each grade
 			for (var j = 0; j < json.cats[i].grades.length; j++) {
@@ -352,9 +357,7 @@ var HAC_HTML =
 					.text(ptsIsNaN ? "" : pts).data("editing", "0")
 					.css('background', ptsIsNaN ? "#FFF" : HAC_HTML.colorize(pts * 100 / json.cats[i].grades[j].ptsPoss))
 					.data({
-						"orig": ptsIsNaN ? "" : pts,
-						"weight": json.cats[i].weight,
-						"is_percent_weight": json.cats[i].is_percent_weight
+						"orig": ptsIsNaN ? "" : pts
 					})
 					.attr("title", "Original grade: " + (ptsIsNaN ? "none" : pts))
 					// allow editing
@@ -570,19 +573,18 @@ var HAC_HTML =
 		var subjectTotal = 0, weightTotal = 0, bonus = 0;
 		rows = $("#classgrades").find(".DataTable");
 		for (var i = 0; i < rows.length; i++) {
+			$currRow = $(rows[i]);
 			if ($(rows[i]).find(".CategoryAverage").text() != "") {
-				// var weight = parseInt($(rows[i]).prev().prev().text().match(/(\d*)%$/)[1]);
-				var weight = $(rows[i]).find(".AssignmentGrade").data("weight");
-				var isPercentWeight = $(rows[i]).find(".AssignmentGrade").data("is_percent_weight");
-				// console.log($(rows[i]).find(".AssignmentGrade")[0], weight, isPercentWeight);
-				categoryAverage = parseFloat($(rows[i]).find(".CategoryAverage").text());
+				var weight = $currRow.data("weight");
+				var isPercentWeight = $currRow.data("is_percent_weight");
+				categoryAverage = parseFloat($currRow.find(".CategoryAverage").text());
 				subjectTotal += categoryAverage * weight;
 				weightTotal += weight;
 
 				// special case: extra credit
-				if (isPercentWeight && weight == 0 && $(rows[i]).find(".AssignmentPointsPossible").length != 0) {
+				if (isPercentWeight && weight == 0 && $currRow.find(".AssignmentPointsPossible").length != 0) {
 					// add up scores individually
-					var bonuses = $(rows[i]).find(".AssignmentGrade");
+					var bonuses = $currRow.find(".AssignmentGrade");
 					for (var j = 0; j < bonuses.length; j++)
 						if (!isNaN(bonuses[j].innerText))
 							bonus += parseFloat(bonuses[j].innerText);
