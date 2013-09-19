@@ -32,6 +32,7 @@ var HAC_HTML =
 	/**
 	 * Converts a server response for marking period grades into JSON
 	 * @param {string} html - the HTML document to parse
+	 * @returns {JSON} the grades extracted from the document
 	 */
 	html_to_jso: function (html) {
 		var myObj = [];
@@ -84,6 +85,7 @@ var HAC_HTML =
 	/*
 	 * Converts marking period grades JSON to a DOM node
 	 * @param {JSON} json - the JSON to parse
+	 * @returns {Element} an HTML element with the grades in a table
 	 */
 	json_to_html: function (json) {
 		var root = document.createElement("table");
@@ -175,6 +177,7 @@ var HAC_HTML =
 	/*
 	 * Converts a server response for class grades into JSON
 	 * @param {string} html - the HTML document to parse
+	 * @returns {JSON} the grades extracted from the document
 	 */
 	cgrades_to_json: function (html) {
 		var context = $.parseHTML(html);
@@ -258,6 +261,7 @@ var HAC_HTML =
 	/*
 	 * Converts a class grades JSON to a DOM element
 	 * @param {JSON} json - the JSON to parse
+	 * @returns {Element} an HTML element with the grades in a table
 	 */
 	cjson_to_html: function (json) {
 		var root = document.createDocumentFragment();
@@ -656,6 +660,7 @@ var HAC_HTML =
 
 	/**
 	 * Calculates and displays the semester averages based on marking period averaegs
+	 * @param {jQuery} changedGradeCell - the grade cell that triggered the recalculation
 	 */
 	_recalculate_subject_averages: function (changedGradeCell) {
 		// add up subject averages
