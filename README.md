@@ -9,12 +9,7 @@ QuickHAC (or qHAC) is a Chrome extension that checks grades from roundrockisd.or
 
 ## Installing ##
 
-To add the compiled .crx file to Chrome:
-
-1. Download QuickHAC from [its homepage](http://hacaccess.herokuapp.com/qhac). **Chrome will tell you that you cannot install the extension. Do not panic; this is expected behavior.**
-2. In Chrome, click the menu at the top right, select Tools -> Extensions. This will show you a list of all of your installed extensions.
-3. Drag and drop the file you downloaded anywhere in the Extensions page.
-4. Login and enjoy.
+1. Download QuickHAC from the [Chrome Web Store](https://chrome.google.com/webstore/detail/quickhac/dnboopdmbbpaicaphfkcphonijbfhopg).
 
 ## Developing ##
 
