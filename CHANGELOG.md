@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.0.7
+
+* Add support for 8 digit student IDs
+
 ### 2.0.6
 
 * Fetch ads from server instead of hardcoding them
