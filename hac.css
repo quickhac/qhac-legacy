@@ -758,13 +758,14 @@ body.logged_in #grades {
 	white-space: nowrap;
 	display: block;
 	text-overflow: ellipsis;
+	background: #eee;
 }
 
 .grade.exam:hover {
 	text-decoration: underline;
 }
 
-#update_wrapper, #lastupdated {
+#update_wrapper, #lastupdated, #gpa_wrapper, #gpa {
 	font-size: 12px;
 }
 
@@ -773,19 +774,38 @@ body.logged_in #grades {
 }
 
 /* oh and an ad */
-#ad_wrapper {
-	padding: 2px;
-	display: block;
+#bottom_bar {
 	background: #f4f4f4;
 	border-bottom-left-radius: 4px;
 	border-bottom-right-radius: 4px;
+	padding: 2px;
+}
+#gpa_wrapper {
+	padding: 2px;
+	display: block;
+	float: left;
+}
+#ad_wrapper {
+	padding: 0 2px 2px 2px;
+	display: block;
+	float: right;
 }
 #ad, #hide_ad {
 	font-size: 12px;
 	padding: 0 2px;
 }
-#ad { color: #4FB8C0; text-align: center; }
-#hide_ad { color: #777; float: right; font-size: 16px;}
+#ad {
+	color: #4FB8C0;
+	text-align: center;
+	margin-right: 4px;
+	font-size: 12px;
+	cursor: pointer;
+}
+#hide_ad {
+	color: #777;
+	float: right;
+	font-size: 14px;
+}
 
 /** CLASS GRADES **/
 

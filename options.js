@@ -29,7 +29,10 @@ notifs_enabled,
 single_notif,
 
 /** @type boolean */
-animations_enabled;
+animations_enabled,
+
+/** @type boolean */
+gpa_enabled;
 
 /**
  * Generates and displays a table with numbers labeled 1 to 100 showing the
@@ -204,6 +207,19 @@ function update_options_dom(noAnimation) {
 			.slideUp(anim);
 		notifs_enabled = false;
 	}
+
+	if ($("#gpa_enabled").prop("checked")) {
+		$("#gpa_enabled_wrapper").removeClass("minimized");
+		$("#gpa_enabled_wrapper .option, #gpa_enabled_wrapper section .info")
+			.slideDown(anim);
+		gpa_enabled = true;
+	} else {
+		$("#gpa_enabled_wrapper").addClass("minimized");
+		$("#gpa_enabled_wrapper .option, #gpa_enabled_wrapper section .info")
+			.slideUp(anim);
+		gpa_enabled = false;
+	}
+
 	set_password_boxes($("#password_protection").prop("checked"));
 }
 

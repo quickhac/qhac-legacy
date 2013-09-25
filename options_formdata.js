@@ -369,7 +369,63 @@ var options_formdata = {
 					options: []
 				}
 			]
-		}
+		},
+		{
+			title: "GPA Display",
+			id: "gpa_enabled",
+			type: "toggle",
+			default_value: true,
+			info: "Display your GPA in the top right corner of qHAC.<br>\
+				Click a course name in the grades display on the popup to\
+				toggle whether it is used in the GPA calculation or not.",
+			attributes: {},
+			on_change: function (el) {
+				update_options_dom(false);
+			},
+			options: [
+				{
+					title: "Weighted",
+					id: "gpa_weighted",
+					type: "toggle",
+					info: "Use the 6.0 scale GPA",
+					default_value: true,
+					attributes: {},
+					on_change: function (el) {},
+					validation_input: function () {},
+					validation_rules: {},
+					validation_responses: []
+				},
+				{
+					title: "Precision",
+					id: "gpa_precision",
+					type: "number",
+					info: "The number of decimal points to display on GPA",
+					default_value: "4",
+					attributes: {
+						"min": "0",
+						"max": "12",
+						"step": "1"
+					},
+					on_change: function (el) {},
+					validation_input: function () {
+						return parseInt($("#gpa_precision").val());
+					},
+					validation_rules: {
+						"in_range": function (val) { return val >= 0 && val <= 12; }
+					},
+					validation_responses: [
+						{
+							states: [{ "in_range": false }],
+							success: function (val) {
+								show_error($("#gpa_precision"), "Precision must be between 0 and 12.")
+								return false;
+							}
+						}
+					]
+				}
+			],
+			sections: []
+		},
 	],
 	on_submit: function (toggles) {
 		var all_valid = true, toggle, option, section, section_option;
@@ -398,16 +454,21 @@ var options_formdata = {
 		var new_hue = parseInt($("#hue").val());
 		var new_notif_duration = parseInt($("#notif_duration").val());
 		single_notif = $("#single_notif").prop("checked");
+		var gpa_weighted = $("#gpa_weighted").prop("checked");
+		var gpa_precision = parseInt($("#gpa_precision").val());
 
 		localStorage.setItem("asianness", new_asianness.toString());
 		localStorage.setItem("r_int", new_r_int.toString());
 		localStorage.setItem("hue", new_hue.toString());
 		localStorage.setItem("notif_duration", new_notif_duration.toString());
+		localStorage.setItem("gpa_precision", gpa_precision.toString());
 
 		localStorage.setItem("notifs_enabled", notifs_enabled ? "true" : "false");
 		localStorage.setItem("single_notif", single_notif ? "true" : "false");
 		localStorage.setItem("badge_enabled", badge_enabled ? "true" : "false");
 		localStorage.setItem("animations", animations_enabled ? "on" : "off");
+		localStorage.setItem("gpa_enabled", gpa_enabled ? "true" : "false");
+		localStorage.setItem("gpa_weighted", gpa_weighted ? "true" : "false");
 
 		// Deal with password crap
 

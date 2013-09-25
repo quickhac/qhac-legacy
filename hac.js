@@ -278,11 +278,31 @@ function login(uname, pass, studentid, district) {
 	}
 }
 
+/** Generates the bar that shows up right below the overall grades table */
+function generateBottomBar() {
+	var $root = $(document.createElement("div"));
+	$root.attr("id", "bottom_bar");
+
+	var $gpa_wrapper = $(document.createElement("span"));
+	$gpa_wrapper.attr("id", "gpa_wrapper").html("GPA: ")
+		.append($(document.createElement("span")).attr("id", "gpa"));
+
+	var ad = Ad.generate_ad();
+
+	$root.append($gpa_wrapper).append(ad).append(
+		$(document.createElement("span")).html("&nbsp;")
+			.css("clear", "both"));
+
+	$("#grades").append($root);
+}
+
 /** Retrieves the cached grades from localStorage and displays them */
 function showCachedGrades() {
 	if (localStorage.hasOwnProperty("grades")) {
 		$("#grades").html("").append(HAC_HTML.json_to_html(
 			JSON.parse(localStorage["grades"])));
+
+		generateBottomBar();
 
 		setChangedGradeIndicators();
 	}
@@ -333,6 +353,7 @@ function update() {
  */
 function displayGrades(grades_json) {
 	$("#grades").html("").append(HAC_HTML.json_to_html(grades_json));
+	generateBottomBar();
 }
 
 /**
@@ -359,6 +380,8 @@ function processUpdatedGrades(doc) {
 	$("#lastupdated").html(Updater.get_update_text());
 	// classes
 	$("body").addClass("logged_in").removeClass("busy offline edited");
+	// gpa
+	GPA.show();
 
 	return true;
 }
@@ -679,6 +702,7 @@ $(function () {
 		// logged in
 		$("#login_form").addClass("hide");
 		$("#lastupdated").html(Updater.get_update_text());
+		GPA.show();
 		// bug: body won't scroll if the "logged_in" class is added immediately
 		window.setTimeout(function () { $(document.body).addClass("logged_in"); }, 100);
 	}
@@ -710,7 +734,7 @@ $(function () {
 		$("#restricted_access_wrapper").addClass("hide");
 	}
 
-	$("html").css("height", $("#main_view").outerHeight() + "px");
+	// $("html").css("height", $("#main_view").outerHeight() + "px");
 });
 
 // analytics

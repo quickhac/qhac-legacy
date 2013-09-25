@@ -34,14 +34,17 @@ var HAC_HTML =
 	 * @param {string} html - the HTML document to parse
 	 * @returns {JSON} the grades extracted from the document
 	 */
-	html_to_jso: function (html) {
+	html_to_jso: function (html, is_qhac_html) {
 		var myObj = [];
 		var context = $.parseHTML(html);
 		$rows = $(".DataTable:first tr.DataRow, .DataTable:first tr.DataRowAlt", context);
 
 		// hard-coded offsets
 		var titleOffset, gradesOffset;
-		if (localStorage["district"] == "rrisd") {
+		if (is_qhac_html) {
+			titleOffset = 0; gradesOffset = 1;
+		}
+		else if (localStorage["district"] == "rrisd") {
 			titleOffset = 0; gradesOffset = 2;
 		} else if (localStorage["district"] == "aisd") {
 			titleOffset = 1; gradesOffset = 3;
@@ -60,12 +63,16 @@ var HAC_HTML =
 				grade = $cells.eq(i + gradesOffset).html();
 				if (grade.indexOf("<") != -1) {
 					if (grade.indexOf("<a href") != -1)
-						urls[i] = /\?data=([\w\d%]*)"/g.exec(grade)[1];
+						if (is_qhac_html)
+							urls[i] = $cells.eq(i + gradesOffset).children().eq(0).data("data");
+						else
+							urls[i] = /\?data=([\w\d%]*)"/g.exec(grade)[1];
 					grade = />([\w\d]*)</g.exec(grade)[1];
 				} else {
-					if (grade = "&nbsp;") {
+					if (grade = "&nbsp;")
 						grade = "";
-					}
+					if (is_qhac_html)
+						grade = $cells.eq(i + gradesOffset).html();
 				}
 
 				grades[i] = grade;
@@ -89,6 +96,7 @@ var HAC_HTML =
 	 */
 	json_to_html: function (json) {
 		var root = document.createElement("table");
+		$(root).addClass("DataTable");
 
 		// header row
 		var header = document.createElement("tr");
@@ -104,6 +112,7 @@ var HAC_HTML =
 		// each row
 		for (var r = 0; r < json.length; r++) {
 			var row = document.createElement("tr");
+			$(row).addClass("DataRow");
 
 			// title cell
 			var title = document.createElement("td");
@@ -164,14 +173,7 @@ var HAC_HTML =
 			$(root).append(row);
 		}
 
-		// more root
-		var superRoot = document.createDocumentFragment();
-		$(superRoot).append(root);
-
-		// and an ad
-		$(superRoot).append(Ad.generate_ad());
-
-		return superRoot;
+		return root;
 	},
 
 	/*
@@ -614,6 +616,9 @@ var HAC_HTML =
 
 		// subject averages
 		HAC_HTML._recalculate_subject_averages(changedGradeCell);
+
+		// GPA
+		GPA.show();
 
 		// analytics
 		_gaq.push(['_trackEvent', 'Class Grades', 'Edit', 'Edit Grades', grade]);

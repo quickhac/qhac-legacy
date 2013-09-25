@@ -175,6 +175,7 @@ var Ad = {
 	fetch_ad: function() {
 		$.get(Ad.host + "/api/ad/latest", function(data) {
 			var ad = JSON.parse(data);
+			if (localStorage["ad_" + ad.id] == "no") return;
 			localStorage["ad"] = ad.id;
 			localStorage["ad_" + ad.id] = data;
 			localStorage["ad_updatetime"] = +new Date;
