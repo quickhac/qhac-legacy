@@ -1,0 +1,36 @@
+Course
+===========
+  - Name: String
+  - Teacher: String (teacher id?)
+  - Period: Integer
+  - Exam 1 Grade: Int
+  - Exam 2 Grade
+  - Has many cycles: [c1, c2, c3, c4, c5, c6]
+  - advancedcourse
+
+Cycle
+===========
+  - belongsTo Course
+  - datalink
+  - cycleNumber
+  - currentAverage
+  - hasMany categories
+
+Category
+============
+  - weight (.25), Decimal
+  - average
+
+Grade
+===========
+  - name
+  - assigned
+  - due
+  - points
+  - userCreated
+  - note
+
+STORING IN LOCALSTORAGE
+==============================
+"course_{id}" = {}
+"course_ids" 
