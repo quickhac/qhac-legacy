@@ -17,6 +17,7 @@
 		<script type="text/javascript" src="javascripts/models/category.js"></script>
 		<script type="text/javascript" src="javascripts/models/grade.js"></script>
 		<script type="text/javascript" src="javascripts/controllers/login_controller.js"></script>
+		<script type="text/javascript" src="javascripts/testing_scraping.js"></script>
 		<!-- <script type="text/javascript" src="lib/jquery.tipsy.js"></script> -->
 		<!-- <script type="text/javascript" src="lib/moment.js"></script>
 		<script type="text/javascript" src="lib/base64.js"></script>
@@ -25,8 +26,20 @@
 		<script type="text/javascript" src="hac_dom.js"></script>
 		<script type="text/javascript" src="logo_canvas.js"></script>
 		<script type="text/javascript" src="hac.js"></script> -->
+		<script>
+			course1 = QHAC.Course.create({
+				name: "AP English", 
+				period: 1,
+			});
+			course1 = course1.save().then(function(value) {
+				console.log(value.get('collectionKey'));
+			}, function(err) {
+				console.log(err);
+			});
+		</script>
 	</head>
 	<body>
+		<div id="tmp" style:"display:none"></div>
 		<script type="text/x-handlebars" data-template-name="login">
 			<div id="login_wrapper">
 				<form id="login_form" {{action "login" on="submit"}}>
