@@ -684,7 +684,7 @@ body.logged_in #grades {
 #grades td a.down::after {
 	content: "\00ab";
 	display: inline-block;
-	font-size: 1.25em
+	font-size: 1.25em;
 	line-height: 1;
 	text-decoration: none;
 
@@ -694,7 +694,7 @@ body.logged_in #grades {
 #grades td a.same::after {
 	content: "*";
 	display: inline-block;
-	font-size: 1.25em
+	font-size: 1.25em;
 	line-height: 1;
 	text-decoration: none;
 }
