@@ -674,7 +674,7 @@ body.logged_in #grades {
 #grades td a.up::after {
 	content: "\00bb";
 	display: inline-block;
-	font-size: 1.25em
+	font-size: 1.25em;
 	line-height: 1;
 	text-decoration: none;
 
