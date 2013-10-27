@@ -736,10 +736,11 @@ $(function () {
 
 	// bug: http://stackoverflow.com/questions/13217353/random-whitespace-in-google-chrome-extension
 	// show body after done populating DOM
-	$(document.body).css({
-		display: 'block',
-		width: '600px',
-		height: $(document.body).height()});
+	window.setTimeout(function() { $(document.body).css({
+			display: 'block',
+			width: '600px',
+			height: $(document.body).height()});
+	}, 200);
 });
 
 // analytics
