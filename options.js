@@ -323,6 +323,9 @@ $(function(){
 	});
 
 	update_options_dom(true);
+
+	// show quote
+	$("#quote").html(get_random_inspiring_quote());
 	
 	// slider change events
 	$("#asianness_slider").change(function () {
@@ -363,7 +366,7 @@ $(function(){
 		});
 });
 
-analytics
+// analytics
 var _gaq = _gaq || [];
 _gaq.push(['_setAccount', 'UA-37395872-1']);
 _gaq.push(['_trackPageview']);

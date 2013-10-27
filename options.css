@@ -25,7 +25,7 @@ body {
 #settings_wrapper {
 	background-color: #EEEEEE;
 	border-radius: 4px;
-	padding: 4px 200px 4px 80px;
+	padding: 4px 200px 4px 40px;
 	text-align: right;
 	min-height: 258px;
 }
@@ -188,16 +188,10 @@ input[type="number"] {
 	opacity: 1;
 	/*-webkit-transition: 0s opacity linear 0s;*/
 }
-#heaf {
+#quote {
 	float: right;
-	height: 192px;
-	width: 150px;
-	margin-right: -175px;
-	border-radius: 50%;
-	background-image: url('assets/heaf.png');
-	background-repeat: no-repeat;
-	background-position: -20px 0; 
-	-webkit-filter: drop-shadow(4px 4px 15px #888);
+	width: 190px;
+	margin-right: -235px;
 }
 
 

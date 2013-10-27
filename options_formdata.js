@@ -12,7 +12,7 @@ var options_formdata = {
 			},
 			options: [
 				{
-					title: "Asianness Level",
+					title: "Power Level",
 					id: "asianness",
 					type: "number",
 					default_value: "4",
