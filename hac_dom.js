@@ -696,7 +696,8 @@ var HAC_HTML =
 
 		// show subject average
 		var semColor = HAC_HTML.colorize(semAvg);
-		$(semAvgCell).text(Math.round(Math.round(semAvg * 10000) / 10000)) // FP roundoff error compensation
+		var semAvgText = isNaN(semAvg) ? "" : Math.round(Math.round(semAvg * 10000) / 10000);
+		$(semAvgCell).text(semAvgText)
 			.css({"background-color": semColor,
 				"box-shadow": semColor + " 0px 0px 4px"});
 
