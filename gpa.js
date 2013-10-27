@@ -72,6 +72,12 @@ var GPA = {
 		return (grade - 50) / 10 + (GPA.is_honors(title) ? 1 : 0);
 	},
 
+	/**
+	 * Finds the grade point average of a list of grades.
+	 * @param {JSON} grades - the list of grades to find the GPA of
+	 * @param {function} callback - a function to calculate grade point
+	 * from grade
+	 */
 	calculate: function(grades, callback) {
 		var courses = [];
 		for (var i = 0; i < grades.length; i++) {
@@ -82,6 +88,9 @@ var GPA = {
 		return GPA._avg(courses);
 	},
 
+	/**
+	 * Converts grades shown in qHAC to a grade JSON
+	 */
 	_retrieve_grades_from_dom: function() {
 		return HAC_HTML.html_to_jso(document.body.innerHTML, true);
 	},

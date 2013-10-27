@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Index</title>
+    <title>JSDoc: Source: gpa.js</title>
     
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,54 +17,133 @@
 
 <div id="main">
     
-    <h1 class="page-title">Index</h1>
+    <h1 class="page-title">Source: gpa.js</h1>
     
     
 
 
     
-
-
-    <h3> </h3>
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
     <section>
-        <article><h1>QuickHAC</h1>
+        <article>
+            <pre class="prettyprint source"><code>/**
+ * @type {number}
+ * @const
+ */
+var DEFAULT_GPA_PRECISION = 3;
 
-<p>QuickHAC (or qHAC) is a Chrome extension that checks grades from roundrockisd.org. In addition to allowing you to see your overall grades and your class grades, it also supports the following features:</p>
+/**
+ * Calculates grade point average.
+ * @namespace
+ */
+var GPA = {
+	/**
+	 * Checks if a course is an honors course based on its course name.
+	 * This is needed to calculate the weighted grade point average.
+	 * @param {string} coursename - the course to check
+	 * @returns {boolean} true if the course in an honors course
+	 */
+	is_honors: function(coursename) {
+		return /(ap|ib|tag)/i.test(coursename);
+	},
 
-<ul><li>Automatic updates and notifications for grade changes</li><li>Colorization of grades depending on how bad they are</li><li>Extremely pretty interface designed by mdciotti</li><li>Edit assignment grades locally to see how it would affect your overall grade</li></ul>
+	/**
+	 * Checks if a given grade should be excluded from the GPA calculation.
+	 * @param {number} grade - the grade to check
+	 * @returns {boolean} true if the grade should be excluded
+	 */
+	_is_empty: function(grade) {
+		if (typeof grade === "undefined") return true;
+		if (grade === "") return true;
+		if (isNaN(grade)) return true;
+		return false;
+	},
 
-<h2>Installing</h2>
+	/**
+	 * Finds the average value of an array, excluding empty and NaN grades.
+	 * @param {Array&lt;number>} array - the array of numbers to find the average of
+	 * @returns {number} the average of the array
+	 */
+	_avg: function(array) {
+		total = 0;
+		items = 0;
+		for (var i = 0; i &lt; array.length; i++) {
+			if (GPA._is_empty(array[i]))
+				continue;
+			items++;
+			total += array[i];
+		}
+		return total / items;
+	},
 
-<p>To add the compiled .crx file to Chrome:</p>
+	/**
+	 * Finds the unweighted grade point on a 4.0 scale of a course,
+	 * as defined in the RRISD Course Catalogue
+	 * @param {number} grade - the grade to find the grade point of
+	 * @returns {number} the equivalent grade point
+	 */
+	grade_point_unweighted: function(grade) {
+		if (GPA._is_empty(grade)) return NaN;
+		if (grade &lt; 70) return 0;
+		return Math.min(Math.floor((grade - 60) / 10 + 1), 4);
+	},
 
-<ol><li>Download QuickHAC from <a href="http://hacaccess.herokuapp.com/qhac">its homepage</a>. <strong>Chrome will tell you that you cannot install the extension. Do not panic; this is expected behavior.</strong></li><li>In Chrome, click the menu at the top right, select Tools -&gt; Extensions. This will show you a list of all of your installed extensions.</li><li>Drag and drop the file you downloaded anywhere in the Extensions page.</li><li>Login and enjoy.</li></ol>
+	/**
+	 * Finds the weighted grade point on a 6.0 scale of a course, as
+	 * defined in the RRISD Course Catalogue
+	 * @param {number} grade - the grade to find the grade point of
+	 * @returns {number} the equivalent grade point
+	 */
+	grade_point_weighted: function(grade, title) {
+		if (GPA._is_empty(grade)) return NaN;
+		if (grade &lt; 70) return 0;
+		return (grade - 50) / 10 + (GPA.is_honors(title) ? 1 : 0);
+	},
 
-<h2>Developing</h2>
+	/**
+	 * Finds the unweighted GPA on a 4.0 scale of a list of grades, as
+	 * defined in the RRISD Course Catalogue
+	 * @param {Object} grades - the list of gradse to find the grade point of
+	 * @returns {number} the equivalent grade point
+	 */
+	unweighted: function(grades) {
+		var courses = [];
+		for (var i = 0; i &lt; grades.length; i++) {
+			courses[courses.length] = GPA.grade_point_unweighted(grades[i].grades[4]);
+			courses[courses.length] = GPA.grade_point_unweighted(grades[i].grades[9]);
+		}
+		// average all GPAs to get final number
+		return GPA._avg(courses);
+	},
 
-<p>To add the source code to Chrome:</p>
+	/**
+	 * Finds the weighted GPA on a 6.0 scale of a list of grades, as
+	 * defined in the RRISD Course Catalogue
+	 * @param {Object} grades - the list of gradse to find the grade point of
+	 * @returns {number} the equivalent grade point
+	 */
+	weighted: function(grades) {
+		// exactly as above
+		var courses = [];
+		for (var i = 0; i &lt; grades.length; i++) {
+			courses[courses.length] = GPA.grade_point_weighted(grades[i].grades[4], grades[i].title);
+			courses[courses.length] = GPA.grade_point_weighted(grades[i].grades[9], grades[i].title);
+		}
+		return GPA._avg(courses);
+	},
 
-<ol><li>Turn on Developer Mode in Tools -&gt; Extensions in Chrome.</li><li>Download and extract (if necessary) a copy of the source code into the filesystem.</li><li>In Chrome&#39;s Extension page, select &quot;Load Unpacked Extension...&quot; and select the root folder of the source code.</li></ol>
-
-<h2>Copyright</h2>
-
-<p>Created by Yash Aggarwal, Max Ciotti, Tristan Seifert and Xuming Zeng.</p></article>
+	show: function() {
+		if (!localStorage["gpa_enabled"] || (localStorage["gpa_enabled"] == "true")) {
+			var gpa = !localStorage["gpa_weighted"] || (localStorage["gpa_weighted"] == "true") ?
+				GPA.weighted(JSON.parse(localStorage['grades'])) :
+				GPA.unweighted(JSON.parse(localStorage['grades']));
+			$("#gpa").text(gpa.toFixed(parseInt(localStorage["gpa_precision"]) || DEFAULT_GPA_PRECISION));
+		} else {
+			$("#gpa_wrapper").hide();
+		}
+	}
+}</code></pre>
+        </article>
     </section>
-
-
 
 
 

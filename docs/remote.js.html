@@ -126,35 +126,30 @@ var Updater = {
  * Generates useful links for the user
  */
 var Ad = {
+	host: "https://hacaccess.herokuapp.com",
 
 	/**
 	 * Creates the most relevant link
 	 * @returns {Element} a link to append to the marking period grades table
 	 */
 	generate_ad: function () {
-		var wrapper = document.createElement("div");
-		$(wrapper).attr("id", "ad_wrapper");
+		// update from server if necessary
+		var curr_time = +new Date;
+		var get_time = parseInt(localStorage["ad_updatetime"]);
+		if (isNaN(get_time) || (curr_time - get_time > 24 * 60 * 60 * 1000))
+			Ad.fetch_ad();
 
-		// survey
-		if (localStorage["ad_3"] != "no")
-			return Ad.generate_ad_inner(
-				"We value your feedback! Take our survey &raquo;",
-				"https://docs.google.com/forms/d/1VcjEbLuRL1AwNE7sXmJ003uM0KJ8bpW_Ev31nII_s1A/viewform",
-				"3");
-
-		// workaround for scrolling
-		if ((window.navigator.appVersion.indexOf("OS X 10") != -1) && (localStorage["ad_2"] != "no"))
-			return Ad.generate_ad_inner(
-				"Using OS X? Scrolling might not work. Here's a fix. &raquo;",
-				"http://hacaccess.herokuapp.com/qhac/ml-fix", "2");
-
-		// edit grade banner
-		if (localStorage["ad_1"] != "no")
-			return Ad.generate_ad_inner(
-				"New in 1.2: Edit grades locally. Click on any assignment grade to get started!",
-				"", "1");
-
-		return document.createDocumentFragment();
+		// create the ad
+		var ad = localStorage["ad_" + localStorage["ad"]];
+		if (ad == "no") return document.createDocumentFragment();
+		else {
+			try {
+				ad_json = JSON.parse(ad);
+			} catch (e) {
+				return document.createDocumentFragment();
+			}
+			return Ad.generate_ad_inner(ad_json.text, ad_json.url, ad_json.id);
+		}
 	},
 
 	/**
@@ -199,6 +194,19 @@ var Ad = {
 		wrapper.appendChild(hideAd);
 
 		return wrapper;
+	},
+
+	/**
+	 * Fetches ad content from the qHAC server and caches it
+	 */
+	fetch_ad: function() {
+		$.get(Ad.host + "/api/ad/latest", function(data) {
+			var ad = JSON.parse(data);
+			if (localStorage["ad_" + ad.id] == "no") return;
+			localStorage["ad"] = ad.id;
+			localStorage["ad_" + ad.id] = data;
+			localStorage["ad_updatetime"] = +new Date;
+		});
 	}
 };
 
@@ -372,13 +380,13 @@ var AISD_HAC = {
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Namespaces</h3><ul><li><a href="HAC_HTML.html">HAC_HTML</a></li><li><a href="Queuer.html">Queuer</a></li><li><a href="RRISD_HAC.html">RRISD_HAC</a></li><li><a href="Updater.html">Updater</a></li></ul><h3>Global</h3><ul><li><a href="global.html#Ad">Ad</a></li><li><a href="global.html#AISD_HAC">AISD_HAC</a></li><li><a href="global.html#animations_enabled">animations_enabled</a></li><li><a href="global.html#asianness">asianness</a></li><li><a href="global.html#asianness_on">asianness_on</a></li><li><a href="global.html#badge_enabled">badge_enabled</a></li><li><a href="global.html#cached_refresh_interval">cached_refresh_interval</a></li><li><a href="global.html#colorization_enabled">colorization_enabled</a></li><li><a href="global.html#DEFAULT_ASIANNESS">DEFAULT_ASIANNESS</a></li><li><a href="global.html#default_error_handler">default_error_handler</a></li><li><a href="global.html#DEFAULT_HUE">DEFAULT_HUE</a></li><li><a href="global.html#DEFAULT_NOTIF_DURATION">DEFAULT_NOTIF_DURATION</a></li><li><a href="global.html#DEFAULT_R_INT">DEFAULT_R_INT</a></li><li><a href="global.html#disable_login_form">disable_login_form</a></li><li><a href="global.html#displayGrades">displayGrades</a></li><li><a href="global.html#generate_color_table">generate_color_table</a></li><li><a href="global.html#getVersion">getVersion</a></li><li><a href="global.html#handle_load_error">handle_load_error</a></li><li><a href="global.html#handle_load_error_class">handle_load_error_class</a></li><li><a href="global.html#hide_login_form">hide_login_form</a></li><li><a href="global.html#hue">hue</a></li><li><a href="global.html#hue_enabled">hue_enabled</a></li><li><a href="global.html#imposter">imposter</a></li><li><a href="global.html#isValidGradeData">isValidGradeData</a></li><li><a href="global.html#loadClassGrades">loadClassGrades</a></li><li><a href="global.html#lock">lock</a></li><li><a href="global.html#login">login</a></li><li><a href="global.html#login_to_aisd">login_to_aisd</a></li><li><a href="global.html#login_to_rrisd">login_to_rrisd</a></li><li><a href="global.html#logout">logout</a></li><li><a href="global.html#notifs_enabled">notifs_enabled</a></li><li><a href="global.html#on_error_logging_in">on_error_logging_in</a></li><li><a href="global.html#password_enabled">password_enabled</a></li><li><a href="global.html#process_update">process_update</a></li><li><a href="global.html#processUpdatedClassGrades">processUpdatedClassGrades</a></li><li><a href="global.html#processUpdatedGrades">processUpdatedGrades</a></li><li><a href="global.html#r_interval">r_interval</a></li><li><a href="global.html#refresh_enabled">refresh_enabled</a></li><li><a href="global.html#reset_login_form">reset_login_form</a></li><li><a href="global.html#set_password_boxes">set_password_boxes</a></li><li><a href="global.html#setChangedGradeIndicators">setChangedGradeIndicators</a></li><li><a href="global.html#setSliderIndicator">setSliderIndicator</a></li><li><a href="global.html#shadowMax">shadowMax</a></li><li><a href="global.html#show_error">show_error</a></li><li><a href="global.html#show_login_error">show_login_error</a></li><li><a href="global.html#showCachedGrades">showCachedGrades</a></li><li><a href="global.html#silent_update">silent_update</a></li><li><a href="global.html#single_notif">single_notif</a></li><li><a href="global.html#theInterval">theInterval</a></li><li><a href="global.html#throttle">throttle</a></li><li><a href="global.html#toast">toast</a></li><li><a href="global.html#unlock">unlock</a></li><li><a href="global.html#update">update</a></li><li><a href="global.html#update_options_dom">update_options_dom</a></li><li><a href="global.html#XHR_Queue">XHR_Queue</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Namespaces</h3><ul><li><a href="GPA.html">GPA</a></li><li><a href="HAC_HTML.html">HAC_HTML</a></li><li><a href="Queuer.html">Queuer</a></li><li><a href="RRISD_HAC.html">RRISD_HAC</a></li><li><a href="Updater.html">Updater</a></li></ul><h3>Global</h3><ul><li><a href="global.html#Ad">Ad</a></li><li><a href="global.html#AISD_HAC">AISD_HAC</a></li><li><a href="global.html#animations_enabled">animations_enabled</a></li><li><a href="global.html#asianness">asianness</a></li><li><a href="global.html#asianness_on">asianness_on</a></li><li><a href="global.html#badge_enabled">badge_enabled</a></li><li><a href="global.html#cached_refresh_interval">cached_refresh_interval</a></li><li><a href="global.html#colorization_enabled">colorization_enabled</a></li><li><a href="global.html#DEFAULT_ASIANNESS">DEFAULT_ASIANNESS</a></li><li><a href="global.html#default_error_handler">default_error_handler</a></li><li><a href="global.html#DEFAULT_GPA_PRECISION">DEFAULT_GPA_PRECISION</a></li><li><a href="global.html#DEFAULT_HUE">DEFAULT_HUE</a></li><li><a href="global.html#DEFAULT_NOTIF_DURATION">DEFAULT_NOTIF_DURATION</a></li><li><a href="global.html#DEFAULT_R_INT">DEFAULT_R_INT</a></li><li><a href="global.html#disable_login_form">disable_login_form</a></li><li><a href="global.html#displayGrades">displayGrades</a></li><li><a href="global.html#generate_color_table">generate_color_table</a></li><li><a href="global.html#getVersion">getVersion</a></li><li><a href="global.html#gpa_enabled">gpa_enabled</a></li><li><a href="global.html#handle_load_error">handle_load_error</a></li><li><a href="global.html#handle_load_error_class">handle_load_error_class</a></li><li><a href="global.html#hide_login_form">hide_login_form</a></li><li><a href="global.html#hue">hue</a></li><li><a href="global.html#hue_enabled">hue_enabled</a></li><li><a href="global.html#imposter">imposter</a></li><li><a href="global.html#isValidGradeData">isValidGradeData</a></li><li><a href="global.html#loadClassGrades">loadClassGrades</a></li><li><a href="global.html#lock">lock</a></li><li><a href="global.html#login">login</a></li><li><a href="global.html#login_to_aisd">login_to_aisd</a></li><li><a href="global.html#login_to_rrisd">login_to_rrisd</a></li><li><a href="global.html#logout">logout</a></li><li><a href="global.html#notifs_enabled">notifs_enabled</a></li><li><a href="global.html#on_error_logging_in">on_error_logging_in</a></li><li><a href="global.html#password_enabled">password_enabled</a></li><li><a href="global.html#process_update">process_update</a></li><li><a href="global.html#processUpdatedClassGrades">processUpdatedClassGrades</a></li><li><a href="global.html#processUpdatedGrades">processUpdatedGrades</a></li><li><a href="global.html#r_interval">r_interval</a></li><li><a href="global.html#refresh_enabled">refresh_enabled</a></li><li><a href="global.html#reset_login_form">reset_login_form</a></li><li><a href="global.html#set_password_boxes">set_password_boxes</a></li><li><a href="global.html#setChangedGradeIndicators">setChangedGradeIndicators</a></li><li><a href="global.html#setSliderIndicator">setSliderIndicator</a></li><li><a href="global.html#shadowMax">shadowMax</a></li><li><a href="global.html#show_error">show_error</a></li><li><a href="global.html#show_login_error">show_login_error</a></li><li><a href="global.html#showCachedGrades">showCachedGrades</a></li><li><a href="global.html#silent_update">silent_update</a></li><li><a href="global.html#single_notif">single_notif</a></li><li><a href="global.html#theInterval">theInterval</a></li><li><a href="global.html#throttle">throttle</a></li><li><a href="global.html#toast">toast</a></li><li><a href="global.html#unlock">unlock</a></li><li><a href="global.html#update">update</a></li><li><a href="global.html#update_options_dom">update_options_dom</a></li><li><a href="global.html#XHR_Queue">XHR_Queue</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Thu Jul 11 2013 10:35:10 GMT-0500 (CDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Wed Sep 11 2013 20:10:18 GMT-0500 (CDT)
 </footer>
 
 <script> prettyPrint(); </script>

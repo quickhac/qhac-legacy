@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Namespace: HAC_HTML</title>
+    <title>JSDoc: Namespace: GPA</title>
     
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">Namespace: HAC_HTML</h1>
+    <h1 class="page-title">Namespace: GPA</h1>
     
     
 
@@ -27,7 +27,7 @@
     
 <header>
     <h2>
-    HAC_HTML
+    GPA
     </h2>
     
 </header>  
@@ -38,8 +38,7 @@
     
     
         
-            <div class="description">Converts different kind of grade lists between HTML documents, JSON objects,
-and DOMs</div>
+            <div class="description">Calculates grade point average.</div>
         
         
         
@@ -65,7 +64,7 @@ and DOMs</div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hac_dom.js.html">hac_dom.js</a>, <a href="hac_dom.js.html#line30">line 30</a>
+        <a href="gpa.js.html">gpa.js</a>, <a href="gpa.js.html#line11">line 11</a>
     </li></ul></dd>
     
     
@@ -99,7 +98,7 @@ and DOMs</div>
         <dl>
             
 <dt>
-    <h4 class="name" id="_finalize_exam_grade_edit"><span class="type-signature">&lt;static> </span>_finalize_exam_grade_edit<span class="signature">(el)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="_avg"><span class="type-signature">&lt;static> </span>_avg<span class="signature">(array)</span><span class="type-signature"> &rarr; {number}</span></h4>
     
     
 </dt>
@@ -107,8 +106,7 @@ and DOMs</div>
     
     
     <div class="description">
-        Performs all of the actions necessary after an exam grade editor changes
-a grade
+        Finds the average value of an array, excluding empty and NaN grades.
     </div>
     
 
@@ -142,13 +140,13 @@ a grade
 	
         <tr>
             
-                <td class="name"><code>el</code></td>
+                <td class="name"><code>array</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type">Element</span>
+<span class="param-type">Array.&lt;number></span>
 
 
             
@@ -158,7 +156,7 @@ a grade
             
             
             
-            <td class="description last">the element that fired this event</td>
+            <td class="description last">the array of numbers to find the average of</td>
         </tr>
 	
 	
@@ -189,7 +187,7 @@ a grade
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hac_dom.js.html">hac_dom.js</a>, <a href="hac_dom.js.html#line627">line 627</a>
+        <a href="gpa.js.html">gpa.js</a>, <a href="gpa.js.html#line39">line 39</a>
     </li></ul></dd>
     
     
@@ -210,313 +208,28 @@ a grade
     
     
     
+    <h5>Returns:</h5>
     
-    
-</dd>
-
-        
             
-<dt>
-    <h4 class="name" id="_finalize_grade_edit"><span class="type-signature">&lt;static> </span>_finalize_grade_edit<span class="signature">(el)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Performs all the actions necessary after a grade editor changes the value
-of a grade
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>el</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Element</span>
+<div class="param-desc">
+    the average of the array
+</div>
 
 
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">the element that fired this event</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hac_dom.js.html">hac_dom.js</a>, <a href="hac_dom.js.html#line513">line 513</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="_notify"><span class="type-signature">&lt;static> </span>_notify<span class="signature">(className, label, oldgrade, newgrade)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Creates and displays a WebKit notification based on grade data
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
 		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>className</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">the name of the class that the changed grade
-is in</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>label</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">the marking period that the changed grade is in</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>oldgrade</code></td>
-            
-            
-            <td class="type">
-            
-                
 <span class="param-type">number</span>
 
 
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">the old grade</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>newgrade</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">the new grade</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-        <dt class="important tag-deprecated">Deprecated:</dt><dd><ul class="dummy"><li>use <a href="HAC_HTML.html#_notify2">HAC_HTML._notify2</a> instead</li><ul></dd>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hac_dom.js.html">hac_dom.js</a>, <a href="hac_dom.js.html#line908">line 908</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
+	</dd>
 </dl>
 
-    
-    
-
-    
-
-    
-    
-    
-    
-    
+        
     
     
 </dd>
@@ -524,7 +237,7 @@ is in</td>
         
             
 <dt>
-    <h4 class="name" id="_notify2"><span class="type-signature">&lt;static> </span>_notify2<span class="signature">(titleText, updateText)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="_is_empty"><span class="type-signature">&lt;static> </span>_is_empty<span class="signature">(grade)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
     
     
 </dt>
@@ -532,265 +245,7 @@ is in</td>
     
     
     <div class="description">
-        Creates and displays a WebKit notification
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>titleText</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">notification title text</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>updateText</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">notification body text</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hac_dom.js.html">hac_dom.js</a>, <a href="hac_dom.js.html#line882">line 882</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="_recalculate_subject_averages"><span class="type-signature">&lt;static> </span>_recalculate_subject_averages<span class="signature">(changedGradeCell)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Calculates and displays the semester averages based on marking period averaegs
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>changedGradeCell</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">jQuery</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">the grade cell that triggered the recalculation</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hac_dom.js.html">hac_dom.js</a>, <a href="hac_dom.js.html#line665">line 665</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="colorize"><span class="type-signature">&lt;static> </span>colorize<span class="signature">(grade)</span><span class="type-signature"> &rarr; {string}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Calculates the background color corresponding with a specific grade based
-on the grade, Asianness level, and hue
+        Checks if a given grade should be excluded from the GPA calculation.
     </div>
     
 
@@ -840,7 +295,7 @@ on the grade, Asianness level, and hue
             
             
             
-            <td class="description last">the grade to colorize</td>
+            <td class="description last">the grade to check</td>
         </tr>
 	
 	
@@ -871,7 +326,7 @@ on the grade, Asianness level, and hue
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hac_dom.js.html">hac_dom.js</a>, <a href="hac_dom.js.html#line712">line 712</a>
+        <a href="gpa.js.html">gpa.js</a>, <a href="gpa.js.html#line27">line 27</a>
     </li></ul></dd>
     
     
@@ -896,7 +351,7 @@ on the grade, Asianness level, and hue
     
             
 <div class="param-desc">
-    the color that corresponds with the grade given
+    true if the grade should be excluded
 </div>
 
 
@@ -907,7 +362,7 @@ on the grade, Asianness level, and hue
 	</dt>
 	<dd>
 		
-<span class="param-type">string</span>
+<span class="param-type">boolean</span>
 
 
 	</dd>
@@ -921,7 +376,7 @@ on the grade, Asianness level, and hue
         
             
 <dt>
-    <h4 class="name" id="compare_grades"><span class="type-signature">&lt;static> </span>compare_grades<span class="signature">(oldgrade, newgrade, on_notify)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="grade_point_unweighted"><span class="type-signature">&lt;static> </span>grade_point_unweighted<span class="signature">(grade)</span><span class="type-signature"> &rarr; {number}</span></h4>
     
     
 </dt>
@@ -929,8 +384,8 @@ on the grade, Asianness level, and hue
     
     
     <div class="description">
-        Compares two marking period grade JSONs and notifies the user of any
-changes if notifications are enabled
+        Finds the unweighted grade point on a 4.0 scale of a course,
+as defined in the RRISD Course Catalogue
     </div>
     
 
@@ -964,13 +419,13 @@ changes if notifications are enabled
 	
         <tr>
             
-                <td class="name"><code>oldgrade</code></td>
+                <td class="name"><code>grade</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type">JSON</span>
+<span class="param-type">number</span>
 
 
             
@@ -980,53 +435,7 @@ changes if notifications are enabled
             
             
             
-            <td class="description last">the old list of grades</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>newgrade</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">JSON</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">the new list of grades</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>on_notify</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">function</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">a function to call if grades have been changed</td>
+            <td class="description last">the grade to find the grade point of</td>
         </tr>
 	
 	
@@ -1057,124 +466,7 @@ changes if notifications are enabled
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hac_dom.js.html">hac_dom.js</a>, <a href="hac_dom.js.html#line777">line 777</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="html_to_jso"><span class="type-signature">&lt;static> </span>html_to_jso<span class="signature">(html)</span><span class="type-signature"> &rarr; {JSON}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Converts a server response for marking period grades into JSON
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>html</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">the HTML document to parse</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hac_dom.js.html">hac_dom.js</a>, <a href="hac_dom.js.html#line37">line 37</a>
+        <a href="gpa.js.html">gpa.js</a>, <a href="gpa.js.html#line57">line 57</a>
     </li></ul></dd>
     
     
@@ -1199,7 +491,7 @@ changes if notifications are enabled
     
             
 <div class="param-desc">
-    the grades extracted from the document
+    the equivalent grade point
 </div>
 
 
@@ -1210,7 +502,7 @@ changes if notifications are enabled
 	</dt>
 	<dd>
 		
-<span class="param-type">JSON</span>
+<span class="param-type">number</span>
 
 
 	</dd>
@@ -1224,7 +516,7 @@ changes if notifications are enabled
         
             
 <dt>
-    <h4 class="name" id="makeUpdateText"><span class="type-signature">&lt;static> </span>makeUpdateText<span class="signature">(gradeData)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    <h4 class="name" id="grade_point_weighted"><span class="type-signature">&lt;static> </span>grade_point_weighted<span class="signature">(grade)</span><span class="type-signature"> &rarr; {number}</span></h4>
     
     
 </dt>
@@ -1232,7 +524,8 @@ changes if notifications are enabled
     
     
     <div class="description">
-        Creates the text needed to display a notification about a grade change
+        Finds the weighted grade point on a 6.0 scale of a course, as
+defined in the RRISD Course Catalogue
     </div>
     
 
@@ -1266,7 +559,287 @@ changes if notifications are enabled
 	
         <tr>
             
-                <td class="name"><code>gradeData</code></td>
+                <td class="name"><code>grade</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">the grade to find the grade point of</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="gpa.js.html">gpa.js</a>, <a href="gpa.js.html#line69">line 69</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    the equivalent grade point
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">number</span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="is_honors"><span class="type-signature">&lt;static> </span>is_honors<span class="signature">(coursename)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Checks if a course is an honors course based on its course name.
+This is needed to calculate the weighted grade point average.
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>coursename</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">the course to check</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="gpa.js.html">gpa.js</a>, <a href="gpa.js.html#line18">line 18</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    true if the course in an honors course
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">boolean</span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="unweighted"><span class="type-signature">&lt;static> </span>unweighted<span class="signature">(grades)</span><span class="type-signature"> &rarr; {number}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Finds the unweighted GPA on a 4.0 scale of a list of grades, as
+defined in the RRISD Course Catalogue
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>grades</code></td>
             
             
             <td class="type">
@@ -1282,7 +855,7 @@ changes if notifications are enabled
             
             
             
-            <td class="description last">information about the grade that was changed</td>
+            <td class="description last">the list of gradse to find the grade point of</td>
         </tr>
 	
 	
@@ -1313,7 +886,7 @@ changes if notifications are enabled
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hac_dom.js.html">hac_dom.js</a>, <a href="hac_dom.js.html#line850">line 850</a>
+        <a href="gpa.js.html">gpa.js</a>, <a href="gpa.js.html#line81">line 81</a>
     </li></ul></dd>
     
     
@@ -1338,7 +911,7 @@ changes if notifications are enabled
     
             
 <div class="param-desc">
-    update text for the grade change
+    the equivalent grade point
 </div>
 
 
@@ -1349,7 +922,147 @@ changes if notifications are enabled
 	</dt>
 	<dd>
 		
-<span class="param-type">string</span>
+<span class="param-type">number</span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="weighted"><span class="type-signature">&lt;static> </span>weighted<span class="signature">(grades)</span><span class="type-signature"> &rarr; {number}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Finds the weighted GPA on a 6.0 scale of a list of grades, as
+defined in the RRISD Course Catalogue
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>grades</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Object.html">Object</a></span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">the list of gradse to find the grade point of</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="gpa.js.html">gpa.js</a>, <a href="gpa.js.html#line97">line 97</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    the equivalent grade point
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">number</span>
 
 
 	</dd>

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: lib/jquery.tipsy.js</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Source: lib/jquery.tipsy.js</h1>
+    
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>// tipsy, facebook style tooltips for jquery
+// version 1.0.0a
+// (c) 2008-2010 jason frame [jason@onehackoranother.com]
+// released under the MIT license
+
+(function($) {
+    
+    function maybeCall(thing, ctx) {
+        return (typeof thing == 'function') ? (thing.call(ctx)) : thing;
+    };
+    
+    function isElementInDOM(ele) {
+      while (ele = ele.parentNode) {
+        if (ele == document) return true;
+      }
+      return false;
+    };
+    
+    function Tipsy(element, options) {
+        this.$element = $(element);
+        this.options = options;
+        this.enabled = true;
+        this.fixTitle();
+    };
+    
+    Tipsy.prototype = {
+        show: function() {
+            var title = this.getTitle();
+            if (title && this.enabled) {
+                var $tip = this.tip();
+                
+                $tip.find('.tipsy-inner')[this.options.html ? 'html' : 'text'](title);
+                $tip[0].className = 'tipsy'; // reset classname in case of dynamic gravity
+                $tip.remove().css({top: 0, left: 0, visibility: 'hidden', display: 'block'}).prependTo(document.body);
+                
+                var pos = $.extend({}, this.$element.offset(), {
+                    width: this.$element[0].offsetWidth,
+                    height: this.$element[0].offsetHeight
+                });
+                
+                var actualWidth = $tip[0].offsetWidth,
+                    actualHeight = $tip[0].offsetHeight,
+                    gravity = maybeCall(this.options.gravity, this.$element[0]);
+                
+                var tp;
+                switch (gravity.charAt(0)) {
+                    case 'n':
+                        tp = {top: pos.top + pos.height + this.options.offset, left: pos.left + pos.width / 2 - actualWidth / 2};
+                        break;
+                    case 's':
+                        tp = {top: pos.top - actualHeight - this.options.offset, left: pos.left + pos.width / 2 - actualWidth / 2};
+                        break;
+                    case 'e':
+                        tp = {top: pos.top + pos.height / 2 - actualHeight / 2, left: pos.left - actualWidth - this.options.offset};
+                        break;
+                    case 'w':
+                        tp = {top: pos.top + pos.height / 2 - actualHeight / 2, left: pos.left + pos.width + this.options.offset};
+                        break;
+                }
+                
+                if (gravity.length == 2) {
+                    if (gravity.charAt(1) == 'w') {
+                        tp.left = pos.left + pos.width / 2 - 15;
+                    } else {
+                        tp.left = pos.left + pos.width / 2 - actualWidth + 15;
+                    }
+                }
+                
+                $tip.css(tp).addClass('tipsy-' + gravity);
+                $tip.find('.tipsy-arrow')[0].className = 'tipsy-arrow tipsy-arrow-' + gravity.charAt(0);
+                if (this.options.className) {
+                    $tip.addClass(maybeCall(this.options.className, this.$element[0]));
+                }
+                
+                if (this.options.fade) {
+                    $tip.stop().css({opacity: 0, display: 'block', visibility: 'visible'}).animate({opacity: this.options.opacity});
+                } else {
+                    $tip.css({visibility: 'visible', opacity: this.options.opacity});
+                }
+            }
+        },
+        
+        hide: function() {
+            if (this.options.fade) {
+                this.tip().stop().fadeOut(function() { $(this).remove(); });
+            } else {
+                this.tip().remove();
+            }
+        },
+        
+        fixTitle: function() {
+            var $e = this.$element;
+            if ($e.attr('title') || typeof($e.attr('original-title')) != 'string') {
+                $e.attr('original-title', $e.attr('title') || '').removeAttr('title');
+            }
+        },
+        
+        getTitle: function() {
+            var title, $e = this.$element, o = this.options;
+            this.fixTitle();
+            var title, o = this.options;
+            if (typeof o.title == 'string') {
+                title = $e.attr(o.title == 'title' ? 'original-title' : o.title);
+            } else if (typeof o.title == 'function') {
+                title = o.title.call($e[0]);
+            }
+            title = ('' + title).replace(/(^\s*|\s*$)/, "");
+            return title || o.fallback;
+        },
+        
+        tip: function() {
+            if (!this.$tip) {
+                this.$tip = $('&lt;div class="tipsy">&lt;/div>').html('&lt;div class="tipsy-arrow">&lt;/div>&lt;div class="tipsy-inner">&lt;/div>');
+                this.$tip.data('tipsy-pointee', this.$element[0]);
+            }
+            return this.$tip;
+        },
+        
+        validate: function() {
+            if (!this.$element[0].parentNode) {
+                this.hide();
+                this.$element = null;
+                this.options = null;
+            }
+        },
+        
+        enable: function() { this.enabled = true; },
+        disable: function() { this.enabled = false; },
+        toggleEnabled: function() { this.enabled = !this.enabled; }
+    };
+    
+    $.fn.tipsy = function(options) {
+        
+        if (options === true) {
+            return this.data('tipsy');
+        } else if (typeof options == 'string') {
+            var tipsy = this.data('tipsy');
+            if (tipsy) tipsy[options]();
+            return this;
+        }
+        
+        options = $.extend({}, $.fn.tipsy.defaults, options);
+        
+        function get(ele) {
+            var tipsy = $.data(ele, 'tipsy');
+            if (!tipsy) {
+                tipsy = new Tipsy(ele, $.fn.tipsy.elementOptions(ele, options));
+                $.data(ele, 'tipsy', tipsy);
+            }
+            return tipsy;
+        }
+        
+        function enter() {
+            var tipsy = get(this);
+            tipsy.hoverState = 'in';
+            if (options.delayIn == 0) {
+                tipsy.show();
+            } else {
+                tipsy.fixTitle();
+                setTimeout(function() { if (tipsy.hoverState == 'in') tipsy.show(); }, options.delayIn);
+            }
+        };
+        
+        function leave() {
+            var tipsy = get(this);
+            tipsy.hoverState = 'out';
+            if (options.delayOut == 0) {
+                tipsy.hide();
+            } else {
+                setTimeout(function() { if (tipsy.hoverState == 'out') tipsy.hide(); }, options.delayOut);
+            }
+        };
+        
+        if (!options.live) this.each(function() { get(this); });
+        
+        if (options.trigger != 'manual') {
+            var binder   = options.live ? 'live' : 'bind',
+                eventIn  = options.trigger == 'hover' ? 'mouseenter' : 'focus',
+                eventOut = options.trigger == 'hover' ? 'mouseleave' : 'blur';
+            this[binder](eventIn, enter)[binder](eventOut, leave);
+        }
+        
+        return this;
+        
+    };
+    
+    $.fn.tipsy.defaults = {
+        className: null,
+        delayIn: 0,
+        delayOut: 0,
+        fade: false,
+        fallback: '',
+        gravity: 'n',
+        html: false,
+        live: false,
+        offset: 0,
+        opacity: 0.8,
+        title: 'title',
+        trigger: 'hover'
+    };
+    
+    $.fn.tipsy.revalidate = function() {
+      $('.tipsy').each(function() {
+        var pointee = $.data(this, 'tipsy-pointee');
+        if (!pointee || !isElementInDOM(pointee)) {
+          $(this).remove();
+        }
+      });
+    };
+    
+    // Overwrite this method to provide options on a per-element basis.
+    // For example, you could store the gravity in a 'tipsy-gravity' attribute:
+    // return $.extend({}, options, {gravity: $(ele).attr('tipsy-gravity') || 'n' });
+    // (remember - do not modify 'options' in place!)
+    $.fn.tipsy.elementOptions = function(ele, options) {
+        return $.metadata ? $.extend({}, options, $(ele).metadata()) : options;
+    };
+    
+    $.fn.tipsy.autoNS = function() {
+        return $(this).offset().top > ($(document).scrollTop() + $(window).height() / 2) ? 's' : 'n';
+    };
+    
+    $.fn.tipsy.autoWE = function() {
+        return $(this).offset().left > ($(document).scrollLeft() + $(window).width() / 2) ? 'e' : 'w';
+    };
+    
+    /**
+     * yields a closure of the supplied parameters, producing a function that takes
+     * no arguments and is suitable for use as an autogravity function like so:
+     *
+     * @param margin (int) - distance from the viewable region edge that an
+     *        element should be before setting its tooltip's gravity to be away
+     *        from that edge.
+     * @param prefer (string, e.g. 'n', 'sw', 'w') - the direction to prefer
+     *        if there are no viewable region edges effecting the tooltip's
+     *        gravity. It will try to vary from this minimally, for example,
+     *        if 'sw' is preferred and an element is near the right viewable 
+     *        region edge, but not the top edge, it will set the gravity for
+     *        that element's tooltip to be 'se', preserving the southern
+     *        component.
+     */
+     $.fn.tipsy.autoBounds = function(margin, prefer) {
+		return function() {
+			var dir = {ns: prefer[0], ew: (prefer.length > 1 ? prefer[1] : false)},
+			    boundTop = $(document).scrollTop() + margin,
+			    boundLeft = $(document).scrollLeft() + margin,
+			    $this = $(this);
+
+			if ($this.offset().top &lt; boundTop) dir.ns = 'n';
+			if ($this.offset().left &lt; boundLeft) dir.ew = 'w';
+			if ($(window).width() + $(document).scrollLeft() - $this.offset().left &lt; margin) dir.ew = 'e';
+			if ($(window).height() + $(document).scrollTop() - $this.offset().top &lt; margin) dir.ns = 's';
+
+			return dir.ns + (dir.ew ? dir.ew : '');
+		}
+	};
+    
+})(jQuery);</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Namespaces</h3><ul><li><a href="GPA.html">GPA</a></li><li><a href="HAC_HTML.html">HAC_HTML</a></li><li><a href="Queuer.html">Queuer</a></li><li><a href="RRISD_HAC.html">RRISD_HAC</a></li><li><a href="Updater.html">Updater</a></li></ul><h3>Global</h3><ul><li><a href="global.html#Ad">Ad</a></li><li><a href="global.html#AISD_HAC">AISD_HAC</a></li><li><a href="global.html#animations_enabled">animations_enabled</a></li><li><a href="global.html#asianness">asianness</a></li><li><a href="global.html#asianness_on">asianness_on</a></li><li><a href="global.html#badge_enabled">badge_enabled</a></li><li><a href="global.html#cached_refresh_interval">cached_refresh_interval</a></li><li><a href="global.html#colorization_enabled">colorization_enabled</a></li><li><a href="global.html#DEFAULT_ASIANNESS">DEFAULT_ASIANNESS</a></li><li><a href="global.html#default_error_handler">default_error_handler</a></li><li><a href="global.html#DEFAULT_GPA_PRECISION">DEFAULT_GPA_PRECISION</a></li><li><a href="global.html#DEFAULT_HUE">DEFAULT_HUE</a></li><li><a href="global.html#DEFAULT_NOTIF_DURATION">DEFAULT_NOTIF_DURATION</a></li><li><a href="global.html#DEFAULT_R_INT">DEFAULT_R_INT</a></li><li><a href="global.html#disable_login_form">disable_login_form</a></li><li><a href="global.html#displayGrades">displayGrades</a></li><li><a href="global.html#generate_color_table">generate_color_table</a></li><li><a href="global.html#getVersion">getVersion</a></li><li><a href="global.html#gpa_enabled">gpa_enabled</a></li><li><a href="global.html#handle_load_error">handle_load_error</a></li><li><a href="global.html#handle_load_error_class">handle_load_error_class</a></li><li><a href="global.html#hide_login_form">hide_login_form</a></li><li><a href="global.html#hue">hue</a></li><li><a href="global.html#hue_enabled">hue_enabled</a></li><li><a href="global.html#imposter">imposter</a></li><li><a href="global.html#isValidGradeData">isValidGradeData</a></li><li><a href="global.html#loadClassGrades">loadClassGrades</a></li><li><a href="global.html#lock">lock</a></li><li><a href="global.html#login">login</a></li><li><a href="global.html#login_to_aisd">login_to_aisd</a></li><li><a href="global.html#login_to_rrisd">login_to_rrisd</a></li><li><a href="global.html#logout">logout</a></li><li><a href="global.html#notifs_enabled">notifs_enabled</a></li><li><a href="global.html#on_error_logging_in">on_error_logging_in</a></li><li><a href="global.html#password_enabled">password_enabled</a></li><li><a href="global.html#process_update">process_update</a></li><li><a href="global.html#processUpdatedClassGrades">processUpdatedClassGrades</a></li><li><a href="global.html#processUpdatedGrades">processUpdatedGrades</a></li><li><a href="global.html#r_interval">r_interval</a></li><li><a href="global.html#refresh_enabled">refresh_enabled</a></li><li><a href="global.html#reset_login_form">reset_login_form</a></li><li><a href="global.html#set_password_boxes">set_password_boxes</a></li><li><a href="global.html#setChangedGradeIndicators">setChangedGradeIndicators</a></li><li><a href="global.html#setSliderIndicator">setSliderIndicator</a></li><li><a href="global.html#shadowMax">shadowMax</a></li><li><a href="global.html#show_error">show_error</a></li><li><a href="global.html#show_login_error">show_login_error</a></li><li><a href="global.html#showCachedGrades">showCachedGrades</a></li><li><a href="global.html#silent_update">silent_update</a></li><li><a href="global.html#single_notif">single_notif</a></li><li><a href="global.html#theInterval">theInterval</a></li><li><a href="global.html#throttle">throttle</a></li><li><a href="global.html#toast">toast</a></li><li><a href="global.html#unlock">unlock</a></li><li><a href="global.html#update">update</a></li><li><a href="global.html#update_options_dom">update_options_dom</a></li><li><a href="global.html#XHR_Queue">XHR_Queue</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Wed Sep 11 2013 20:10:18 GMT-0500 (CDT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
