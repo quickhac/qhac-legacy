@@ -1,11 +1,11 @@
 function get_random_inspiring_quote() {
-	var $root = $(document.createDocumentFragment());
+	var $blockquote = $(document.createElement("blockquote"));
 	var quote = INSPIRING_QUOTES[parseInt(Math.random() * INSPIRING_QUOTES.length)];
-	// $root.append("\"" + quote.text + "\" &mdash; ");
+	// $blockquote.append("\"" + quote.text + "\" &mdash; ");
 	quote.text.replace("'", "&apos;");
 	var $q = $(document.createElement("q"));
 	$q.html(quote.text);
-	$root.append($q);
+	$blockquote.append($q);
 	var $cite = $(document.createElement("cite"));
 	if (quote.hasOwnProperty("link")) {
 		var $link = $(document.createElement("a"));
@@ -14,8 +14,8 @@ function get_random_inspiring_quote() {
 	} else {
 		$cite.text(quote.source);
 	}
-	$root.append($cite);
-	return $root;
+	$blockquote.append($cite);
+	return $blockquote;
 }
 
 var INSPIRING_QUOTES = [
@@ -154,5 +154,17 @@ var INSPIRING_QUOTES = [
 	{
 		text: "Your future is created by what you do today, not tomorrow.",
 		source: "Robert Kiyosaki"
+	},
+	{
+		text: "Before I do anything, I ask myself, \"Would an idiot do that?\" and if the answer is yes, I do not do that thing.",
+		source: "Dwight Schrute"
+	},
+	{
+		text: "Work hard. Dream big.",
+		source: "unknown"
+	},
+	{
+		text: "Try not to become a man of success but rather a man of value.",
+		source: "Albert Einstein"
 	}
 ];

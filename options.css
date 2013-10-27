@@ -189,15 +189,17 @@ input[type="number"] {
 	/*-webkit-transition: 0s opacity linear 0s;*/
 }
 #quote {
-	text-align: left;
-	float: right;
-	width: 220px;
+	/*float: left;*/
+	width: 320px;
+	margin: 32px auto;
+	/*margin-left: -230px;*/
+}
+#quote blockquote {
+	text-align: center;
 	margin: 0;
-	margin-right: -230px;
 	padding: 0;
-	/*box-sizing: border-box;*/
 	line-height: 1.5;
-	/*font-size: 20px;*/
+	font-size: 20px;
 	font-family: 'Merriweather', Georgia;
 }
 #quote q {
@@ -211,6 +213,8 @@ input[type="number"] {
 	float: right;
 	text-align: right;
 	color: #999999;
+	font-size: 80%;
+	line-height: 30px;
 }
 #quote cite:before {
 	content: '\2014' ' ';
