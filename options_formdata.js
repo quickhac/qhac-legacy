@@ -308,6 +308,8 @@ var options_formdata = {
 							validation_responses: [
 								{
 									states: [
+										// You probably shouldn't mess with these, it took me a few days just to figure
+										// out the perfect combination. So basically, the following is magic.
 										{ "np_required": true, "np_length": false, "op_empty": true, "np_empty": false },
 										{ "np_required": true, "np_length": false, "cp_empty": false, "np_empty": true },
 										{ "np_required": true, "np_length": false, "op_empty": false },
@@ -372,6 +374,7 @@ var options_formdata = {
 		}
 	],
 	on_submit: function (toggles) {
+		// Checks for complete validity
 		var all_valid = true, toggle, option, section, section_option;
 		for (var i = 0, n = toggles.length; i < n; i++) {
 			toggle = toggles[i];
@@ -387,7 +390,7 @@ var options_formdata = {
 				}
 			}
 		}
-		console.log(all_valid);
+		// console.log(all_valid);
 
 		if (!all_valid) return false;
 

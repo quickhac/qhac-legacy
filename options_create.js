@@ -58,12 +58,10 @@ Validator = (function() {
     returnValue = true;
     _ref = this.rules;
     for (name in _ref) {
+      if (!__hasProp.call(_ref, name)) continue;
       rule = _ref[name];
-      if (this.rules.hasOwnProperty(name)) {
-        state[name] = rule.call(this, this.getInput());
-      }
+      state[name] = rule.call(this, this.getInput());
     }
-    // console.log(this);
     successes = this.responses.filter(function(response, index, array) {
       var checkVal, isValid, key, resState, responseState, stateIsTrue, _i, _len, _ref1;
       isValid = false;
