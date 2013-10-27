@@ -592,6 +592,8 @@ function setChangedGradeIndicators() {
 
 // init
 $(function () {
+	// hide the body to hide the ugly reflows
+	$(document.body).css('opacity', 0);
 
 	// Setup AJAX (converters not used)
 	$.ajaxSetup({
@@ -703,8 +705,7 @@ $(function () {
 		$("#login_form").addClass("hide");
 		$("#lastupdated").html(Updater.get_update_text());
 		GPA.show();
-		// bug: body won't scroll if the "logged_in" class is added immediately
-		window.setTimeout(function () { $(document.body).addClass("logged_in"); }, 100);
+		$(document.body).addClass("logged_in");
 	}
 
 	$("#logOutToReset").click(function () {
@@ -734,7 +735,13 @@ $(function () {
 		$("#restricted_access_wrapper").addClass("hide");
 	}
 
-	// $("html").css("height", $("#main_view").outerHeight() + "px");
+	// bug: http://stackoverflow.com/questions/13217353/random-whitespace-in-google-chrome-extension
+	// TODO: find a better workaround, this one is complete crap
+	document.body.style.marginTop = '1px';
+	window.setTimeout(function () {
+		document.body.style.marginTop = '0px';
+		// fade in body after done hiding the ugly crap
+		$(document.body).animate({opacity: 1}); }, 400);
 });
 
 // analytics
