@@ -675,7 +675,7 @@ $(function () {
 	// shadow on scrolling
 	$(window).scroll(throttle(30, function() {
 			var pos = $(window).scrollTop();
-			if (pos == 0) {
+			if (pos <= 0) {
 				$("#direct_access_form").css("box-shadow", "none");
 				shadowMax = false;
 			}
