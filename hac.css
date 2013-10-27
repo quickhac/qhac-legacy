@@ -491,8 +491,13 @@ select {
 	border-radius: 4px;
 	color: #444;
 	font-size: 20px;
+	cursor: pointer;
 }
 
+#do_login:disabled {
+	background: #CBC29F;
+	cursor: not-allowed;
+}
 #do_login:not([disabled]):active, #do_unlock:not([disabled]):active {
 	box-shadow: inset 0 0 4px #666;
 }
@@ -669,7 +674,7 @@ body.logged_in #grades {
 #grades td a.up::after {
 	content: "\00bb";
 	display: inline-block;
-	font-size: 1.25em
+	font-size: 1.25em;
 	line-height: 1;
 	text-decoration: none;
 
@@ -679,7 +684,7 @@ body.logged_in #grades {
 #grades td a.down::after {
 	content: "\00ab";
 	display: inline-block;
-	font-size: 1.25em
+	font-size: 1.25em;
 	line-height: 1;
 	text-decoration: none;
 
@@ -689,7 +694,7 @@ body.logged_in #grades {
 #grades td a.same::after {
 	content: "*";
 	display: inline-block;
-	font-size: 1.25em
+	font-size: 1.25em;
 	line-height: 1;
 	text-decoration: none;
 }

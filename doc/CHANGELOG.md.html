@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset='UTF-8'>
+  <title>CoffeeScript API Documentation</title>
+  <link rel='stylesheet' href='assets/codo.css' type='text/css'>
+  <script src='assets/codo.js'></script>
+  <script src='assets/search_data.js'></script>
+</head>
+  <body>
+    <div id='base' data-path=''></div>
+<div id='header'>
+  <div id='menu'>
+    <a href='README.md.html' title='Hacaccess'>Hacaccess</a>
+    &raquo;
+    <a href='class_index.html' title='Index'>Index</a>
+    &raquo;
+    <span class='title'>CHANGELOG.md</span>
+    <nav>
+      <ul>
+        <li class='noframes'>
+          (<a class='noframes' href='#'>no frames</a>)
+        </li>
+      </ul>
+    </nav>
+    <div id='search'>
+      <a id='class_list_link' href='class_list.html'>Classes</a>
+      <a id='file_list_link' href='file_list.html'>Files</a>
+      <a id='method_list_link' href='method_list.html'>Methods</a>
+      <a id='extra_list_link' href='extra_list.html'>Extras</a>
+    </div>
+  </div>
+  <iframe id='search_frame'></iframe>
+  <div id='fuzzySearch'>
+    <input type='text'>
+    <ol></ol>
+  </div>
+  <div id='help'>
+    <p>
+      Quickly fuzzy find classes, mixins, methods, file:
+    </p>
+    <ul>
+      <li>
+        <span>Ctrl-T</span>
+        Open fuzzy finder dialog
+      </li>
+    </ul>
+    <p>
+      In frame mode you can toggle the list naviation frame on the left side:
+    </p>
+    <ul>
+      <li>
+        <span>Ctrl-L</span>
+        Toggle list view
+      </li>
+    </ul>
+    <p>
+      You can focus a list in frame mode or toggle a tab in frameless mode:
+    </p>
+    <ul>
+      <li>
+        <span>Ctrl-C</span>
+        Class list
+      </li>
+      <li>
+        <span>Ctrl-I</span>
+        Mixin list
+      </li>
+      <li>
+        <span>Ctrl-F</span>
+        File list
+      </li>
+      <li>
+        <span>Ctrl-M</span>
+        Method list
+      </li>
+      <li>
+        <span>Ctrl-E</span>
+        Extras list
+      </li>
+    </ul>
+    <p>
+      You can focus and blur the search input:
+    </p>
+    <ul>
+      <li>
+        <span>Ctrl-S</span>
+        Focus search input
+      </li>
+      <li>
+        <span>Esc</span>
+        Blur search input
+      </li>
+    </ul>
+    <p>
+      In frameless mode you can close the list tab:
+    </p>
+    <ul>
+      <li>
+        <span>Esc</span>
+        Close list tab
+      </li>
+    </ul>
+  </div>
+</div>
+    <div id='content'>
+      <nav class='toc'>
+        <p class='title'>
+          <a class='hide_toc' href='#'>
+            <strong>Table of Contents</strong>
+          </a>
+          <small>
+            (<a class='float_toc' href='#'>left</a>)
+          </small>
+        </p>
+      </nav>
+      <div id='filecontents'>
+        <h1>Changelog</h1>
+<h3>2.0.7</h3>
+<ul>
+<li>Add support for 8 digit student IDs</li>
+</ul>
+<h3>2.0.6</h3>
+<ul>
+<li>Fetch ads from server instead of hardcoding them</li>
+<li>Fix NaN when adding grade to empty category</li>
+</ul>
+<h3>2.0.5</h3>
+<ul>
+<li>Fix automatic updating not working unless user changed options</li>
+</ul>
+<h3>2.0.4</h3>
+<ul>
+<li>Fix logged out qHAC being CPU/network hog</li>
+</ul>
+<h3>2.0.3</h3>
+<ul>
+<li>Fix user interactivity disabled on logging in</li>
+</ul>
+<h3>2.0.2</h3>
+<ul>
+<li>Add JSDoc documentation</li>
+</ul>
+<h3>2.0.1</h3>
+<ul>
+<li>Merge in ability to save grade data from 1.2.10</li>
+</ul>
+<h3>2.0.0</h3>
+<ul>
+<li>Add ability to add new assignments</li>
+<li>Add new indicator for Offline Mode</li>
+<li>Add small indicators to show which grades have changed</li>
+<li>Change &#39;busy&#39; spinner sprite</li>
+<li>Cache class grades for offline use and pre-loading to increse responsiveness</li>
+<li>Adjust and even out the column widths of assignment grades for readability</li>
+<li>Add color schemes</li>
+<li>Add special color for extra credit</li>
+<li>Render logo in canvas</li>
+<li>Other minor visual updates</li>
+<li>Handle invalid responses from HAC gracefully</li>
+<li>Only load one AJAX request at a time</li>
+<li>Completely rewrite options page</li>
+<li>Add option to show consolidated grade change notifications</li>
+<li>Add password protection (with cool animations! :D)</li>
+<li>Add support for Austin ISD users</li>
+<li>Enhance support for Grisham MS</li>
+<li>Migrate to jQuery 2.0</li>
+</ul>
+<h3>1.2.10</h3>
+<ul>
+<li>Add ability to save all grade data</li>
+</ul>
+<h3>1.2.9</h3>
+<ul>
+<li>Add tracking of background updates</li>
+</ul>
+<h3>1.2.8</h3>
+<ul>
+<li>Fix CPU and network hog</li>
+</ul>
+<h3>1.2.7</h3>
+<ul>
+<li>Add developer credit to Tristan Seifert (oops!)</li>
+</ul>
+<h3>1.2.6</h3>
+<ul>
+<li>Add checkboxes to options page for more intuitive disabling of grade colorization and automatic refresh</li>
+<li>Add link to survey</li>
+<li>Refactor ad generation code</li>
+</ul>
+<h3>1.2.5</h3>
+<ul>
+<li>Add tooltip showing original grade when editing a grade (via tipsy)</li>
+<li>Add &quot;edited&quot; notice to the header</li>
+<li>Highlight edited six-weeks averages in blue</li>
+<li>Limit six weeks and semester averages to between 0 and 100</li>
+<li>Fix colorising algorithm to handle extreme grades gracefully</li>
+<li>Allow editing of semester exam grades</li>
+</ul>
+<h3>1.2.4</h3>
+<ul>
+<li>Add notice of workaround for Mountain Lion users potentially having scrolling issues</li>
+</ul>
+<h2>1.2.2</h2>
+<ul>
+<li>Refactor code</li>
+<li>Change the way the scrolling shadow is calculated</li>
+</ul>
+<h3>1.2.1</h3>
+<ul>
+<li>Add analytics for grade editing</li>
+<li>Hide &quot;User-edited&quot; notice when changing grade back to original value</li>
+<li>Fix formatting issues with grade editor</li>
+<li>Change the way the scrolling shadow is calculated</li>
+<li>Add extra credit case to grade calculation (does not cover all extra credit)</li>
+</ul>
+<h3>1.2.0</h3>
+<ul>
+<li>Add ability to edit assignment grades</li>
+</ul>
+<h3>1.1.2</h3>
+<ul>
+<li>Add ad for Sailesh</li>
+</ul>
+<h3>1.1.1</h3>
+<ul>
+<li>Update overall grades when loading class grades</li>
+</ul>
+<h3>1.1.0</h3>
+<ul>
+<li>Fix bugs</li>
+<li>Show version on options page</li>
+<li>Other options page tweaks</li>
+</ul>
+<h3>1.0.4</h3>
+<ul>
+<li>Make orchestra booster ad work</li>
+</ul>
+<h3>1.0.2</h3>
+<ul>
+<li>Add orchestra booster ad</li>
+</ul>
+<h3>1.0.1</h3>
+<ul>
+<li>Add detailed Google Analytics code</li>
+</ul>
+<h3>1.0.0</h3>
+<ul>
+<li>First official release</li>
+</ul>
+
+      </div>
+    </div>
+    <div id='footer'>
+  Generated on
+  Fri Oct 11 2013 02:44:15 GMT-0400 (EDT)
+  by
+  <a href='https://github.com/netzpirat/codo' title='CoffeeScript API documentation generator'>Codo</a>
+  v1.9.0
+  (Node.js v0.8.16).
+  &#10034;
+  Press Ctrl-h to see the keyboard shortcuts
+  &#10034;
+  <a href='http://twitter.com/#!/netzpirat'>@netzpirat</a>
+  &#10034;
+  <a href='https://mksoft.ch'>mksoft.ch</a>
+</div>
+  </body>
+</html>
