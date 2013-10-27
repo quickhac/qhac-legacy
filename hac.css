@@ -7,14 +7,10 @@
 	src: url('assets/OpenSans-Light.ttf');
 }
 
-html {
-	min-width: 600px;
-	min-height: 200px;
-}
-
 body {
 	color: #222222;
 	cursor: default;
+	display: none;
 }
 
 body.noanimations * {

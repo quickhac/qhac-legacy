@@ -592,8 +592,7 @@ function setChangedGradeIndicators() {
 
 // init
 $(function () {
-	// hide the body to hide the ugly reflows
-	$(document.body).css('opacity', 0);
+	// body is hidden in css on page load
 
 	// Setup AJAX (converters not used)
 	$.ajaxSetup({
@@ -736,12 +735,11 @@ $(function () {
 	}
 
 	// bug: http://stackoverflow.com/questions/13217353/random-whitespace-in-google-chrome-extension
-	// TODO: find a better workaround, this one is complete crap
-	document.body.style.marginTop = '1px';
-	window.setTimeout(function () {
-		document.body.style.marginTop = '0px';
-		// fade in body after done hiding the ugly crap
-		$(document.body).animate({opacity: 1}); }, 400);
+	// show body after done populating DOM
+	$(document.body).css({
+		display: 'block',
+		width: '600px',
+		height: $(document.body).height()});
 });
 
 // analytics
