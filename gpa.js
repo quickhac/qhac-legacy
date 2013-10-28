@@ -10,13 +10,53 @@ var DEFAULT_GPA_PRECISION = 4;
  */
 var GPA = {
 	/**
-	 * Checks if a course is an honors course based on its course name.
-	 * This is needed to calculate the weighted grade point average.
-	 * @param {string} coursename - the course to check
-	 * @returns {boolean} true if the course in an honors course
+	 * Retrieves the list of Honors course names from localStorage.
+	 * If said list does not exist, populates said list with all
+	 * of the courses that have course names containing the keywords
+	 * AP, IB, or TAG from the list of grades in localStorage.
+	 * @returns {string[]} the list of Honors course names
 	 */
-	is_honors: function(coursename) {
-		return /(ap|ib|tag)/i.test(coursename);
+	get_honors_courses: function() {
+		if (localStorage.hasOwnProperty("gpa_honors")) {
+			return JSON.parse(localStorage["gpa_honors"])
+		} else {
+			var honors = [];
+			var grades = JSON.parse(localStorage["grades"]);
+			for (var i = 0; i < grades.length; i++)
+				if (/\b(ap|ib|tag)\b/i.test(grades[i].title))
+					honors[honors.length] = grades[i].title;
+			localStorage["gpa_honors"] = JSON.stringify(honors);
+			return honors;
+		}
+	},
+
+	/**
+	 * Retrieves the list of course names that are blacklisted from the
+	 * GPA calculation from localStorage. If said list does not exist,
+	 * initialises said blacklist as an empty array and returns that.
+	 * @returns {string[]} the list of GPA-blacklisted course names
+	 */
+	get_gpa_blacklist: function() {
+		if (localStorage.hasOwnProperty("gpa_blacklist")) {
+			return JSON.parse(localStorage["gpa_blacklist"]);
+		} else {
+			localStorage["gpa_blacklist"] = "[]";
+			return [];
+		}
+	},
+
+	/**
+	 * Removes blacklisted courses from an array of grades.
+	 * @param {Object} grades
+	 * @returns {Object}
+	 */
+	filter_grades: function(grades) {
+		var blacklist = GPA.get_gpa_blacklist();
+		var new_grades = [];
+		for (var i = 0; i < grades.length; i++)
+			if (blacklist.indexOf(grades[i].title) == -1)
+				new_grades[new_grades.length] = grades[i];
+		return new_grades;
 	},
 
 	/**
@@ -54,7 +94,7 @@ var GPA = {
 	 * @param {number} grade - the grade to find the grade point of
 	 * @returns {number} the equivalent grade point
 	 */
-	grade_point_unweighted: function(grade, title) {
+	grade_point_unweighted: function(grade) {
 		if (GPA._is_empty(grade)) return NaN;
 		if (grade < 70) return 0;
 		return Math.min(Math.floor((grade - 60) / 10 + 1), 4);
@@ -66,23 +106,25 @@ var GPA = {
 	 * @param {number} grade - the grade to find the grade point of
 	 * @returns {number} the equivalent grade point
 	 */
-	grade_point_weighted: function(grade, title) {
+	grade_point_weighted: function(grade, title, honors_courses) {
 		if (GPA._is_empty(grade)) return NaN;
 		if (grade < 70) return 0;
-		return (grade - 50) / 10 + (GPA.is_honors(title) ? 1 : 0);
+		return (grade - 50) / 10 + (honors_courses.indexOf(title) == -1 ? 0 : 1);
 	},
 
 	/**
 	 * Finds the grade point average of a list of grades.
-	 * @param {JSON} grades - the list of grades to find the GPA of
+	 * @param {Object} grades - the list of grades to find the GPA of
 	 * @param {function} callback - a function to calculate grade point
 	 * from grade
 	 */
 	calculate: function(grades, callback) {
 		var courses = [];
+		var honors_courses = GPA.get_honors_courses();
+		grades = GPA.filter_grades(grades);
 		for (var i = 0; i < grades.length; i++) {
-			courses[courses.length] = callback(grades[i].grades[4], grades[i].title);
-			courses[courses.length] = callback(grades[i].grades[9], grades[i].title);
+			courses[courses.length] = callback(grades[i].grades[4], grades[i].title, honors_courses);
+			courses[courses.length] = callback(grades[i].grades[9], grades[i].title, honors_courses);
 		}
 		// average all GPAs to get final number
 		return GPA._avg(courses);
