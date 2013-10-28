@@ -741,9 +741,9 @@ $(function () {
 			width: '600px',
 			height: '100px',
 			display: 'block'})
-		.animate({
-			opacity: 1,
-			height: $(document.body).height()}); // this is the hackiest HAC hack that QuickHAC has ever HAC'd
+		.animate(
+			{height: $(document.body).height()},
+			1000); // this is the hackiest HAC hack that QuickHAC has ever HAC'd
 	}, 100);
 });
 
