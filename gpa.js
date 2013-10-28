@@ -97,7 +97,8 @@ var GPA = {
 	grade_point_unweighted: function(grade) {
 		if (GPA._is_empty(grade)) return NaN;
 		if (grade < 70) return 0;
-		return Math.min(Math.floor((grade - 60) / 10 + 1), 4);
+		// return Math.min(Math.floor((grade - 60) / 10 + 1), 4);
+		return Math.min((grade - 60) / 10, 4);
 	},
 
 	/**
