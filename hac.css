@@ -860,32 +860,52 @@ body.logged_in #grades {
 
 .CurrentAverage {
 	border-radius: 4px;
-	padding: 4px;
-	margin: 16px 190px;
+	/*padding: 4px;*/
+	/*margin: 16px 190px;*/
 	text-align: center;
 	text-transform: uppercase;
-	font-size: 16px;
+	font-size: 14px;
+	line-height: 20px;
+	font-weight: 700;
+	color: rgba(0,0,0,0.5);
+}
+.CurrentAverage span {
+	font-size: 20px;
+	font-weight: 400;
+	color: #222222;
+	width: 20px;
+	height: 20px;
+	line-height: 20px;
+	display: inline-block;
+	padding: 8px;
+	border-radius: 50%;
 }
 
 .TableHeader th {
-	font-family: 'Open Sans Light';
-	font-weight: normal;
+	font-family: 'Open Sans';
+	font-weight: 700;
+	color: #666666;
 	text-transform: uppercase;
 	font-size: 12px;
 	text-align: left;
 	padding-left: 4px;
+	letter-spacing: 1px;
+}
+
+/* Center date and grade header */
+.TableHeader th:nth-child(2),
+.TableHeader th:nth-child(3) {
+	text-align: center;
 }
 
 .AssignmentName {
 	width: 40%;
 }
 
-.DateDue {
-	width: 13%;
-}
-
+.DateDue,
 .AssignmentGrade {
 	width: 13%;
+	text-align: center;
 }
 
 .AssignmentPointsPossible {
@@ -897,7 +917,11 @@ body.logged_in #grades {
 }
 
 .AssignmentGrade:hover {
-	box-shadow: inset 0 0 8px #888;
+	box-shadow: inset 0 0 0 2px rgba(0,0,0,0.25)
+}
+
+.CategoryAverage {
+	text-align: center;
 }
 
 #classgrades .GradeEditor {
