@@ -377,9 +377,9 @@ var options_formdata = {
 			id: "gpa_enabled",
 			type: "toggle",
 			default_value: true,
-			info: "Display your GPA in the top right corner of qHAC.<br>\
-				Click a course name in the grades display on the popup to\
-				toggle whether it is used in the GPA calculation or not.",
+			info: "Display your GPA in the bottom left corner of qHAC.<br>\
+				Click the GPA display to choose which courses are used in the calculation.<br>\
+				<strong>Disclaimer: GPA not guaranteed to be accurate.</strong>",
 			attributes: {},
 			on_change: function (el) {
 				update_options_dom(false);
