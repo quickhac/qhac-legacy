@@ -166,5 +166,29 @@ var INSPIRING_QUOTES = [
 	{
 		text: "Try not to become a man of success but rather a man of value.",
 		source: "Albert Einstein"
+	},
+	{
+		text: "The difference between a successful person and others is not a lack of strength, or knowledge, but rather a lack in will.",
+		source: "Vince Lombardi"
+	},
+	{
+		text: "If you're going through hell, keep going.",
+		source: "Winston Churchill"
+	},
+	{
+		text: "If you always put a limit on everything you do, it will spread into your work and into your life. There are no limits. There are only plateaus, and you must not stay there, you must go beyond them.",
+		source: "Bruce Lee"
+	},
+	{
+		text: "Don't fear failure... in great attempts it is glorious even to fail.",
+		source: "Bruce Lee"
+	},
+	{
+		text: "Our virtues and our failings are inseparable, like force and matter. When they separate, man is no more.",
+		source: "Nikola Tesla"
+	},
+	{
+		text: "I could either watch it happen, or be part of it.",
+		source: "Elon Musk"
 	}
 ];
