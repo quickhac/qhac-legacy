@@ -736,11 +736,15 @@ $(function () {
 
 	// bug: http://stackoverflow.com/questions/13217353/random-whitespace-in-google-chrome-extension
 	// show body after done populating DOM
-	window.setTimeout(function() { $(document.body).css({
+	window.setTimeout(function() {
+		$(document.body).css({
 			width: '600px',
-			height: $(document.body).height(),
-			display: 'block'});
-	}, 200);
+			height: '100px',
+			display: 'block'})
+		.animate({
+			opacity: 1,
+			height: $(document.body).height()}); // this is the hackiest HAC hack that QuickHAC has ever HAC'd
+	}, 100);
 });
 
 // analytics
