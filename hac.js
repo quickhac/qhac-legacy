@@ -285,7 +285,14 @@ function generateBottomBar() {
 
 	var $gpa_wrapper = $(document.createElement("span"));
 	$gpa_wrapper.attr("id", "gpa_wrapper").html("GPA: ")
+		.click(GPA.toggle_panel)
 		.append($(document.createElement("span")).attr("id", "gpa"));
+	$("#GPA_panel_wrapper").click(GPA.toggle_panel);
+	$("#GPA_panel").click(function (event) {
+		// event.preventDefault();
+		// event.stopPropagation();
+		// return false;
+	});
 
 	var ad = Ad.generate_ad();
 

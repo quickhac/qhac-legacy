@@ -172,5 +172,13 @@ var GPA = {
 			$("#ad_wrapper").css("float", "none");
 			$("#ad").css({"float": "left", "paddingTop": "2px"});
 		}
+	},
+
+
+	/** Displays the GPA settings panel **/
+	toggle_panel: function() {
+		$panel = $("#GPA_panel");
+		
+		$("#GPA_panel_wrapper").toggleClass('visible');
 	}
 }
