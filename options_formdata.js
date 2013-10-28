@@ -389,7 +389,8 @@ var options_formdata = {
 					title: "Weighted",
 					id: "gpa_weighted",
 					type: "toggle",
-					info: "Use the 6.0 scale GPA",
+					info: "Display weighted GPA.<br>\
+						RRISD uses 6.0 scale. AISD uses 5.0 scale.",
 					default_value: false,
 					attributes: {},
 					on_change: function (el) {},

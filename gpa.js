@@ -89,6 +89,23 @@ var GPA = {
 	},
 
 	/**
+	 * Finds the numerical offset for the conversion from 100-point scale
+	 * grade to grade point, as defined by the formula:<br>
+	 * <pre>
+	 *     grade point (< 70) := 0
+	 *     grade point (grade) := (grade - offset) / 10
+	 *     grade point (honors grade) := (grade - offset) / 10 + 1
+	 * </pre>
+	 * @returns {number}
+	 */
+	offset: function() {
+		if (localStorage["district"] == "rrisd")
+			return 50;
+		else if (localStorage["district"] == "aisd")
+			return 60;
+	},
+
+	/**
 	 * Finds the unweighted grade point on a 4.0 scale of a course,
 	 * as defined in the RRISD Course Catalogue
 	 * @param {number} grade - the grade to find the grade point of
@@ -103,14 +120,17 @@ var GPA = {
 
 	/**
 	 * Finds the weighted grade point on a 6.0 scale of a course, as
-	 * defined in the RRISD Course Catalogue
+	 * defined in the RRISD Course Catalogue, or a 5.0 scale, as defined
+	 * in the AISD Student Handbook, page 116
+	 * (http://archive.austinisd.org/academics/docs/2013Schoolguide/en/ssig_2012_2013_Complete.pdf)
 	 * @param {number} grade - the grade to find the grade point of
 	 * @returns {number} the equivalent grade point
 	 */
 	grade_point_weighted: function(grade, title, honors_courses) {
 		if (GPA._is_empty(grade)) return NaN;
 		if (grade < 70) return 0;
-		return (grade - 50) / 10 + (honors_courses.indexOf(title) == -1 ? 0 : 1);
+		var offset = GPA.offset();
+		return (grade - offset) / 10 + (honors_courses.indexOf(title) == -1 ? 0 : 1);
 	},
 
 	/**
@@ -164,7 +184,7 @@ var GPA = {
 
 	show: function() {
 		if (!localStorage["gpa_enabled"] || (localStorage["gpa_enabled"] == "true")) {
-			var gpa = !localStorage["gpa_weighted"] || (localStorage["gpa_weighted"] == "true") ?
+			var gpa = (localStorage["gpa_weighted"] == "true") ?
 				GPA.weighted(JSON.parse(localStorage['grades'])) :
 				GPA.unweighted(JSON.parse(localStorage['grades']));
 			$("#gpa").text(gpa.toFixed(parseInt(localStorage["gpa_precision"]) || DEFAULT_GPA_PRECISION));
