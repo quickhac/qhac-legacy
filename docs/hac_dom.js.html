@@ -59,6 +59,7 @@ var HAC_HTML =
 	/**
 	 * Converts a server response for marking period grades into JSON
 	 * @param {string} html - the HTML document to parse
+	 * @returns {JSON} the grades extracted from the document
 	 */
 	html_to_jso: function (html) {
 		var myObj = [];
@@ -111,6 +112,7 @@ var HAC_HTML =
 	/*
 	 * Converts marking period grades JSON to a DOM node
 	 * @param {JSON} json - the JSON to parse
+	 * @returns {Element} an HTML element with the grades in a table
 	 */
 	json_to_html: function (json) {
 		var root = document.createElement("table");
@@ -202,6 +204,7 @@ var HAC_HTML =
 	/*
 	 * Converts a server response for class grades into JSON
 	 * @param {string} html - the HTML document to parse
+	 * @returns {JSON} the grades extracted from the document
 	 */
 	cgrades_to_json: function (html) {
 		var context = $.parseHTML(html);
@@ -285,6 +288,7 @@ var HAC_HTML =
 	/*
 	 * Converts a class grades JSON to a DOM element
 	 * @param {JSON} json - the JSON to parse
+	 * @returns {Element} an HTML element with the grades in a table
 	 */
 	cjson_to_html: function (json) {
 		var root = document.createDocumentFragment();
@@ -355,7 +359,12 @@ var HAC_HTML =
 			$(catTableHeaderRow).append(headerCells);
 
 			var catTableBody = document.createElement("tbody");
-			$(catTable).addClass("DataTable").append(catTableBody);
+			$(catTable).addClass("DataTable").append(catTableBody)
+				// add weight
+				.data({
+						"weight": json.cats[i].weight,
+						"is_percent_weight": json.cats[i].is_percent_weight
+				});
 
 			// each grade
 			for (var j = 0; j &lt; json.cats[i].grades.length; j++) {
@@ -379,9 +388,7 @@ var HAC_HTML =
 					.text(ptsIsNaN ? "" : pts).data("editing", "0")
 					.css('background', ptsIsNaN ? "#FFF" : HAC_HTML.colorize(pts * 100 / json.cats[i].grades[j].ptsPoss))
 					.data({
-						"orig": ptsIsNaN ? "" : pts,
-						"weight": json.cats[i].weight,
-						"is_percent_weight": json.cats[i].is_percent_weight
+						"orig": ptsIsNaN ? "" : pts
 					})
 					.attr("title", "Original grade: " + (ptsIsNaN ? "none" : pts))
 					// allow editing
@@ -597,19 +604,18 @@ var HAC_HTML =
 		var subjectTotal = 0, weightTotal = 0, bonus = 0;
 		rows = $("#classgrades").find(".DataTable");
 		for (var i = 0; i &lt; rows.length; i++) {
+			$currRow = $(rows[i]);
 			if ($(rows[i]).find(".CategoryAverage").text() != "") {
-				// var weight = parseInt($(rows[i]).prev().prev().text().match(/(\d*)%$/)[1]);
-				var weight = $(rows[i]).find(".AssignmentGrade").data("weight");
-				var isPercentWeight = $(rows[i]).find(".AssignmentGrade").data("is_percent_weight");
-				// console.log($(rows[i]).find(".AssignmentGrade")[0], weight, isPercentWeight);
-				categoryAverage = parseFloat($(rows[i]).find(".CategoryAverage").text());
+				var weight = $currRow.data("weight");
+				var isPercentWeight = $currRow.data("is_percent_weight");
+				categoryAverage = parseFloat($currRow.find(".CategoryAverage").text());
 				subjectTotal += categoryAverage * weight;
 				weightTotal += weight;
 
 				// special case: extra credit
-				if (isPercentWeight && weight == 0 && $(rows[i]).find(".AssignmentPointsPossible").length != 0) {
+				if (isPercentWeight && weight == 0 && $currRow.find(".AssignmentPointsPossible").length != 0) {
 					// add up scores individually
-					var bonuses = $(rows[i]).find(".AssignmentGrade");
+					var bonuses = $currRow.find(".AssignmentGrade");
 					for (var j = 0; j &lt; bonuses.length; j++)
 						if (!isNaN(bonuses[j].innerText))
 							bonus += parseFloat(bonuses[j].innerText);
@@ -681,6 +687,7 @@ var HAC_HTML =
 
 	/**
 	 * Calculates and displays the semester averages based on marking period averaegs
+	 * @param {jQuery} changedGradeCell - the grade cell that triggered the recalculation
 	 */
 	_recalculate_subject_averages: function (changedGradeCell) {
 		// add up subject averages
@@ -948,13 +955,13 @@ var HAC_HTML =
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Namespaces</h3><ul><li><a href="HAC_HTML.html">HAC_HTML</a></li><li><a href="Queuer.html">Queuer</a></li><li><a href="RRISD_HAC.html">RRISD_HAC</a></li><li><a href="Updater.html">Updater</a></li></ul><h3>Global</h3><ul><li><a href="global.html#Ad">Ad</a></li><li><a href="global.html#AISD_HAC">AISD_HAC</a></li><li><a href="global.html#animations_enabled">animations_enabled</a></li><li><a href="global.html#asianness">asianness</a></li><li><a href="global.html#asianness_on">asianness_on</a></li><li><a href="global.html#badge_enabled">badge_enabled</a></li><li><a href="global.html#cached_refresh_interval">cached_refresh_interval</a></li><li><a href="global.html#colorization_enabled">colorization_enabled</a></li><li><a href="global.html#DEFAULT_ASIANNESS">DEFAULT_ASIANNESS</a></li><li><a href="global.html#default_error_handler">default_error_handler</a></li><li><a href="global.html#DEFAULT_HUE">DEFAULT_HUE</a></li><li><a href="global.html#DEFAULT_NOTIF_DURATION">DEFAULT_NOTIF_DURATION</a></li><li><a href="global.html#DEFAULT_R_INT">DEFAULT_R_INT</a></li><li><a href="global.html#disable_login_form">disable_login_form</a></li><li><a href="global.html#displayGrades">displayGrades</a></li><li><a href="global.html#generate_color_table">generate_color_table</a></li><li><a href="global.html#getVersion">getVersion</a></li><li><a href="global.html#handle_load_error">handle_load_error</a></li><li><a href="global.html#handle_load_error_class">handle_load_error_class</a></li><li><a href="global.html#hide_login_form">hide_login_form</a></li><li><a href="global.html#hue">hue</a></li><li><a href="global.html#hue_enabled">hue_enabled</a></li><li><a href="global.html#imposter">imposter</a></li><li><a href="global.html#isValidGradeData">isValidGradeData</a></li><li><a href="global.html#loadClassGrades">loadClassGrades</a></li><li><a href="global.html#lock">lock</a></li><li><a href="global.html#login">login</a></li><li><a href="global.html#login_to_aisd">login_to_aisd</a></li><li><a href="global.html#login_to_rrisd">login_to_rrisd</a></li><li><a href="global.html#logout">logout</a></li><li><a href="global.html#notifs_enabled">notifs_enabled</a></li><li><a href="global.html#on_error_logging_in">on_error_logging_in</a></li><li><a href="global.html#password_enabled">password_enabled</a></li><li><a href="global.html#process_update">process_update</a></li><li><a href="global.html#processUpdatedClassGrades">processUpdatedClassGrades</a></li><li><a href="global.html#processUpdatedGrades">processUpdatedGrades</a></li><li><a href="global.html#r_interval">r_interval</a></li><li><a href="global.html#refresh_enabled">refresh_enabled</a></li><li><a href="global.html#reset_login_form">reset_login_form</a></li><li><a href="global.html#set_password_boxes">set_password_boxes</a></li><li><a href="global.html#setChangedGradeIndicators">setChangedGradeIndicators</a></li><li><a href="global.html#setSliderIndicator">setSliderIndicator</a></li><li><a href="global.html#shadowMax">shadowMax</a></li><li><a href="global.html#show_error">show_error</a></li><li><a href="global.html#show_login_error">show_login_error</a></li><li><a href="global.html#showCachedGrades">showCachedGrades</a></li><li><a href="global.html#silent_update">silent_update</a></li><li><a href="global.html#single_notif">single_notif</a></li><li><a href="global.html#theInterval">theInterval</a></li><li><a href="global.html#throttle">throttle</a></li><li><a href="global.html#toast">toast</a></li><li><a href="global.html#unlock">unlock</a></li><li><a href="global.html#update">update</a></li><li><a href="global.html#update_options_dom">update_options_dom</a></li><li><a href="global.html#XHR_Queue">XHR_Queue</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Namespaces</h3><ul><li><a href="GPA.html">GPA</a></li><li><a href="HAC_HTML.html">HAC_HTML</a></li><li><a href="Queuer.html">Queuer</a></li><li><a href="RRISD_HAC.html">RRISD_HAC</a></li><li><a href="Updater.html">Updater</a></li></ul><h3>Global</h3><ul><li><a href="global.html#Ad">Ad</a></li><li><a href="global.html#AISD_HAC">AISD_HAC</a></li><li><a href="global.html#animations_enabled">animations_enabled</a></li><li><a href="global.html#asianness">asianness</a></li><li><a href="global.html#asianness_on">asianness_on</a></li><li><a href="global.html#badge_enabled">badge_enabled</a></li><li><a href="global.html#cached_refresh_interval">cached_refresh_interval</a></li><li><a href="global.html#colorization_enabled">colorization_enabled</a></li><li><a href="global.html#DEFAULT_ASIANNESS">DEFAULT_ASIANNESS</a></li><li><a href="global.html#default_error_handler">default_error_handler</a></li><li><a href="global.html#DEFAULT_GPA_PRECISION">DEFAULT_GPA_PRECISION</a></li><li><a href="global.html#DEFAULT_HUE">DEFAULT_HUE</a></li><li><a href="global.html#DEFAULT_NOTIF_DURATION">DEFAULT_NOTIF_DURATION</a></li><li><a href="global.html#DEFAULT_R_INT">DEFAULT_R_INT</a></li><li><a href="global.html#disable_login_form">disable_login_form</a></li><li><a href="global.html#displayGrades">displayGrades</a></li><li><a href="global.html#generate_color_table">generate_color_table</a></li><li><a href="global.html#getVersion">getVersion</a></li><li><a href="global.html#gpa_enabled">gpa_enabled</a></li><li><a href="global.html#handle_load_error">handle_load_error</a></li><li><a href="global.html#handle_load_error_class">handle_load_error_class</a></li><li><a href="global.html#hide_login_form">hide_login_form</a></li><li><a href="global.html#hue">hue</a></li><li><a href="global.html#hue_enabled">hue_enabled</a></li><li><a href="global.html#imposter">imposter</a></li><li><a href="global.html#isValidGradeData">isValidGradeData</a></li><li><a href="global.html#loadClassGrades">loadClassGrades</a></li><li><a href="global.html#lock">lock</a></li><li><a href="global.html#login">login</a></li><li><a href="global.html#login_to_aisd">login_to_aisd</a></li><li><a href="global.html#login_to_rrisd">login_to_rrisd</a></li><li><a href="global.html#logout">logout</a></li><li><a href="global.html#notifs_enabled">notifs_enabled</a></li><li><a href="global.html#on_error_logging_in">on_error_logging_in</a></li><li><a href="global.html#password_enabled">password_enabled</a></li><li><a href="global.html#process_update">process_update</a></li><li><a href="global.html#processUpdatedClassGrades">processUpdatedClassGrades</a></li><li><a href="global.html#processUpdatedGrades">processUpdatedGrades</a></li><li><a href="global.html#r_interval">r_interval</a></li><li><a href="global.html#refresh_enabled">refresh_enabled</a></li><li><a href="global.html#reset_login_form">reset_login_form</a></li><li><a href="global.html#set_password_boxes">set_password_boxes</a></li><li><a href="global.html#setChangedGradeIndicators">setChangedGradeIndicators</a></li><li><a href="global.html#setSliderIndicator">setSliderIndicator</a></li><li><a href="global.html#shadowMax">shadowMax</a></li><li><a href="global.html#show_error">show_error</a></li><li><a href="global.html#show_login_error">show_login_error</a></li><li><a href="global.html#showCachedGrades">showCachedGrades</a></li><li><a href="global.html#silent_update">silent_update</a></li><li><a href="global.html#single_notif">single_notif</a></li><li><a href="global.html#theInterval">theInterval</a></li><li><a href="global.html#throttle">throttle</a></li><li><a href="global.html#toast">toast</a></li><li><a href="global.html#unlock">unlock</a></li><li><a href="global.html#update">update</a></li><li><a href="global.html#update_options_dom">update_options_dom</a></li><li><a href="global.html#XHR_Queue">XHR_Queue</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Thu Jul 11 2013 10:35:10 GMT-0500 (CDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Wed Sep 11 2013 20:10:18 GMT-0500 (CDT)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -278,11 +278,41 @@ function login(uname, pass, studentid, district) {
 	}
 }
 
+/** Generates the bar that shows up right below the overall grades table */
+function generateBottomBar() {
+	var $root = $(document.createElement("div"));
+	$root.prop("id", "bottom_bar");
+
+	var $gpa_wrapper = $(document.createElement("span"));
+	$gpa_wrapper.prop("id", "gpa_wrapper")
+		.html("GPA: ")
+		.prop("title", "Click for GPA options")
+		.tipsy({ gravity: "w", fade: true })
+		.click(GPA.toggle_panel)
+		.append($(document.createElement("span")).prop("id", "gpa"));
+	$("#GPA_panel_wrapper").click(GPA.toggle_panel);
+	$("#GPA_panel").click(function (event) {
+		// event.preventDefault();
+		// event.stopPropagation();
+		// return false;
+	});
+
+	var ad = Ad.generate_ad();
+
+	$root.append($gpa_wrapper).append(ad).append(
+		$(document.createElement("span")).html("&nbsp;")
+			.css("clear", "both"));
+
+	$("#grades").append($root);
+}
+
 /** Retrieves the cached grades from localStorage and displays them */
 function showCachedGrades() {
 	if (localStorage.hasOwnProperty("grades")) {
 		$("#grades").html("").append(HAC_HTML.json_to_html(
 			JSON.parse(localStorage["grades"])));
+
+		generateBottomBar();
 
 		setChangedGradeIndicators();
 	}
@@ -333,6 +363,7 @@ function update() {
  */
 function displayGrades(grades_json) {
 	$("#grades").html("").append(HAC_HTML.json_to_html(grades_json));
+	generateBottomBar();
 }
 
 /**
@@ -359,6 +390,8 @@ function processUpdatedGrades(doc) {
 	$("#lastupdated").html(Updater.get_update_text());
 	// classes
 	$("body").addClass("logged_in").removeClass("busy offline edited");
+	// gpa
+	GPA.show();
 
 	return true;
 }
@@ -569,6 +602,7 @@ function setChangedGradeIndicators() {
 
 // init
 $(function () {
+	// body is hidden in css on page load
 
 	// Setup AJAX (converters not used)
 	$.ajaxSetup({
@@ -651,7 +685,7 @@ $(function () {
 	// shadow on scrolling
 	$(window).scroll(throttle(30, function() {
 			var pos = $(window).scrollTop();
-			if (pos == 0) {
+			if (pos <= 0) {
 				$("#direct_access_form").css("box-shadow", "none");
 				shadowMax = false;
 			}
@@ -679,8 +713,8 @@ $(function () {
 		// logged in
 		$("#login_form").addClass("hide");
 		$("#lastupdated").html(Updater.get_update_text());
-		// bug: body won't scroll if the "logged_in" class is added immediately
-		window.setTimeout(function () { $(document.body).addClass("logged_in"); }, 100);
+		GPA.show();
+		$(document.body).addClass("logged_in");
 	}
 
 	$("#logOutToReset").click(function () {
@@ -710,7 +744,17 @@ $(function () {
 		$("#restricted_access_wrapper").addClass("hide");
 	}
 
-	$("html").css("height", $("#main_view").outerHeight() + "px");
+	// bug: http://stackoverflow.com/questions/13217353/random-whitespace-in-google-chrome-extension
+	// show body after done populating DOM
+	window.setTimeout(function() {
+		$(document.body).css({
+			width: '600px',
+			height: '100px',
+			display: 'block'})
+		.animate(
+			{height: $(document.body).height()},
+			1000); // this is the hackiest HAC hack that QuickHAC has ever HAC'd
+	}, 100);
 });
 
 // analytics

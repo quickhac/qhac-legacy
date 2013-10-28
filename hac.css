@@ -7,14 +7,10 @@
 	src: url('assets/OpenSans-Light.ttf');
 }
 
-html {
-	min-width: 600px;
-	min-height: 200px;
-}
-
 body {
 	color: #222222;
 	cursor: default;
+	display: none;
 }
 
 body.noanimations * {
@@ -347,8 +343,8 @@ body.locked #restricted_access {
 	-webkit-transform: none;
 	transform: none;
 
-	-webkit-transition: -webkit-transform 1s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.5s linear;
-	transition: transform 1s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.5s linear;
+	-webkit-transition: -webkit-transform 1s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.5s linear, -webkit-filter 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+	transition: transform 1s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.5s linear, filter 0.5s cubic-bezier(0.19, 1, 0.22, 1);
 }
 body.locked #main_view {
 	opacity: 0;
@@ -423,11 +419,12 @@ body.logged_in #login_wrapper {
 	width: 200px;
 	height: 280px;
 	padding: 32px;
-	margin-left: -116px;
-	margin-top: -171px;
+	margin: auto;
 	position: absolute;
-	top: 50%;
-	left: 50%;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
 	background-color: #FFFFFF;
 	border-radius: 4px;
 	box-shadow: 0 8px 32px rgba(0,0,0,0.25);
@@ -528,7 +525,7 @@ body:not(.logged_in) #direct_access_form {
 	box-sizing: border-box;
 	padding: 8px;
 	background: -webkit-linear-gradient(top,rgba(255, 255, 255, 1),rgba(255, 255, 255, 0.9));
-	z-index: 9001;
+	z-index: 10;
 	user-select: none;
 	-webkit-user-select: none;
 }
@@ -763,13 +760,14 @@ body.logged_in #grades {
 	white-space: nowrap;
 	display: block;
 	text-overflow: ellipsis;
+	background: #eee;
 }
 
 .grade.exam:hover {
 	text-decoration: underline;
 }
 
-#update_wrapper, #lastupdated {
+#update_wrapper, #lastupdated, #gpa_wrapper, #gpa {
 	font-size: 12px;
 }
 
@@ -778,19 +776,47 @@ body.logged_in #grades {
 }
 
 /* oh and an ad */
-#ad_wrapper {
-	padding: 2px;
-	display: block;
+#bottom_bar {
 	background: #f4f4f4;
 	border-bottom-left-radius: 4px;
 	border-bottom-right-radius: 4px;
+	padding: 2px;
+}
+#gpa_wrapper {
+	padding: 2px;
+	display: block;
+	float: left;
+	cursor: pointer;
+	font-weight: 700;
+}
+#gpa_wrapper:hover {
+	text-decoration: underline;
+	/*background-color: #666666;*/
+}
+#gpa {
+	font-weight: normal;
+}
+#ad_wrapper {
+	padding: 0 2px 2px 2px;
+	display: block;
+	float: right;
 }
 #ad, #hide_ad {
 	font-size: 12px;
 	padding: 0 2px;
 }
-#ad { color: #4FB8C0; text-align: center; }
-#hide_ad { color: #777; float: right; font-size: 16px;}
+#ad {
+	color: #4FB8C0;
+	text-align: center;
+	margin-right: 4px;
+	font-size: 12px;
+	cursor: pointer;
+}
+#hide_ad {
+	color: #777;
+	float: right;
+	font-size: 14px;
+}
 
 /** CLASS GRADES **/
 
@@ -899,3 +925,166 @@ body.logged_in #grades {
 .NewAssignment .AssignmentName {
 	background: #def;
 }
+
+#GPA_panel_wrapper {
+	position: fixed;
+	left: 0;
+	top: 0;
+	height: 100%;
+	overflow: auto;
+	width: 100%;
+	background: rgba(255,255,255,0.8);
+	padding: 32px 64px;
+	box-sizing: border-box;
+	z-index: -1;
+	opacity: 0;
+	-webkit-transform: scale(2, 2);
+	-webkit-transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+}
+#GPA_panel_wrapper.visible {
+	-webkit-transform: scale(1, 1);
+	opacity: 1;
+	z-index: 9002;
+}
+
+#GPA_panel_wrapper h1 {
+	font-size: 48px;
+	font-weight: 100;
+	text-align: center;
+	margin: 0;
+    color: #CCCCCC;
+	cursor: default;
+}
+
+.cardContainer {
+	background-color: rgba(0,0,0,0.075);
+	padding: 8px;
+	border-radius: 6px;
+}
+* + .cardContainer {
+	margin-top: 16px;
+}
+
+.cardContainer .card {
+	font-size: 16px;
+	border-radius: 3px;
+  	background: #FFFFFF;
+	color: #222222;
+	font-weight: 200;
+	margin-bottom: 8px;
+	padding: 6px;
+	box-shadow: 0 2px 4px -2px rgba(0,0,0,0.25);
+	display: -webkit-flex;
+	-webkit-align-items: center;
+}
+.cardContainer .card:last-child {
+	margin-bottom: 0;
+}
+
+.cardContainer .card .course-title {
+	-webkit-flex: 1 1 auto;
+}
+
+.cardContainer .card input[type="checkbox"] {
+	display: block;
+	margin: 0 auto;
+	width: 1.5em;
+	height: 1.5em;
+}
+
+.switch-light {
+    display: block;
+    height: 24px;
+    position: relative;
+    overflow: visible;
+    padding: 0;
+    margin-left: 6px;
+    -webkit-user-select: none;
+    user-select: none;
+    width: 150px; }
+    .switch-light * {
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box; }
+    .switch-light a {
+      display: block;
+      -webkit-transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+      transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1); }
+    .switch-light label, .switch-light > span {
+      line-height: 24px;
+      vertical-align: middle; }
+    .switch-light input:focus ~ a, .switch-light input:focus + label {
+      /*outline: 1px dotted #888888;*/ }
+    .switch-light label {
+      position: relative;
+      z-index: 3;
+      display: block;
+      width: 100%; }
+    .switch-light input {
+      position: absolute;
+      opacity: 0;
+      z-index: 5; }
+      .switch-light input:checked ~ a {
+        right: 0%; }
+    .switch-light > span {
+      position: absolute;
+      left: -100px;
+      width: 100%;
+      margin: 0;
+      padding-right: 100px;
+      text-align: left; }
+      .switch-light > span span {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 5;
+        display: block;
+        width: 50%;
+        margin-left: 100px;
+        text-align: center; }
+        .switch-light > span span:last-child {
+          left: 50%; }
+    .switch-light a {
+      position: absolute;
+      right: 50%;
+      top: 0;
+      z-index: 4;
+      display: block;
+      width: 50%; /*calc(50% - 4px);*/
+      height: 100%; /*calc(100% - 4px);*/
+      padding: 0; }
+
+.switch-android {
+    background-color: #dddddd;
+    border-radius: 12px;
+    color: #ffffff;
+    font-weight: 600;
+    /*box-shadow: inset rgba(0, 0, 0, 0.1) 0 1px 0;*/
+}
+    .switch-android label {
+      color: #ffffff; }
+    .switch-android > span span {
+      opacity: 0.5;
+      color: #666666;
+      /*text-shadow: 0 1px rgba(255,255,255,0.25);*/
+      -webkit-transition: all 0.1s;
+      transition: all 0.1s; }
+      .switch-android > span span:first-of-type {
+        opacity: 1; }
+    .switch-android a {
+      background-color: #bbbbbb;
+      border-radius: 12px;
+      /*margin: 2px;*/
+      /*box-shadow: inset rgba(255, 255, 255, 0.5) 0 1px 0, inset rgba(0, 0, 0, 0.2) 0 -2px 0;*/ }
+    .switch-android.switch-light input:checked ~ a {
+      background-color: #00aced; }
+    .switch-android.switch-light input:checked ~ span span:first-of-type {
+      opacity: 0.5;
+      color: #666666;
+      /*text-shadow: 0 1px rgba(255,255,255,0.25);*/ }
+    .switch-android.switch-light input:checked ~ span span:last-of-type {
+      opacity: 1;
+      color: #ffffff;
+      /*text-shadow: 0 -1px rgba(0,0,0,0.25);*/ }
+    .switch-android.switch-toggle, .switch-android > span span {
+      font-size: 85%;
+      text-transform: uppercase; }

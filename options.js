@@ -29,7 +29,16 @@ notifs_enabled,
 single_notif,
 
 /** @type boolean */
-animations_enabled;
+animations_enabled,
+
+/** @type boolean */
+gpa_enabled,
+
+/** @type boolean */
+gpa_weighted,
+
+/** @type number */
+gpa_precision;
 
 /**
  * Generates and displays a table with numbers labeled 1 to 100 showing the
@@ -204,6 +213,19 @@ function update_options_dom(noAnimation) {
 			.slideUp(anim);
 		notifs_enabled = false;
 	}
+
+	if ($("#gpa_enabled").prop("checked")) {
+		$("#gpa_enabled_wrapper").removeClass("minimized");
+		$("#gpa_enabled_wrapper .option, #gpa_enabled_wrapper section .info")
+			.slideDown(anim);
+		gpa_enabled = true;
+	} else {
+		$("#gpa_enabled_wrapper").addClass("minimized");
+		$("#gpa_enabled_wrapper .option, #gpa_enabled_wrapper section .info")
+			.slideUp(anim);
+		gpa_enabled = false;
+	}
+
 	set_password_boxes($("#password_protection").prop("checked"));
 }
 
@@ -235,6 +257,7 @@ $(function(){
 	r_interval = localStorage.hasOwnProperty("r_int") ? parseFloat(localStorage["r_int"]) : DEFAULT_R_INT;
 	hue = localStorage.hasOwnProperty("hue") ? parseFloat(localStorage["hue"]) : DEFAULT_HUE;
 	notif_duration = localStorage.hasOwnProperty("notif_duration") ? parseFloat(localStorage["notif_duration"]) : DEFAULT_NOTIF_DURATION;
+	gpa_precision = localStorage.hasOwnProperty("gpa_precision") ? parseFloat(localStorage["gpa_precision"]) : DEFAULT_GPA_PRECISION;
 	
 	// Generate Options HTML
 	renderOptions(options_formdata, $("#settings")[0]);
@@ -242,6 +265,7 @@ $(function(){
 	// Load toggles states from storage
 	colorization_enabled = (localStorage.hasOwnProperty("asianness") ? (parseFloat(localStorage["asianness"]) != 0) : true);
 	refresh_enabled = (localStorage.hasOwnProperty("r_int") ? (parseFloat(localStorage["r_int"]) != 0) : true);
+	gpa_enabled = (localStorage.hasOwnProperty("gpa_weighted") ? (localStorage["gpa_weighted"] == "true") : false);
 
 	if (!localStorage.hasOwnProperty("notifs_enabled")) {
 		var enabled = $("#notifs_enabled").prop("checked");
@@ -287,6 +311,7 @@ $(function(){
 	$("#badge_count").prop('checked', badge_enabled);
 	$("#password_protection").prop('checked', password_enabled);
 	$("#animations").prop('checked', animations_enabled);
+	$("#gpa_enabled").prop('checked', gpa_enabled);
 
 	// update spinbox values (use default values if previously disabled)
 	$("#asianness").val(colorization_enabled ? asianness.toString() : DEFAULT_ASIANNESS.toString());
@@ -294,6 +319,7 @@ $(function(){
 	$("#r_interval").val(refresh_enabled ? r_interval.toString() : DEFAULT_R_INT.toString());
 	$("#hue, #hue_slider").val(hue.toString());
 	$("#notif_duration").val(notifs_enabled ? notif_duration.toString() : "0");
+	$("#gpa_precision").val(gpa_precision.toString() || DEFAULT_GPA_PRECISION);
 
 	// Initialize slider indicators
 	setSliderIndicator("#asianness_slider", asianness);
@@ -307,6 +333,9 @@ $(function(){
 	});
 
 	update_options_dom(true);
+
+	// show quote
+	$("#quote").html(get_random_inspiring_quote());
 	
 	// slider change events
 	$("#asianness_slider").change(function () {
@@ -347,7 +376,7 @@ $(function(){
 		});
 });
 
-analytics
+// analytics
 var _gaq = _gaq || [];
 _gaq.push(['_setAccount', 'UA-37395872-1']);
 _gaq.push(['_trackPageview']);

@@ -1,5 +1,12 @@
 # Changelog
 
+### 2.1.0
+
+* Add GPA calculator
+* Add inspiring quotes to options page
+* Rename "Asianness Level" to "Power Level"
+* Remove High Expectations Asian Father reference
+
 ### 2.0.7
 
 * Add support for 8 digit student IDs
