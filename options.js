@@ -265,7 +265,8 @@ $(function(){
 	// Load toggles states from storage
 	colorization_enabled = (localStorage.hasOwnProperty("asianness") ? (parseFloat(localStorage["asianness"]) != 0) : true);
 	refresh_enabled = (localStorage.hasOwnProperty("r_int") ? (parseFloat(localStorage["r_int"]) != 0) : true);
-	gpa_enabled = (localStorage.hasOwnProperty("gpa_weighted") ? (localStorage["gpa_weighted"] == "true") : false);
+	gpa_enabled = (localStorage.hasOwnProperty("gpa_enabled") ? (localStorage["gpa_enabled"] == "true") : false);
+	gpa_weighted = (localStorage.hasOwnProperty("gpa_weighted") ? (localStorage["gpa_weighted"] == "true") : false);
 
 	if (!localStorage.hasOwnProperty("notifs_enabled")) {
 		var enabled = $("#notifs_enabled").prop("checked");
@@ -312,6 +313,7 @@ $(function(){
 	$("#password_protection").prop('checked', password_enabled);
 	$("#animations").prop('checked', animations_enabled);
 	$("#gpa_enabled").prop('checked', gpa_enabled);
+	$("#gpa_weighted").prop('checked', gpa_weighted);
 
 	// update spinbox values (use default values if previously disabled)
 	$("#asianness").val(colorization_enabled ? asianness.toString() : DEFAULT_ASIANNESS.toString());
