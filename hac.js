@@ -427,7 +427,7 @@ function logout() {
 
 	// show login
 	$("#direct_access_form").hide();
-	$("#login_form").show();
+	$("#login_form, #login_wrapper").show();
 	$(document.body).removeClass("logged_in");
 
 	// hide grades
@@ -746,15 +746,21 @@ $(function () {
 
 	// bug: http://stackoverflow.com/questions/13217353/random-whitespace-in-google-chrome-extension
 	// show body after done populating DOM
-	window.setTimeout(function() {
+	if ($(document.body).hasClass("logged_in"))
+		window.setTimeout(function() {
+			$(document.body).css({
+				width: '600px',
+				height: '100px',
+				display: 'block'})
+			.animate(
+				{height: $("#main_view").height() + 'px'},
+				1000); // this is the hackiest HAC hack that QuickHAC has ever HAC'd
+		}, 100);
+	else
 		$(document.body).css({
 			width: '600px',
-			height: '100px',
-			display: 'block'})
-		.animate(
-			{height: $(document.body).height()},
-			1000); // this is the hackiest HAC hack that QuickHAC has ever HAC'd
-	}, 100);
+			display: 'block'
+		});
 });
 
 // analytics

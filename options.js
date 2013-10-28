@@ -265,7 +265,7 @@ $(function(){
 	// Load toggles states from storage
 	colorization_enabled = (localStorage.hasOwnProperty("asianness") ? (parseFloat(localStorage["asianness"]) != 0) : true);
 	refresh_enabled = (localStorage.hasOwnProperty("r_int") ? (parseFloat(localStorage["r_int"]) != 0) : true);
-	gpa_enabled = (localStorage.hasOwnProperty("gpa_enabled") ? (localStorage["gpa_enabled"] == "true") : false);
+	gpa_enabled = (localStorage.hasOwnProperty("gpa_enabled") ? (localStorage["gpa_enabled"] == "true") : true);
 	gpa_weighted = (localStorage.hasOwnProperty("gpa_weighted") ? (localStorage["gpa_weighted"] == "true") : false);
 
 	if (!localStorage.hasOwnProperty("notifs_enabled")) {
