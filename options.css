@@ -23,6 +23,7 @@ body {
 * { font-family: 'Open Sans'; -webkit-font-smoothing: antialiased; }
 
 #settings_wrapper {
+	clear: both;
 	background-color: #EEEEEE;
 	border-radius: 4px;
 	padding: 4px 200px 4px 80px;
@@ -215,6 +216,7 @@ input[type="number"] {
 	color: #999999;
 	font-size: 80%;
 	line-height: 30px;
+	margin-bottom: 32px;
 }
 #quote cite:before {
 	content: '\2014' ' ';
