@@ -148,13 +148,35 @@ var HAC_HTML =
 					.data("editing", "0")
 					.click(function () {
 						if ($(this).data("editing") == "0") {
+							var $el = $(this);
+							var i = $el.index();
+							var row_i = $el.parent().index();
+							var wrap = $el.parent().parent().children().length;
+							var nextRow_i = (row_i+1) >= wrap ? 1 : row_i + 1;
+							var prevRow_i = (row_i-1) < 1 ? wrap - 1: row_i - 1;
+							var $nextRow = $el.parent().parent().children().eq(nextRow_i);
+							var $prevRow = $el.parent().parent().children().eq(prevRow_i);
+
 							var editor = document.createElement("input");
 							var kphandler = function(e) {
-								if ((e.keyCode ? e.keyCode : e.which) == 13)
-									HAC_HTML._finalize_exam_grade_edit(this);
+								switch (e.keyCode || e.which) {
+									case 13: HAC_HTML._finalize_exam_grade_edit(this); break;
+									case 9: HAC_HTML._finalize_exam_grade_edit(this);
+										// edit next grade (fire click event)
+										if (e.shiftKey) {
+											// edit previous grade
+											$prevRow.children().eq(i).click();
+										} else {
+											//edit next grade
+											$nextRow.children().eq(i).click();
+										}
+										e.preventDefault();
+										break;
+									default: break;
+								}
 							};
 
-							$(editor).attr("size", "2").val(this.innerText).keypress(kphandler)
+							$(editor).attr("size", "2").val(this.innerText).keydown(kphandler).keypress(kphandler)
 								.blur(function () {HAC_HTML._finalize_exam_grade_edit(this);})
 								.addClass("GradeEditor");
 							$(this).html("").append(editor).data("editing", "1").tipsy("show")
@@ -275,8 +297,9 @@ var HAC_HTML =
 		$(root).append(title);
 
 		var currAvg = document.createElement("p");
-		$(currAvg).addClass("CurrentAverage").html("Current Average: " + json.currAvg)
-			.css('background', HAC_HTML.colorize(parseInt(json.currAvg)));
+		$(currAvg).addClass("CurrentAverage").text("Current Average: ")
+			.append($(document.createElement("span")).text(json.currAvg)
+				.css('background', HAC_HTML.colorize(parseInt(json.currAvg))));
 		$(root).append(currAvg);
 
 		for (var i = 0; i < json.cats.length; i++) {
@@ -368,14 +391,32 @@ var HAC_HTML =
 					.attr("title", "Original grade: " + (ptsIsNaN ? "none" : pts))
 					// allow editing
 					.click(function() {
+						var $el = $(this);
+						var i = $el.index();
 						if ($(this).data("editing") == "0") {
 							var editor = document.createElement("input");
 							var kphandler = function (e) {
-								if ((e.keyCode ? e.keyCode : e.which) == 13)
-									HAC_HTML._finalize_grade_edit(this);
+								// if ((e.keyCode ? e.keyCode : e.which) == 13)
+								// 	HAC_HTML._finalize_grade_edit(this);
+
+								switch (e.keyCode || e.which) {
+									case 13: HAC_HTML._finalize_grade_edit(this); break;
+									case 9: HAC_HTML._finalize_grade_edit(this);
+										// edit next grade (fire click event)
+										if (e.shiftKey) {
+											// edit previous grade
+											$el.parent().prev().children().eq(i).click();
+										} else {
+											//edit next grade
+											$el.parent().next().children().eq(i).click();
+										}
+										e.preventDefault();
+										break;
+									default: break;
+								}
 							};
 
-							$(editor).attr("size", "5").val(this.innerText).keypress(kphandler)
+							$(editor).attr("size", "5").val(this.innerText).keydown(kphandler).keypress(kphandler)
 								.blur(function() {HAC_HTML._finalize_grade_edit(this);})
 								.addClass("GradeEditor");
 							$(this).html("").append(editor).data("editing", "1").tipsy("show")
@@ -602,8 +643,9 @@ var HAC_HTML =
 		subjectTotal = Math.max(subjectTotal, 0);
 
 		// show subject average
-		$(".CurrentAverage").html("Current Average: " + Math.round(subjectTotal))
-			.css("background-color", HAC_HTML.colorize(subjectTotal));
+		$(".CurrentAverage").html("Current Average: ")
+			.append($(document.createElement("span")).text(Math.round(subjectTotal))
+				.css('background', HAC_HTML.colorize(Math.round(subjectTotal))));
 
 		// show subject average on main grades chart
 		var sixWeeksColor = HAC_HTML.colorize(subjectTotal);
