@@ -315,6 +315,8 @@ function showCachedGrades() {
 		generateBottomBar();
 
 		setChangedGradeIndicators();
+
+		GPA.show();
 	}
 }
 
