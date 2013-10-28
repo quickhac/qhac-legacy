@@ -390,7 +390,7 @@ var options_formdata = {
 					id: "gpa_weighted",
 					type: "toggle",
 					info: "Use the 6.0 scale GPA",
-					default_value: true,
+					default_value: false,
 					attributes: {},
 					on_change: function (el) {},
 					validation_input: function () {},

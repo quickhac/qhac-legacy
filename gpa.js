@@ -178,7 +178,86 @@ var GPA = {
 
 	/** Displays the GPA settings panel **/
 	toggle_panel: function() {
-		$panel = $("#GPA_panel");
+		$panel = $("#GPA_panel").html("");
+
+		var honors_courses = GPA.get_honors_courses();
+		var blacklist = GPA.get_gpa_blacklist();
+		var courses = JSON.parse(localStorage["grades"]).map(function (el, i) {
+			return el.title;
+		});
+
+		function makeSwitch(enabled, disabledText, enabledText, courseName, switchType) {
+			var $el = $(document.createElement("label"))
+				.addClass("switch-light switch-android");
+			var $checkbox = $(document.createElement("input"))
+				.prop("type", "checkbox")
+				.prop("checked", enabled)
+				.change(function (event) {
+					console.log(courseName, switchType, this.checked);
+					var newState = this.checked;
+					event.stopPropagation();
+					var list;
+
+					if (switchType === "include") {
+						var list = GPA.get_gpa_blacklist();
+						var inList = list.indexOf(courseName) >= 0;
+						if (!inList && !newState) {
+							// Add to blacklist
+							list.push(courseName);
+						} else if (inList && newState) {
+							// remove from blacklist
+							list.splice(list.indexOf(courseName), 1);
+						}
+						localStorage["gpa_blacklist"] = JSON.stringify(list);
+					} else {
+						var list = GPA.get_honors_courses();
+						var inList = list.indexOf(courseName) >= 0;
+						if (!inList && newState) {
+							// Add to honors list
+							list.push(courseName);
+						} else if (inList && !newState) {
+							// remove from honors list
+							list.splice(list.indexOf(courseName), 1);
+						}
+						localStorage["gpa_honors"] = JSON.stringify(list);
+					}
+					GPA.show();
+				})
+				.appendTo($el);
+			var $texts = $(document.createElement("span"))
+				.appendTo($el);
+			var $text1 = $(document.createElement("span"))
+				.text(disabledText)
+				.appendTo($texts);
+			var $text2 = $(document.createElement("span"))
+				.text(enabledText)
+				.appendTo($texts);
+			var $a = $(document.createElement("a"))
+				.appendTo($el);
+
+			return $el;
+		}
+
+		courses.forEach(function (courseName) {
+			var $course = $(document.createElement("div"))
+				.addClass("course card")
+				.click(function (event) {
+					event.stopPropagation();
+				});
+
+			var $title = $(document.createElement("span"))
+				.addClass("course-title")
+				.text(courseName)
+				.appendTo($course);
+
+			var isIncluded = blacklist.indexOf(courseName) < 0;
+			var isHonors = honors_courses.indexOf(courseName) >= 0;
+
+			$course.append(makeSwitch(isIncluded, "exclude", "include", courseName, "include"));
+			$course.append(makeSwitch(isHonors, "regular", "honors", courseName, "honors"));
+
+			$panel.append($course);
+		});
 		
 		$("#GPA_panel_wrapper").toggleClass('visible');
 	}

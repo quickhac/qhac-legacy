@@ -281,12 +281,15 @@ function login(uname, pass, studentid, district) {
 /** Generates the bar that shows up right below the overall grades table */
 function generateBottomBar() {
 	var $root = $(document.createElement("div"));
-	$root.attr("id", "bottom_bar");
+	$root.prop("id", "bottom_bar");
 
 	var $gpa_wrapper = $(document.createElement("span"));
-	$gpa_wrapper.attr("id", "gpa_wrapper").html("GPA: ")
+	$gpa_wrapper.prop("id", "gpa_wrapper")
+		.html("GPA: ")
+		.prop("title", "Click for GPA options")
+		.tipsy({ gravity: "w", fade: true })
 		.click(GPA.toggle_panel)
-		.append($(document.createElement("span")).attr("id", "gpa"));
+		.append($(document.createElement("span")).prop("id", "gpa"));
 	$("#GPA_panel_wrapper").click(GPA.toggle_panel);
 	$("#GPA_panel").click(function (event) {
 		// event.preventDefault();
