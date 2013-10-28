@@ -292,9 +292,7 @@ function generateBottomBar() {
 		.append($(document.createElement("span")).prop("id", "gpa"));
 	$("#GPA_panel_wrapper").click(GPA.toggle_panel);
 	$("#GPA_panel").click(function (event) {
-		// event.preventDefault();
-		// event.stopPropagation();
-		// return false;
+		event.stopPropagation();
 	});
 
 	var ad = Ad.generate_ad();
