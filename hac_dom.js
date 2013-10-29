@@ -393,22 +393,43 @@ var HAC_HTML =
 					.click(function() {
 						var $el = $(this);
 						var i = $el.index();
+						var row_i = $el.parent().index();
+
+						// $el.parent().parent().nextUntil(".AssignmentCreator").last().next().children(".AssignmentGrade").children().blur();
+						// $(".NewAssignment:empty").last().remove();
+						// var len = $el.parent().parent().children().length;
+
+						var $table = $el.parent().parent().parent();
+						// var $prevTable = $table.prevUntil(".DataTable").last().prev();
+
+						var $nextRow = $table.children("tbody").children(".DataRow").eq(row_i + 1);
+						var $prevRow = $table.children("tbody").children(".DataRow").eq(row_i - 1);
+
+						// var $prevRow = row_i-1 < 0 ?
+						// 	$prevTable.children("tbody").children(".DataRow").last()
+						// 	: $table.children("tbody").children(".DataRow").eq(row_i - 1);
+
+						// var nextIsCreator = $nextRow.hasClass("AssignmentCreator");
+						// var prevIsCreator = $prevRow.hasClass("AssignmentCreator");
+						
+						// var $nextGrade = $nextRow.children().eq(nextIsCreator ? 0 : i);
+						// var $prevGrade = $prevRow.children().eq(prevIsCreator ? 0 : i);
+						var $nextGrade = $nextRow.children().eq(i);
+						var $prevGrade = $prevRow.children().eq(i);
+
 						if ($(this).data("editing") == "0") {
 							var editor = document.createElement("input");
 							var kphandler = function (e) {
-								// if ((e.keyCode ? e.keyCode : e.which) == 13)
-								// 	HAC_HTML._finalize_grade_edit(this);
 
 								switch (e.keyCode || e.which) {
 									case 13: HAC_HTML._finalize_grade_edit(this); break;
 									case 9: HAC_HTML._finalize_grade_edit(this);
-										// edit next grade (fire click event)
 										if (e.shiftKey) {
 											// edit previous grade
-											$el.parent().prev().children().eq(i).click();
+											$prevGrade.click();
 										} else {
 											//edit next grade
-											$el.parent().next().children().eq(i).click();
+											$nextGrade.click();
 										}
 										e.preventDefault();
 										break;
@@ -416,7 +437,7 @@ var HAC_HTML =
 								}
 							};
 
-							$(editor).attr("size", "5").val(this.innerText).keydown(kphandler).keypress(kphandler)
+							$(editor).attr("size", "2").val(this.innerText).keydown(kphandler).keypress(kphandler)
 								.blur(function() {HAC_HTML._finalize_grade_edit(this);})
 								.addClass("GradeEditor");
 							$(this).html("").append(editor).data("editing", "1").tipsy("show")
@@ -451,24 +472,51 @@ var HAC_HTML =
 			// add a row that allows user to add and edit a new assignment
 			var addAssignmentRow = document.createElement("tr");
 			var removeIfEmptyRow = function (el) {
-				if (el.find(".AssignmentGrade").text() == "")
-					el.remove();
+				el.find(".AssignmentGrade:empty")
+					// console.log("removing", el[0], el.find(".AssignmentGrade")[0]);
+					.tipsy("hide")
+					.parent().remove();
 			};
 			var createGradeEditor = function () {
 				return $(document.createElement("input"))
-					.attr("size", 5)
+					.attr("size", "2")
 					.keypress(function (e) {
-						if ((e.keyCode ? e.keyCode : e.which) == 13) {
-								var row = $(this).parent().parent();
-								HAC_HTML._finalize_grade_edit(this);
-								removeIfEmptyRow(row);
-							}
-						})
+						if ((e.keyCode || e.which) == 13) {
+							var row = $(this).parent().parent();
+							HAC_HTML._finalize_grade_edit(this);
+							removeIfEmptyRow(row);
+						}
+					})
+					// .keydown(function (e) {
+					// 	// This is for tab navigation.
+					// 	if ((e.keyCode || e.which) == 9) {
+					// 		// GREAT-GREAT-GRANDPARENTS AWW YEAH
+					// 		var $table = $(this).parent().parent().parent().parent();
+					// 		var $row = $(this).parent().parent();
+					// 		var len = $row.siblings(".DataRow").andSelf().length;
+					// 		if (e.shiftKey) {
+					// 			var $prevTableRow = $table.prevUntil(".DataTable").last().prev().children("tbody").children(".DataRow").last();
+					// 			var isNotFirstRow = $row.index() > 0;
+					// 			var $prevRow = isNotFirstRow ? $row.prev() : $prevTableRow;
+					// 			var $prevGrade = $prevRow.children().eq($prevRow.hasClass("AssignmentCreator") ? 0 : 2);
+					// 			$prevGrade.click();
+
+					// 		} else {
+					// 			var $nextTable = $table.nextUntil(".DataTable").last().next();
+					// 			var $nextTableRow = $nextTable.children("tbody").children().first(".DataRow");
+					// 			var isNotLastRow = $row.index() < len - 1;
+					// 			var $nextRow = isNotLastRow ? $row.next() : $nextTableRow;
+					// 			var $nextGrade = $nextRow.children().eq($nextRow.hasClass("AssignmentCreator") ? 0 : 2);
+					// 			$nextGrade.click();
+					// 		}
+					// 		event.preventDefault();
+					// 	}
+					// })
 					.blur(function () {
 						var row = $(this).parent().parent();
-						HAC_HTML._finalize_grade_edit(this);
 						removeIfEmptyRow(row);
-						})
+						HAC_HTML._finalize_grade_edit(this);
+					})
 					.addClass("GradeEditor");
 			};
 
@@ -501,6 +549,9 @@ var HAC_HTML =
 															.tipsy("show").children().focus().select();
 													}
 											})
+											.blur(function () {
+												$(this).tipsy("hide");
+											})
 											.tipsy({gravity: 'e', trigger: 'manual', fade: true, opacity: 1}))
 									.append(
 										$(document.createElement("td")).text(""))
@@ -525,22 +576,26 @@ var HAC_HTML =
 
 			// calculate and display category average
 
-			var avgLabel = document.createElement("td");
-			$(avgLabel).attr('colspan', 2).css('fontWeight', 'bold').html("Average");
-			$(catTableBody).append(avgLabel);
+			var $avgRow = $(document.createElement("tr"))
+				.addClass("CategoryAverageRow");
 
-			var avgCell = document.createElement("td");
+			var $avgLabel = $(document.createElement("td"));
+			$avgLabel.attr('colspan', 2)
+				.html("Average")
+				.appendTo($avgRow);
+
+			var $avgCell = $(document.createElement("td"));
 			var avg = (percentiles.length == 0 ? NaN :
-				percentiles.reduce(function (a,b)
-					{
+				percentiles.reduce(function (a,b) {
 						return (isNaN(a) ? 0 : a) + (isNaN(b) ? 0 : b);
 					}) * 100 /
 					(json.cats[i].is100Pt ? percentiles.length : total));
-			$(avgCell).css({'fontWeight': 'bold', 'background': HAC_HTML.colorize(avg)})
+			$avgCell.css('background', HAC_HTML.colorize(avg))
 				.html(isNaN(avg) ? "" : Math.round(avg * 100) / 100)
-				.addClass("CategoryAverage");
+				.addClass("CategoryAverage")
+				.appendTo($avgRow);
 
-			$(catTableBody).append(avgCell);
+			$(catTableBody).append($avgRow);
 
 			$(root).append(catTable);
 		}
@@ -613,15 +668,17 @@ var HAC_HTML =
 		var categoryAverage = isNaN(avg) ? "" : Math.round(avg * 100) / 100;
 
 		// show category average
-		$cell.parent().siblings(".CategoryAverage").text(categoryAverage)
+		$cell.parent().siblings(".CategoryAverageRow").children(".CategoryAverage").text(categoryAverage)
 			.css("background-color", HAC_HTML.colorize(categoryAverage));
+
+		// console.log($cell.parent()[0]);
 
 		// sum up the 6 weeks subject average
 		var subjectTotal = 0, weightTotal = 0, bonus = 0;
 		rows = $("#classgrades").find(".DataTable");
 		for (var i = 0; i < rows.length; i++) {
 			$currRow = $(rows[i]);
-			if ($(rows[i]).find(".CategoryAverage").text() != "") {
+			if ($(rows[i]).find(".CategoryAverageRow").children(".CategoryAverage").text() != "") {
 				var weight = $currRow.data("weight");
 				var isPercentWeight = $currRow.data("is_percent_weight");
 				categoryAverage = parseFloat($currRow.find(".CategoryAverage").text());

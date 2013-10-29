@@ -220,7 +220,7 @@ var GPA = {
 				.prop("type", "checkbox")
 				.prop("checked", enabled)
 				.change(function (event) {
-					console.log(courseName, switchType, this.checked);
+					// console.log(courseName, switchType, this.checked);
 					var newState = this.checked;
 					event.stopPropagation();
 					var list;
