@@ -755,7 +755,7 @@ $(function () {
 			.animate(
 				{height: $("#main_view").height() + 'px'},
 				1000); // this is the hackiest HAC hack that QuickHAC has ever HAC'd
-		}, 100);
+		}, 200);
 	else
 		$(document.body).css({
 			width: '600px',
