@@ -1,5 +1,21 @@
 # Changelog
 
+### 2.1.2
+
+* Add support for AISD-style weighted GPA
+* Add header to GPA options
+* Improve visuals on detailed grades view
+* Allow tabbing across assignment and exam grade editors
+* Fix initialization issues on the options page
+* Fix quote citation bottom margin being too small on options page
+* Fix login box being truncated vertically
+* Add Muscula for error tracking
+* More quotes
+
+### 2.1.1
+
+* Fix a regression that caused options page to be broken when upgrading from 2.1.0
+
 ### 2.1.0
 
 * Add GPA calculator
