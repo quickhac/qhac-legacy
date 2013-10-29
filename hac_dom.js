@@ -205,6 +205,11 @@ var HAC_HTML =
 	 */
 	cgrades_to_json: function (html) {
 		var context = $.parseHTML(html);
+
+		// sanity checking
+		if ($("table.DataTable", context).length == 0)
+			return {};
+
 		var myObj = {
 			"title": $("h3.ClassName", context).text(),
 			"currAvg": /Current Average: (\d*)/.exec($("p.CurrentAverage", context).text())[1],
