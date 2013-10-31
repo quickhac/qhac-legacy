@@ -604,6 +604,14 @@ function setChangedGradeIndicators() {
 $(function () {
 	// body is hidden in css on page load
 
+	// delete potential localStorage errors
+	for (var key in localStorage) {
+		if (localStorage.hasOwnProperty(key) && localStorage[key] === undefined) {
+			localStorage.removeItem(key);
+			console.log("Rogue localStorage item deleted in key " + key);
+		}
+	}
+
 	// Setup AJAX (converters not used)
 	$.ajaxSetup({
 		timeout: 15000,

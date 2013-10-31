@@ -19,20 +19,27 @@ Object.size = function (obj) {
  */
 function process_update(doc) {
 	var count = 0;
-	// compare
+	
 	var doc_json = HAC_HTML.html_to_jso(doc);
-	HAC_HTML.compare_grades(JSON.parse(localStorage["grades"]), doc_json);
 
-	var count = Object.size(JSON.parse(localStorage["changed_grades"]));
+	// only continue if returned grades is non-empty
+	if (doc_json.length) {
+		// compare
+		HAC_HTML.compare_grades(JSON.parse(localStorage["grades"]), doc_json);
 
-	localStorage.setItem("badge", count.toString(10));
+		var count = Object.size(JSON.parse(localStorage["changed_grades"]));
 
-	if (localStorage["badge_enabled"] == "true")
-		chrome.browserAction.setBadgeText({"text": count > 0 ? count.toString(10) : ""});
+		localStorage.setItem("badge", count.toString(10));
 
-	// store
-	localStorage.setItem("grades", JSON.stringify(doc_json));
-	Updater.set_updated();
+		if (localStorage["badge_enabled"] == "true")
+			chrome.browserAction.setBadgeText({"text": count > 0 ? count.toString(10) : ""});
+
+		// store
+		localStorage.setItem("grades", JSON.stringify(doc_json));
+		Updater.set_updated();
+	} else {
+		console.log("Background grade update returned nothing.");
+	}
 
 	// reset interval if changed
 	var new_r_int = 60;
