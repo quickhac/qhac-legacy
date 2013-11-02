@@ -982,6 +982,23 @@ body.logged_in #grades {
     color: rgba(0,0,0,0.5);
 	cursor: default;
 }
+#GPA_panel_wrapper p {
+	text-align: center;
+	color: #666666;
+	font-weight: 700;
+	text-transform: uppercase;
+}
+#GPA_panel_wrapper p .gpa_preview {
+	font-weight: 300;
+	font-size: 2em;
+	line-height: 0.5em;
+	color: #222222;
+}
+#GPA_panel_wrapper p .switch-light {
+	display: inline-block;
+	width: 100px;
+	margin-bottom: -6px;
+}
 
 .cardContainer {
 	background-color: rgba(0,0,0,0.075);

@@ -189,6 +189,7 @@ var GPA = {
 				GPA.unweighted(JSON.parse(localStorage['grades']));
 			var GPA_text = gpa.toFixed(parseInt(localStorage["gpa_precision"]) || DEFAULT_GPA_PRECISION);
 			$("#gpa").text(isNaN(GPA_text) ? "" : GPA_text);
+			$("#GPA_panel_wrapper p .gpa_preview").text(isNaN(GPA_text) ? "" : GPA_text);
 		} else {
 			$("#gpa_wrapper").hide();
 			$("#ad_wrapper").css("float", "none");
@@ -196,15 +197,7 @@ var GPA = {
 		}
 	},
 
-
-	/** Displays the GPA settings panel **/
-	toggle_panel: function() {
-		
-		if ($("#GPA_panel_wrapper").hasClass('visible')) {
-			$("#GPA_panel_wrapper").removeClass('visible');
-			return;
-		}
-
+	render_panel: function () {
 		$panel = $("#GPA_panel").html("");
 
 		var honors_courses = GPA.get_honors_courses();
@@ -277,16 +270,28 @@ var GPA = {
 				.text(courseName)
 				.appendTo($course);
 
-			var isIncluded = blacklist.indexOf(courseName) < 0;
-			$course.append(makeSwitch(isIncluded, "exclude", "include", courseName, "include"));
-
 			if (localStorage["gpa_weighted"] == "true") {
 				var isHonors = honors_courses.indexOf(courseName) >= 0;
 				$course.append(makeSwitch(isHonors, "regular", "honors", courseName, "honors"));
 			}
 
+			var isIncluded = blacklist.indexOf(courseName) < 0;
+			$course.append(makeSwitch(isIncluded, "exclude", "include", courseName, "include"));
+
 			$panel.append($course);
 		});
+	},
+
+
+	/** Displays the GPA settings panel **/
+	toggle_panel: function() {
+
+		if ($("#GPA_panel_wrapper").hasClass('visible')) {
+			$("#GPA_panel_wrapper").removeClass('visible');
+			return;
+		}
+
+		GPA.render_panel();
 		
 		$("#GPA_panel_wrapper").addClass('visible');
 	}
