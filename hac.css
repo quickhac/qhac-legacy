@@ -989,8 +989,8 @@ body.logged_in #grades {
 	text-transform: uppercase;
 }
 #GPA_panel_wrapper p .gpa_preview {
-	font-weight: 300;
-	font-size: 2em;
+	font-weight: 400;
+	font-size: 1em
 	line-height: 0.5em;
 	color: #222222;
 }

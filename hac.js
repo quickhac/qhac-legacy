@@ -294,13 +294,19 @@ function generateBottomBar() {
 	$("#GPA_panel").click(function (event) {
 		event.stopPropagation();
 	});
-	// This code is just so awful now I don't even feel bad about doing this:
-	$("#GPA_panel_wrapper p .switch-light input").change(function () {
+
+	// re-render GPA panel when changing weighted/unweighted
+	$("#GPA_panel_wrapper #gpa_weighted_toggle_wrapper input").change(function () {
 		var gpa_weighted = this.checked;
 		localStorage.setItem("gpa_weighted", gpa_weighted ? "true" : "false");
 		GPA.show();
 		GPA.render_panel();
 	});
+
+	// initialize GPA weighted value
+	var gpa_weighted = localStorage["gpa_weighted"] == "true";
+	if (gpa_weighted)
+		$("#gpa_weighted_toggle_wrapper input").attr("checked", true);
 
 	var ad = Ad.generate_ad();
 
