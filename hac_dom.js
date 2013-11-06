@@ -100,7 +100,7 @@ var HAC_HTML =
 
 		// header row
 		var header = document.createElement("tr");
-		["Course", "Cyc 1", "Cyc 2", "Cyc 3", "Ex 1", "Sem 1", "Cyc 4", "Cyc 5", "Cyc 6", "Ex 2", "Sem 2"].forEach(function(e,i) {
+		["Course", "Cycle 1", "Cycle 2", "Cycle 3", "Exam 1", "Semester 1", "Cycle 4", "Cycle 5", "Cycle 6", "Exam 2", "Semester 2"].forEach(function(e,i) {
 			var cell = document.createElement("th");
 			cell.textContent = e;
 			$(cell).addClass("gradeHeader");
