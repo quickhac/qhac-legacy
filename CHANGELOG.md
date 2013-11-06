@@ -1,5 +1,14 @@
 # Changelog
 
+### 2.1.4
+
+* Improve GPA Options panel, putting more GPA-related options in one place
+* Slightly more handling of edge cases when communicating with HAC server
+
+### 2.1.3
+
+* Fix bug that broke background grade updating
+
 ### 2.1.2
 
 * Add support for AISD-style weighted GPA
