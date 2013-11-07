@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.1.5
+
+* Revert stuff because I'm an idiot and pushed the wrong code
+
 ### 2.1.4
 
 * Improve GPA Options panel, putting more GPA-related options in one place
