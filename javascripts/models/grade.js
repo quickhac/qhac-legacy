@@ -1,10 +1,11 @@
-var attr = Ember.attr, hasMany = Ember.hasMany;
+var attr = DS.attr, hasMany = DS.hasMany;
 
-QHAC.Grade = Ember.Model.extend({
-  id: attr(),
-  name: attr(),
-  assigned: attr(),
-  due: attr(),
-  points: attr(),
-  userCreated: attr(),
+QHAC.Grade = DS.Model.extend({
+  //id: attr(),
+  name: attr('number'),
+  assigned: attr('date'),
+  due: attr('date'),
+  points: attr('number'),
+  userCreated: attr('boolean'),
+  notes: attr()
 });

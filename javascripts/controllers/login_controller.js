@@ -5,24 +5,7 @@ QHAC.LoginController = Ember.Controller.extend({
   isSlowConnection: false,
   districts: ["aisd", "rrisd"],
   loginMessage: "Log In",
-
-  login: function() {
-    this.setProperties({
-      loginFailed: false,
-      isProcessing: true,
-      loginMessage: "Logging In..."
-    });
-    var this_login_controller = this;
-    setTimeout(function() {
-      this_login_controller.reset();
-      this_login_controller.transitionToRoute('main'); // wtf
-    }, 2000);
-  },
-
-  success: function() {
-    alert("logged in");
-    // sign in logic
-  },
+  authenticated: false,
 
   failure: function() {
     this.reset();
@@ -33,7 +16,7 @@ QHAC.LoginController = Ember.Controller.extend({
     this.setProperties({
       isProcessing: false,
       isSlowConnection: false,
-      loginMessage: "Log In"
+      loginMessage: "Log In",
     });
   }
 

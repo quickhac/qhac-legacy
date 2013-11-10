@@ -1,10 +1,8 @@
-var attr = Ember.attr, hasMany = Ember.hasMany;
+var attr = DS.attr, hasMany = DS.hasMany;
 
-QHAC.Category = Ember.Model.extend({
-  id: attr(),
-  weight: attr(Number),
-  average: attr(Number),
-  grades: hasMany("QHAC.Grade", {key: 'grades', embedded: true}),
+QHAC.Category = DS.Model.extend({
+  //id: attr(),
+  weight: attr('number'),
+  average: attr('number'),
+  grades: hasMany("grade"),
 });
-
-QHAC.Category.adapter = QHAC.adapter.create();

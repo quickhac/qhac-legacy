@@ -1,11 +1,15 @@
-var attr = Ember.attr, hasMany = Ember.hasMany;
+var attr = DS.attr, hasMany = DS.hasMany;
 
-QHAC.Cycle = Ember.Model.extend({
-  id: attr(),
+QHAC.Cycle = DS.Model.extend({
+  //id: attr(),
   datalink: attr(),
-  cycleNumber: attr(Number),
-  currentAverage: attr(Number),
-  categories: hasMany("QHAC.Category", {key: 'categorys', embedded: true}),
+  cycleNumber: attr('number'),
+  hacAverage: attr('number'),
+  //categories: hasMany("category"),
+  course: DS.belongsTo('course')
 });
 
-QHAC.Cycle.adapter = QHAC.adapter.create();
+QHAC.Cycle.FIXTURES = [
+  { id: "1506_1", hacAverage: 99, course: "1" },
+  { id: "4352_1", hacAverage: 70}
+];

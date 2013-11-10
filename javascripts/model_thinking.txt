@@ -18,7 +18,7 @@ Cycle
 
 Category
 ============
-  - weight (.25), Decimal
+  - weight (.25 * 100), Integer
   - average
 
 Grade

@@ -23,7 +23,6 @@ Ember.LocalStorageAdapter = Ember.Adapter.extend({
   },
 
   findAll: function(klass, records) {
-    console.log(klass);
     var self = this;
 
     return new Promise(function(resolve, reject) {

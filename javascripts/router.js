@@ -3,8 +3,38 @@ QHAC.Router.map(function() {
   this.resource('main');
 });
 
-// Todos.TodosRoute = Ember.Route.extend({
-//   model: function () {
-//     return this.store.find('todo');
-//   }
-// });
+QHAC.MainRoute = Ember.Route.extend({
+  model: function() {
+    var course = this.store.find('course', "1");
+    var cycles = this.store.find('cycle');
+    console.log(course.get('isDirty'));
+    return course;
+    //console.log(this.store.find('course'));
+  },
+  beforeModel: function(transition) {
+    //if(!this.controllerFor('login').get('authenticated')) {
+    if(false) {
+      this.transitionTo('login');
+    }
+  }
+});
+
+
+QHAC.LoginRoute = Ember.Route.extend({
+  actions: {
+    login: function() {
+      this.get('controller').setProperties({
+        loginFailed: false,
+        isProcessing: true,
+        loginMessage: "Logging In...",
+        authenticated: true
+      });
+      var this_login_controller = this.get('controller');
+      var _this = this;
+      setTimeout(function() {
+        this_login_controller.reset();
+        _this.transitionTo('main');
+      }, 2000);
+    }
+  }
+});
