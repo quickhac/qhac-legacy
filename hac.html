@@ -8,8 +8,8 @@
 		<script type="text/javascript" src="javascripts/lib/jquery.js"></script>
 		<script type="text/javascript" src="javascripts/lib/handlebars.js"></script>
 		<script type="text/javascript" src="javascripts/lib/ember.js"></script>
-		<script src="http://builds.emberjs.com/tags/v1.0.0-beta.3/ember-data.js"></script>	
-		<script type="text/javascript" src="http://underscorejs.org/underscore.js"></script>	
+		<script src="javascripts/lib/ember-data.js"></script>	
+		<script type="text/javascript" src="javascripts/lib/underscore.js"></script>	
 		<script type="text/javascript" src="javascripts/application.js"></script>
 		<script type="text/javascript" src="javascripts/router.js"></script>
 		<script type="text/javascript" src="javascripts/models/course.js"></script>
@@ -46,7 +46,52 @@
 			</div>
 		</script>
 		<script type="text/x-handlebars" data-template-name="main">
-    		<li>{{name}}</li>
+			<div id="main_view">
+				<div id="direct_access_form">
+					<span id="access_code_wrapper">Access code: <input id="direct_url" readonly="true"></span>
+					<img src="assets/logo.svg" id="logo" height="36" />
+					<!--<canvas id="logo" height="36" width="121" style="height: 36px; width: 121px;"></canvas>-->
+					<span id="update_wrapper">Updated <span id="lastupdated">2 days ago</span></span>
+					<span id="edited_notice">Edited</span>
+					<span id="offline_notice">Offline</span>
+					<span id="action_buttons">
+						<span class="spinner"></span>
+						<button id="do_direct_access">Refresh</button>
+						<button id="cancel_refresh">Cancel</button>
+						<button id="do_options">Options</button>
+						<button id="do_logout">Logout</button>
+						<button id="do_close">&times;</button>
+					</span>
+				</div>
+				<div id="grades">
+					<table class="DataTable">
+						<tbody>
+							<tr>
+								<th class="gradeHeader">Course</th>
+								<th class="gradeHeader">Cycle 1</th>
+								<th class="gradeHeader">Cycle 2</th>
+								<th class="gradeHeader">Cycle 3</th>
+								<th class="gradeHeader">Exam 1</th>
+								<th class="gradeHeader">Semester 1</th>
+								<th class="gradeHeader">Cycle 4</th>
+								<th class="gradeHeader">Cycle 5</th>
+								<th class="gradeHeader">Cycle 6</th>
+								<th class="gradeHeader">Exam 2</th>
+								<th class="gradeHeader">Semester 2</th>
+							</tr>
+							{{#each}}
+							<tr>
+								<td class="classTitle">{{name}}</td>
+								{{#each cycles}}
+	    					<td class="grade"><a href="#/main">{{hacAverage}}</a></td>
+	    					{{/each}}
+							</tr>
+							{{/each}}
+						</tbody>
+					</table>
+				</div>
+				<div id="bottom_bar"><span id="gpa_wrapper" original-title="Click for GPA options">GPA: <span id="gpa">5.1200</span></span><span style="clear: both;">&nbsp;</span></div>
+			</div>
 		</script>
 		<!--<div id="restricted_access_wrapper">
 			<div id="locked_bg_top"></div>

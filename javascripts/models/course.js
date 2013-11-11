@@ -13,6 +13,6 @@ QHAC.Course = DS.Model.extend({
 });
 
 QHAC.Course.FIXTURES = [
-  { id: "1", name: 'Debate/Com App', period: "1", cycles: ["1506_1"] },
+  { id: "1", name: 'Debate/Com App', period: "1", cycles: ["1506_1", "1506_2"] },
   { id: "2", name: 'Pre-Ib Sci 1', period: "2"     }
 ];

@@ -5,7 +5,7 @@ QHAC.Router.map(function() {
 
 QHAC.MainRoute = Ember.Route.extend({
   model: function() {
-    var course = this.store.find('course', "1");
+    var course = this.store.findAll('course');
     var cycles = this.store.find('cycle');
     console.log(course.get('isDirty'));
     return course;
@@ -21,6 +21,9 @@ QHAC.MainRoute = Ember.Route.extend({
 
 
 QHAC.LoginRoute = Ember.Route.extend({
+  beforeModel: function(transition) {
+    //this.transitionTo('main');
+  },
   actions: {
     login: function() {
       this.get('controller').setProperties({
