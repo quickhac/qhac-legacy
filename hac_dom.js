@@ -66,19 +66,40 @@ var HAC_HTML =
 
 			// each cell
 			for (var i = 0; i < 10; i++) {
-				grade = $cells.eq(i + gradesOffset).html();
-				if (grade.indexOf("<") != -1) {
-					if (grade.indexOf("<a href") != -1)
-						if (is_qhac_html)
-							urls[i] = $cells.eq(i + gradesOffset).children().eq(0).data("data");
-						else
-							urls[i] = /\?data=([\w\d%]*)"/g.exec(grade)[1];
-					grade = />([\w\d]*)</g.exec(grade)[1];
+				if (i == 4 || i == 9) {
+					var earned = 0, weight = 0, weightPerSixWeeks = 85 / 300;
+					// calculate semester average (issue #45)
+					// TODO: use same calculations as the grade edit finaliser
+					for (var j = i - 4; j < i - 1; j++) {
+						if (grades[j] != "" && !isNaN(grades[j])) {
+							earned += parseInt(grades[j]) * weightPerSixWeeks;
+							weight += weightPerSixWeeks;
+						}
+					}
+					// add exam grade
+					if (grades[i-1] != "" && !isNaN(grades[i-1])){
+						earned += parseInt(grades[i-1]) * 0.15;
+						weight += 0.15;
+					}
+					// calculate
+					var semesterGrade = earned / weight;
+					if (!isNaN(semesterGrade))
+						grade = isNaN(semesterGrade) ? "" : Math.round(Math.round(semesterGrade * 10000) / 10000);
 				} else {
-					if (grade = "&nbsp;")
-						grade = "";
-					if (is_qhac_html)
-						grade = $cells.eq(i + gradesOffset).html();
+					grade = $cells.eq(i + gradesOffset).html();
+					if (grade.indexOf("<") != -1) {
+						if (grade.indexOf("<a href") != -1)
+							if (is_qhac_html)
+								urls[i] = $cells.eq(i + gradesOffset).children().eq(0).data("data");
+							else
+								urls[i] = /\?data=([\w\d%]*)"/g.exec(grade)[1];
+						grade = />([\w\d]*)</g.exec(grade)[1];
+					} else {
+						if (grade = "&nbsp;")
+							grade = "";
+						if (is_qhac_html)
+							grade = $cells.eq(i + gradesOffset).html();
+					}
 				}
 
 				grades[i] = grade;
