@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.1.6
+### 2.1.6
 
 * Always calculate semester average on the client to avoid Gradespeed messing up
 * Handle extra credit correctly, assuming it counts toward six weeks average
@@ -32,7 +32,7 @@
 
 ### 2.1.1
 
-* Fix a regression that caused options page to be broken when upgrading from 2.1.0
+* Fix a regression that caused options page to be broken when upgrading to 2.1.0
 
 ### 2.1.0
 
@@ -126,7 +126,7 @@
 
 * Add notice of workaround for Mountain Lion users potentially having scrolling issues
 
-## 1.2.2
+### 1.2.2
 
 * Refactor code
 * Change the way the scrolling shadow is calculated
