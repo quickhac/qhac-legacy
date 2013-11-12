@@ -23,6 +23,12 @@ var DEFAULT_HUE = 0;
 var DEFAULT_NOTIF_DURATION = 5;
 
 /**
+ * @type {regex}
+ * @const
+ */
+var EXTRA_CREDIT_REGEX = /^extra credit$|^ec$/i;
+
+/**
  * Converts different kind of grade lists between HTML documents, JSON objects,
  * and DOMs
  * @namespace
@@ -387,9 +393,11 @@ var HAC_HTML =
 				var ptsIsNaN = isNaN(pts) || pts == null;
 				if (ptsIsNaN)
 					json.cats[i].grades[j].ptsEarned = NaN;
+				var is_extra_credit = EXTRA_CREDIT_REGEX.test(json.cats[i].grades[j].title);
+				var grade_to_color = is_extra_credit ? 100 + pts : pts * 100 / json.cats[i].grades[j].ptsPoss;
 				$(ptsEarned).addClass("AssignmentGrade")
 					.text(ptsIsNaN ? "" : pts).data("editing", "0")
-					.css('background', ptsIsNaN ? "#FFF" : HAC_HTML.colorize(pts * 100 / json.cats[i].grades[j].ptsPoss))
+					.css('background', ptsIsNaN ? "#FFF" : HAC_HTML.colorize(grade_to_color))
 					.data({
 						"orig": ptsIsNaN ? "" : pts
 					})
@@ -465,7 +473,7 @@ var HAC_HTML =
 				$(catTableBody).append(gradeRow);
 
 				// calculate category average
-				if (!ptsIsNaN && json.cats[i].grades[j].note.indexOf("Dropped") == -1)
+				if (!ptsIsNaN && json.cats[i].grades[j].note.indexOf("Dropped") == -1 && EXTRA_CREDIT_REGEX.test(json.cats[i].grades[j].title) == false)
 					if (json.cats[i].is100Pt)
 						percentiles.push(json.cats[i].grades[j].ptsEarned / json.cats[i].grades[j].ptsPoss);
 					else {
@@ -614,7 +622,7 @@ var HAC_HTML =
 	 * @param {Element} el - the element that fired this event
 	 */
 	_finalize_grade_edit: function (el) {
-		var ptsPoss, ptsPossElem, grade, gradeText;
+		var ptsPoss, ptsPossElem, grade, gradeText, assignmentNameElem;
 
 		// hide tipsy
 		$(el).parent().tipsy("hide");
@@ -652,21 +660,27 @@ var HAC_HTML =
 
 		// re-render grade cell
 		var $cell = $(el).parent();
+		var assignmentNameElem = $cell.siblings(".AssignmentName");
+		var gradeToColor = EXTRA_CREDIT_REGEX.test(assignmentNameElem.text()) ? 100 + grade : grade;
 		$cell.html(gradeText).data("editing", "0")
-			.css("background-color", HAC_HTML.colorize(grade));
+			.css("background-color", HAC_HTML.colorize(gradeToColor));
 
 		// recalculate category average
-		var earned = 0, poss = 0, earnedCell, possCell, rows;
+		var earned = 0, poss = 0, ecPoints = 0, earnedCell, possCell, rows;
 		rows = $cell.parent().parent().find(".DataRow, .DataRowAlt");
 		for (var i = 0; i < rows.length; i++) {
 			var assignmentRow = rows[i];
 			if (!(isNaN((earnedCell = $(assignmentRow).children(".AssignmentGrade")).text())
-				|| earnedCell.text() == "") && earnedCell.next().text().indexOf("Dropped") == -1) {
-				earned += parseFloat(earnedCell.text());
-				if ((possCell = $(assignmentRow).children(".AssignmentPointsPossible")).length == 0)
-					poss += 100;
-				else
-					poss += parseFloat(possCell.text());
+					|| earnedCell.text() == "") && earnedCell.next().text().indexOf("Dropped") == -1) {
+				if (EXTRA_CREDIT_REGEX.test(earnedCell.prev().prev().text())) {
+					ecPoints += parseFloat(earnedCell.text());
+				} else {
+					earned += parseFloat(earnedCell.text());
+					if ((possCell = $(assignmentRow).children(".AssignmentPointsPossible")).length == 0)
+						poss += 100;
+					else
+						poss += parseFloat(possCell.text());
+				}
 			}
 		}
 		var avg = earned * 100 / poss;
@@ -701,7 +715,7 @@ var HAC_HTML =
 			}
 		}
 		subjectTotal *= 1 / weightTotal;
-		subjectTotal += bonus;
+		subjectTotal += bonus + ecPoints;
 		subjectTotal = Math.max(subjectTotal, 0);
 
 		// show subject average
