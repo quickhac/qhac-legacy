@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.1.6
+
+* Always calculate semester average on the client to avoid Gradespeed messing up
+* Handle extra credit correctly, assuming it counts toward six weeks average
+
 ### 2.1.5
 
 * Revert stuff because I'm an idiot and pushed the wrong code
