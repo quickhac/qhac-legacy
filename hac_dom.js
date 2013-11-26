@@ -27,6 +27,7 @@ var DEFAULT_NOTIF_DURATION = 5;
  * @const
  */
 var EXTRA_CREDIT_REGEX = /^extra credit$|^ec$/i;
+var EXTRA_CREDIT_NOTE_REGEX = /extra credit/i;
 
 /**
  * Converts different kind of grade lists between HTML documents, JSON objects,
@@ -414,7 +415,8 @@ var HAC_HTML =
 				var ptsIsNaN = isNaN(pts) || pts == null;
 				if (ptsIsNaN)
 					json.cats[i].grades[j].ptsEarned = NaN;
-				var is_extra_credit = EXTRA_CREDIT_REGEX.test(json.cats[i].grades[j].title);
+				var is_extra_credit = EXTRA_CREDIT_REGEX.test(json.cats[i].grades[j].title)
+				                   || EXTRA_CREDIT_NOTE_REGEX.test(json.cats[i].grades[j].note);
 				var grade_to_color = is_extra_credit ? 100 + pts : pts * 100 / json.cats[i].grades[j].ptsPoss;
 				$(ptsEarned).addClass("AssignmentGrade")
 					.text(ptsIsNaN ? "" : pts).data("editing", "0")
@@ -494,7 +496,9 @@ var HAC_HTML =
 				$(catTableBody).append(gradeRow);
 
 				// calculate category average
-				if (!ptsIsNaN && json.cats[i].grades[j].note.indexOf("Dropped") == -1 && EXTRA_CREDIT_REGEX.test(json.cats[i].grades[j].title) == false)
+				if (!ptsIsNaN && json.cats[i].grades[j].note.indexOf("Dropped") == -1
+					&& EXTRA_CREDIT_REGEX.test(json.cats[i].grades[j].title) == false
+					&& EXTRA_CREDIT_NOTE_REGEX.test(json.cats[i].grades[j].note) == false)
 					if (json.cats[i].is100Pt)
 						percentiles.push(json.cats[i].grades[j].ptsEarned / json.cats[i].grades[j].ptsPoss);
 					else {
@@ -643,7 +647,7 @@ var HAC_HTML =
 	 * @param {Element} el - the element that fired this event
 	 */
 	_finalize_grade_edit: function (el) {
-		var ptsPoss, ptsPossElem, grade, gradeText, assignmentNameElem;
+		var ptsPoss, ptsPossElem, grade, gradeText, assignmentNameElem, assignmentNoteElem;
 
 		// hide tipsy
 		$(el).parent().tipsy("hide");
@@ -682,7 +686,10 @@ var HAC_HTML =
 		// re-render grade cell
 		var $cell = $(el).parent();
 		var assignmentNameElem = $cell.siblings(".AssignmentName");
-		var gradeToColor = EXTRA_CREDIT_REGEX.test(assignmentNameElem.text()) ? 100 + grade : grade;
+		var assignmentNoteElem = $cell.siblings(".AssignmentNote");
+		var gradeToColor = (EXTRA_CREDIT_REGEX.test(assignmentNameElem.text())
+		                 || EXTRA_CREDIT_NOTE_REGEX.test(assignmentNoteElem.text()))
+		                 ? 100 + grade : grade;
 		$cell.html(gradeText).data("editing", "0")
 			.css("background-color", HAC_HTML.colorize(gradeToColor));
 
@@ -693,7 +700,8 @@ var HAC_HTML =
 			var assignmentRow = rows[i];
 			if (!(isNaN((earnedCell = $(assignmentRow).children(".AssignmentGrade")).text())
 					|| earnedCell.text() == "") && earnedCell.next().text().indexOf("Dropped") == -1) {
-				if (EXTRA_CREDIT_REGEX.test(earnedCell.prev().prev().text())) {
+				if (EXTRA_CREDIT_REGEX.test(earnedCell.prev().prev().text())
+					|| EXTRA_CREDIT_NOTE_REGEX.test(earnedCell.siblings(".AssignmentNote").text())) {
 					ecPoints += parseFloat(earnedCell.text());
 				} else {
 					earned += parseFloat(earnedCell.text());

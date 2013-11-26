@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.1.7
+
+* Add another extra credit case.
+
 ### 2.1.6
 
 * Always calculate semester average on the client to avoid Gradespeed messing up
