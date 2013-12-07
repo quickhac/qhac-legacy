@@ -271,30 +271,27 @@ var RRISD_HAC = {
  * Interfaces with the Austin ISD Gradespeed (Home Access Center)
  */
 var AISD_HAC = {
-	/** The server to sending API calls to */
-	host: "https://hacaccess.herokuapp.com/",
 
 	/**
-	 * Requests a session ID from Home Access by logging in
-	 * @param {string} login - username
-	 * @param {string} pass - password
-	 * @param {string} id - 6-digit district-provided student ID
-	 * @param {function} callback - a function to call if the request succeeds
-	 * @param {function} on_error  a funciton to call if the request fails
-	 */
+	* Requests a session ID from Home Access by logging in
+	* @param {string} login - username
+	* @param {string} pass - password
+	* @param {string} id - 6-digit district-provided student ID
+	* @param {function} callback - a function to call if the request succeeds
+	* @param {function} on_error  a funciton to call if the request fails
+	*/
 	get_session: function (login, pass, id, callback, on_error) {
-		var jqXHR = $.ajax({
-			url: AISD_HAC.host + "api/aisd/login",
-			type: "POST",
-			data: {
-				login: login.encrypt(),
-				password: pass.encrypt(),
-				studentid: id.encrypt()
-			}
-		}).done(callback).fail(on_error || default_error_handler);
-		XHR_Queue.abortAll().addRequest(jqXHR);
+		new AustinGradeRetriever().login(
+			login,
+			pass,
+			id,
+			function (id) {
+				window.session_id = true;
+				callback();
+			},
+			on_error
+		);
 	},
-
 	/**
 	 * Calls a function, ensuring that window.session_id has been set to an
 	 * AISD session ID.
@@ -302,17 +299,14 @@ var AISD_HAC = {
 	 * has been loaded
 	 */
 	load_session: function (callback) {
-		if (window.session_id != undefined)
+		if (window.session_id == true)
 			callback();
 		else
 			AISD_HAC.get_session(
 				localStorage["login"].decrypt().decrypt(),
 				localStorage["aisd_password"].decrypt().decrypt(),
 				localStorage["studentid"].decrypt().decrypt(),
-				function (id) {
-					window.session_id = id;
-					callback();
-				});
+				callback);
 	},
 
 	/**
@@ -321,11 +315,7 @@ var AISD_HAC = {
 	 * @param {function} callback - a function to call when the request succeeds
 	 */
 	get_gradesHTML: function (id, studentid, callback) {
-		var jqXHR = $.post(AISD_HAC.host + "api/aisd/gradesHTML",
-			{ sessionid: id.rot13(), studentid: studentid.rot13() },
-			function (data) { callback(data); }
-		);
-		XHR_Queue.abortAll().addRequest(jqXHR);
+		new AustinGradeRetriever().getAverages(callback);
 	},
 
 	/**
@@ -336,10 +326,6 @@ var AISD_HAC = {
 	 * @param {function} callback - a function to call when the request succeeds
 	 */
 	get_classGradeHTML: function (id, studentid, data, callback) {
-		var jqXHR = $.post(AISD_HAC.host + "api/aisd/gradesHTML",
-			{ sessionid: id.rot13(), studentid: studentid.rot13(), data: data.rot13() },
-			function (data) { callback(data); }
-		);
-		XHR_Queue.abortAll().addRequest(jqXHR);
+		new AustinGradeRetriever().getClassGrades(decodeURIComponent(data), callback);
 	}
 };

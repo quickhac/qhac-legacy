@@ -183,6 +183,8 @@ var GPA = {
 	},
 
 	show: function() {
+		if (typeof localStorage['grades'] === 'undefined')
+			return;
 		if (!localStorage["gpa_enabled"] || (localStorage["gpa_enabled"] == "true")) {
 			var gpa = (localStorage["gpa_weighted"] == "true") ?
 				GPA.weighted(JSON.parse(localStorage['grades'])) :
