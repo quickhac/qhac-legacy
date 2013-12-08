@@ -10,7 +10,8 @@ QHAC.Cycle = DS.Model.extend({
 });
 
 QHAC.Cycle.FIXTURES = [
-  { id: "1506_1", hacAverage: 99, course: "1", cycleNumber: 1 },
-  { id: "1506_2", hacAverage: 87, course: "1", cycleNumber: 2 },
-  { id: "4352_1", hacAverage: 70}
+  { id: "1506_1", hacAverage: 99, course: "1506", cycleNumber: 1 },
+  { id: "1506_2", hacAverage: 87, course: "1506", cycleNumber: 2 },
+  { id: "1506_3", hacAverage: 90, course: "1506", cycleNumber: 3 },
+  { id: "4352_1", hacAverage: 70, course: "4352", cycleNumber: 1}
 ];

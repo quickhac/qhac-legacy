@@ -20,6 +20,8 @@
 		
 		
 		<script type="text/javascript" src="javascripts/controllers/login_controller.js"></script>
+		<script type="text/javascript" src="javascripts/controllers/main_controller.js"></script>
+
 		<!-- <script type="text/javascript" src="lib/jquery.tipsy.js"></script> -->
 		<!-- <script type="text/javascript" src="lib/moment.js"></script>
 		<script type="text/javascript" src="lib/base64.js"></script>
@@ -77,12 +79,19 @@
 								<th class="gradeHeader">Exam 2</th>
 								<th class="gradeHeader">Semester 2</th>
 							</tr>
-							{{#each}}
+							{{#each courseHighLevelInformationRows}}
 							<tr>
 								<td class="classTitle">{{name}}</td>
-								{{#each cycles}}
-	    					<td class="grade"><a href="#/main">{{hacAverage}}</a></td>
-	    					{{/each}}
+	    					<td class="grade"><a href="#/main">{{cycle1}}</a></td>
+	    					<td class="grade"><a href="#/main">{{cycle2}}</a></td>
+	    					<td class="grade"><a href="#/main">{{cycle3}}</a></td>
+	    					<td class="grade"><a href="#/main">{{exam1}}</a></td>
+	    					<td class="grade"><a href="#/main">{{semester1}}</a></td>
+	    					<td class="grade"><a href="#/main">{{cycle4}}</a></td>
+	    					<td class="grade"><a href="#/main">{{cycle5}}</a></td>
+	    					<td class="grade"><a href="#/main">{{cycle6}}</a></td>
+	    					<td class="grade"><a href="#/main">{{exam2}}</a></td>
+	    					<td class="grade"><a href="#/main">{{semester2}}</a></td>
 							</tr>
 							{{/each}}
 						</tbody>
