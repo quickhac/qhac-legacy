@@ -13,7 +13,9 @@
   },
   "permissions": [
     "https://hacaccess.herokuapp.com/",
-    "https://*.roundrockisd.org/",
+    "https://accesscenter.roundrockisd.org/",
+    "https://gradebook.roundrockisd.org/",
+    "https://gradespeed.austinisd.org/",
     "notifications"
   ],
   "icons": {
