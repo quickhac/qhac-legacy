@@ -68,7 +68,16 @@ var HAC_HTML =
 			// each cell
 			for (var i = 0; i < 10; i++) {
 				if (i == 4 || i == 9) {
-					var earned = 0, weight = 0, weightPerSixWeeks = 85 / 300;
+					var earned = 0, weight = 0,
+						weightPerSixWeeks = 85 / 300,
+						examWeight;
+					if (localStorage["district"] == "rrisd") {
+						weightPerSixWeeks = 85 / 300;
+						examWeight = 0.15;
+					} else {
+						weightPerSixWeeks = 0.25;
+						examWeight = 0.25;
+					}
 					// calculate semester average (issue #45)
 					// TODO: use same calculations as the grade edit finaliser
 					for (var j = i - 4; j < i - 1; j++) {
@@ -79,8 +88,8 @@ var HAC_HTML =
 					}
 					// add exam grade
 					if (grades[i-1] != "" && !isNaN(grades[i-1])){
-						earned += parseInt(grades[i-1]) * 0.15;
-						weight += 0.15;
+						earned += parseInt(grades[i-1]) * examWeight;
+						weight += examWeight;
 					}
 					// calculate
 					var semesterGrade = earned / weight;
@@ -826,7 +835,17 @@ var HAC_HTML =
 			examCell = subject[9];
 			semAvgCell = subject[10];
 		}
-		var semAvg = 0, weightTotal = 0, weightPerSixWeeks = 85 / 300;
+		var semAvg = 0,
+			weightTotal = 0, 
+			weightPerSixWeeks,
+			examWeight;
+		if (localStorage["district"] == "rrisd") {
+			weightPerSixWeeks = 85 / 300;
+			examWeight = 0.15;
+		} else {
+			weightPerSixWeeks = 0.25;
+			examWeight = 0.25;
+		}
 		for (var i = 0; i < sixWeeksCells.length; i++) {
 			cell = sixWeeksCells[i];
 			if (cell.innerHTML != "") {
@@ -835,8 +854,8 @@ var HAC_HTML =
 			}
 		}
 		if (examCell.innerText != "" && !isNaN(examCell.innerText)) {
-			semAvg += parseInt(examCell.innerText) * 0.15;
-			weightTotal += 0.15;
+			semAvg += parseInt(examCell.innerText) * examWeight;
+			weightTotal += examWeight;
 		}
 		semAvg *= 1 / weightTotal;
 		semAvg = Math.max(Math.min(semAvg, 100), 0);
