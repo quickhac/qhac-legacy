@@ -684,10 +684,7 @@ $(function () {
 	$("#do_options").click(function() { chrome.tabs.create({url: "options.html"}); });
 	$("#do_logout").click(logout);
 	$("#do_close").click(function() {
-		// remove popup by selecting the tab
-		chrome.tabs.getSelected(null, function(tab) {
-			chrome.tabs.update(tab.id, { selected: true } )
-		});
+		close();
 	});
 
 	// fill in form
