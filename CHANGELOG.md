@@ -1,5 +1,21 @@
 # Changelog
 
+### 2.1.11
+
+* Make close button work
+
+### 2.1.10
+
+* Fix exam weight in Austin ISD semester average calculation
+
+### 2.1.9
+
+* Add permission to allow making direct requests to Austin ISD
+
+### 2.1.8
+
+* Make requests directly to Austin ISD instead of gonig through our server
+
 ### 2.1.7
 
 * Add another extra credit case.
