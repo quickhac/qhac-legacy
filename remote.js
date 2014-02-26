@@ -198,30 +198,35 @@ var RRISD_HAC = {
 	 * @param {function} on_error  a funciton to call if the request fails
 	 */
 	get_session: function (login, pass, id, callback, on_error) {
-		var jqXHR = $.ajax({
-			url: "https://hacaccess.herokuapp.com/api/rrisd/login",
-			type: "POST",
-			data: {
-				login: login.encrypt(),
-				password: pass.encrypt(),
-				studentid: id.rot13()
-			}
-		}).done(callback).fail(on_error || default_error_handler);
-		XHR_Queue.abortAll().addRequest(jqXHR);
+		GradeRetriever.login(
+			Districts.roundrock,
+			login,
+			pass,
+			function (doc, $dom, choices, state) {
+				window.session_id = true;
+				
+				if (choices == null)
+					callback(doc);
+				else
+					GradeRetriever.disambiguate(
+						Districts.roundrock,
+						id,
+						state,
+						callback)
+			},
+			on_error
+		);
 	},
 
-	/**
-	 * Retrieves the grades URL from the server
-	 * @param {string} id - a valid RRISD HAC session ID
-	 * @param {function} callback - a function to call when the request succeeds
-	 */
-	get_gradesURL: function (id, callback) {
-		var jqXHR = $.ajax({
-			url: "https://hacaccess.herokuapp.com/api/rrisd/gradesURL",
-			type: "POST",
-			data: { sessionid: id.rot13() }
-		}).done(callback).fail(default_error_handler);
-		XHR_Queue.abortAll().addRequest(jqXHR);
+	load_session: function (callback) {
+		if (window.session_id == true || typeof localStorage["url"] != "undefined")
+			callback();
+		else
+			RRISD_HAC.get_session(
+				localStorage["login"].decrypt().decrypt(),
+				localStorage["rrisd_password"].decrypt().decrypt(),
+				localStorage["studentid"].decrypt().decrypt(),
+				callback);
 	},
 
 	/**
@@ -231,12 +236,19 @@ var RRISD_HAC = {
 	 * @param {function} on_error - a function to call when the request fails
 	 */
 	get_gradesHTML: function (url, callback, on_error) {
-		var jqXHR = $.ajax({
-			url: "https://gradebook.roundrockisd.org/pc/displaygrades.aspx?studentid=" + url,
-			type: "GET"
-			// dataType: "text gjson"
-		}).done(callback).fail(on_error || default_error_handler);
-		XHR_Queue.abortAll().addRequest(jqXHR);
+		if (typeof url == "undefined")
+			GradeRetriever.getAverages(Districts.roundrock, function(doc) {
+				window.doc = doc;
+				callback(doc);
+			}, on_error);
+		else {
+			var jqXHR = $.ajax({
+				url: "https://gradebook.roundrockisd.org/pc/displaygrades.aspx?studentid=" + url,
+				type: "GET"
+				// dataType: "text gjson"
+			}).done(callback).fail(on_error || default_error_handler);
+			XHR_Queue.abortAll().addRequest(jqXHR);
+		}
 	},
 
 	/**
@@ -247,23 +259,34 @@ var RRISD_HAC = {
 	 * @param {function} on_error - a function to call when the request fails
 	 */
 	get_classGradeHTML: function (sID, data, callback, on_error) {
-		var jqXHR = $.ajax({
-			url: "https://gradebook.roundrockisd.org/pc/displaygrades.aspx?data=" + data + "&studentid=" + sID,
-			type: "GET"
-			// dataType: "text cjson",
-			// data: {
-			// 	"data": data,
-			// 	"studentid": sID
-			// }
-		}).done(function (doc) {
-			if (doc == "Could not decode student id.") {
-				console.log("Error while fetching class grades (could not decode student ID)");
-				on_error(new Error("Unable to decode student ID"));
-				return false;
-			}
-			callback(doc);
-		}).fail(on_error || default_error_handler);
-		XHR_Queue.abortAll().addRequest(jqXHR);
+
+		if (typeof sID == "undefined")
+			// overall grades need to be loaded first; load those if haven't already
+			if (typeof window.doc == "undefined")
+				RRISD_HAC.get_gradesHTML(undefined, function() {
+					RRISD_HAC.get_classGradeHTML(sID, data, callback, on_error);
+				}, on_error);
+			else
+				GradeRetriever.getClassGrades(Districts.roundrock, decodeURIComponent(data), window.doc, callback);
+		else {
+			var jqXHR = $.ajax({
+					url: "https://gradebook.roundrockisd.org/pc/displaygrades.aspx?data=" + data + "&studentid=" + sID,
+					type: "GET"
+					// dataType: "text cjson",
+					// data: {
+					// 	"data": data,
+					// 	"studentid": sID
+					// }
+				}).done(function (doc) {
+					if (doc == "Could not decode student id.") {
+						console.log("Error while fetching class grades (could not decode student ID)");
+						on_error(new Error("Unable to decode student ID"));
+						return false;
+					}
+					callback(doc);
+				}).fail(on_error || default_error_handler);
+			XHR_Queue.abortAll().addRequest(jqXHR);
+		}
 	}
 };
 
@@ -281,13 +304,21 @@ var AISD_HAC = {
 	* @param {function} on_error  a funciton to call if the request fails
 	*/
 	get_session: function (login, pass, id, callback, on_error) {
-		new AustinGradeRetriever().login(
+		GradeRetriever.login(
+			Districts.austin,
 			login,
 			pass,
-			id,
-			function (id) {
+			function (doc, $dom, choices, state) {
 				window.session_id = true;
-				callback();
+
+				if (choices == null)
+					callback(doc);
+				else
+					GradeRetriever.disambiguate(
+						Districts.austin,
+						id,
+						state,
+						callback)
 			},
 			on_error
 		);
@@ -314,8 +345,8 @@ var AISD_HAC = {
 	 * @param {string} id - a valid AISD session ID
 	 * @param {function} callback - a function to call when the request succeeds
 	 */
-	get_gradesHTML: function (id, studentid, callback) {
-		new AustinGradeRetriever().getAverages(callback);
+	get_gradesHTML: function (id, studentid, callback, on_error) {
+		GradeRetriever.getAverages(Districts.austin, callback, on_error);
 	},
 
 	/**
@@ -325,7 +356,7 @@ var AISD_HAC = {
 	 * @param {string} data - the class and marking period identifier
 	 * @param {function} callback - a function to call when the request succeeds
 	 */
-	get_classGradeHTML: function (id, studentid, data, callback) {
-		new AustinGradeRetriever().getClassGrades(decodeURIComponent(data), callback);
+	get_classGradeHTML: function (id, studentid, data, callback, on_error) {
+		GradeRetriever.getClassGrades(Districts.austin, decodeURIComponent(data), undefined, callback, on_error);
 	}
 };
