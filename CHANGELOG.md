@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.2.0
+
+* Include newer version of `qhac-common`
+* Make all Round Rock ISD grade requests direct from client to GradeSpeed; credentials no longer touch our server at all
+
 ### 2.1.11
 
 * Make close button work
@@ -14,7 +19,7 @@
 
 ### 2.1.8
 
-* Make requests directly to Austin ISD instead of gonig through our server
+* Make requests directly to Austin ISD instead of going through our server
 
 ### 2.1.7
 

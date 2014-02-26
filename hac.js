@@ -189,29 +189,18 @@ function login_to_rrisd(uname, pass, studentid) {
 		pass,
 		studentid,
 		function (id) {
-			// save url
-			RRISD_HAC.get_gradesURL(id, function (url) {
-				var captures = /id=([\w\d%]*)/.exec(url);
-				// if login failed
-				if (typeof captures == "undefined") {
-					// return error
-					show_login_error("Unable to log in")
-					reset_login_form();
-					return false;
-				}
+			// save session id
+			window.session_id = id;
 
-				sID = captures[1];
-				localStorage.setItem("url", sID);
-				$("#direct_url").val(sID);
-				// load grades directly
-				RRISD_HAC.get_gradesHTML(sID, function (doc) {
-					processUpdatedGrades(doc);
-					hide_login_form();
-					reset_login_form();
-					chrome.extension.getBackgroundPage().create_interval(true);
-					$("body").removeClass("busy offline edited");
-				}, handle_load_error);
-			});
+			// load grades
+			RRISD_HAC.get_gradesHTML(undefined, function (doc) {
+				window.doc = doc;
+				processUpdatedGrades(doc);
+				hide_login_form();
+				reset_login_form();
+				chrome.extension.getBackgroundPage().create_interval(true);
+				$("body").removeClass("busy offline edited");
+			}, handle_load_error);
 		},
 		on_error_logging_in);
 }
@@ -266,6 +255,8 @@ function login(uname, pass, studentid, district) {
 	localStorage.setItem("district", district);
 	if (district == "aisd")
 		localStorage.setItem("aisd_password", pass.encrypt().encrypt());
+	else if (district == "rrisd")
+		localStorage.setItem("rrisd_password", pass.encrypt().encrypt());
 
 	// query the correct district's website
 	switch (district) {
@@ -356,8 +347,10 @@ function update() {
 	// query the correct district
 	switch (localStorage["district"]) {
 	case "rrisd":
-		RRISD_HAC.get_gradesHTML(
-			localStorage["url"], processUpdatedGrades, handle_load_error);
+		RRISD_HAC.load_session(function() {
+			RRISD_HAC.get_gradesHTML(
+				localStorage["url"], processUpdatedGrades, handle_load_error);
+		});
 		break;
 	case "aisd":
 		AISD_HAC.load_session(function() {
@@ -492,10 +485,12 @@ function loadClassGrades(data) {
 	// load
 	switch (localStorage["district"]) {
 	case "rrisd":
-		RRISD_HAC.get_classGradeHTML(
-			localStorage["url"], data,
-			function(stuff) { processUpdatedClassGrades(data, stuff); },
-			handle_load_error_class);
+		RRISD_HAC.load_session(function() {
+			RRISD_HAC.get_classGradeHTML(
+				localStorage["url"], data,
+				function(stuff) { processUpdatedClassGrades(data, stuff); },
+				handle_load_error_class);
+		});
 		break;
 	case "aisd":
 		AISD_HAC.load_session(function() {
@@ -724,7 +719,7 @@ $(function () {
 	));
 
 	// login or direct access?
-	if (typeof localStorage["url"] == "undefined" && typeof localStorage["aisd_password"] == "undefined")
+	if (typeof localStorage["url"] == "undefined" && typeof localStorage["aisd_password"] == "undefined" && typeof localStorage["rrisd_password"] == "undefined")
 		// not logged in
 		$("#login_form").removeClass("hide");
 	else {

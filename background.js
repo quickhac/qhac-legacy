@@ -60,14 +60,17 @@ function silent_update() {
 		return;
 	}
 
+	// clear session id if it might be expired
+	if (localStorage["r_int"] > 5) window.session_id = undefined;
+
 	// query the correct district
 	switch (localStorage["district"]) {
 	case "rrisd":
-		RRISD_HAC.get_gradesHTML(localStorage["url"], process_update);
+		RRISD_HAC.load_session(function() {
+			RRISD_HAC.get_gradesHTML(localStorage["url"], process_update);
+		});
 		break;
 	case "aisd":
-		// clear session id if it might be expired
-		if (localStorage["r_int"] > 5) window.session_id = undefined;
 		AISD_HAC.load_session(function() {
 			AISD_HAC.get_gradesHTML(
 				window.session_id,
