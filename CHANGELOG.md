@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.2.2
+
+* Don't break on Austin ISD's cumulative GPA
+
 ### 2.2.1
 
 * Fix bug that broke background updating if refresh interval was not set

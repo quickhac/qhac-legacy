@@ -47,18 +47,18 @@ var HAC_HTML =
 		$rows = $(".DataTable:first tr.DataRow, .DataTable:first tr.DataRowAlt", context);
 
 		// hard-coded offsets
-		var titleOffset, gradesOffset;
+		var titleOffset, gradesOffset, gradesRowOffset;
 		if (is_qhac_html) {
-			titleOffset = 0; gradesOffset = 1;
+			titleOffset = 0; gradesOffset = 1, gradesRowOffset = 0;
 		}
 		else if (localStorage["district"] == "rrisd") {
-			titleOffset = 0; gradesOffset = 2;
+			titleOffset = 0; gradesOffset = 2, gradesRowOffset = 0;
 		} else if (localStorage["district"] == "aisd") {
-			titleOffset = 1; gradesOffset = 3;
+			titleOffset = 1; gradesOffset = 3, gradesRowOffset = 1;
 		}
 
 		// each row
-		for (var r = 0; r < $rows.length; r++) {
+		for (var r = gradesColOffset; r < $rows.length; r++) {
 			var title, grades, $cells, grade;
 			$cells = $rows.eq(r).children("td");
 			title = $cells.eq(titleOffset).html();
