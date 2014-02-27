@@ -61,7 +61,7 @@ function silent_update() {
 	}
 
 	// clear session id if it might be expired
-	if (localStorage["r_int"] > 5) window.session_id = undefined;
+	if (cached_refresh_interval > 5) window.session_id = undefined;
 
 	// query the correct district
 	switch (localStorage["district"]) {

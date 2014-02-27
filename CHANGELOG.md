@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.2.1
+
+* Fix bug that broke background updating if refresh interval was not set
+
 ## 2.2.0
 
 * Include newer version of `qhac-common`
