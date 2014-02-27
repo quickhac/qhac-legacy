@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.2.3
+
+* Fix typo
+
 ### 2.2.2
 
 * Don't break on Austin ISD's cumulative GPA

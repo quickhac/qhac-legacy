@@ -58,7 +58,7 @@ var HAC_HTML =
 		}
 
 		// each row
-		for (var r = gradesColOffset; r < $rows.length; r++) {
+		for (var r = gradesRowOffset; r < $rows.length; r++) {
 			var title, grades, $cells, grade;
 			$cells = $rows.eq(r).children("td");
 			title = $cells.eq(titleOffset).html();
