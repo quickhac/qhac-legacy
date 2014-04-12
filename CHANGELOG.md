@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.2.4
+
+* Fix compatibility for 10 Apr 2014 RRISD HAC update
+
 ### 2.2.3
 
 * Fix typo
