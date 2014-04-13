@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.2.5
+
+* Fix student selection for RRISD
+
 ### 2.2.4
 
 * Fix compatibility for 10 Apr 2014 RRISD HAC update
